@@ -1,0 +1,321 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 390px; height: 884px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>Merchant Orders | ShopLink</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#e2e2e5",
+                        "on-surface": "#181c1c",
+                        "on-secondary-fixed": "#1a1c1e",
+                        "primary-container": "#00d177",
+                        "surface-dim": "#d7dbda",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e0e3e2",
+                        "primary-fixed": "#5bffa0",
+                        "tertiary-fixed": "#dde1ff",
+                        "primary": "#006d3b",
+                        "outline": "#6c7b6e",
+                        "on-tertiary-fixed-variant": "#0035be",
+                        "on-surface-variant": "#3c4a3f",
+                        "secondary-fixed": "#e2e2e5",
+                        "on-secondary-container": "#636467",
+                        "on-background": "#181c1c",
+                        "on-secondary-fixed-variant": "#454749",
+                        "on-primary-fixed": "#00210e",
+                        "inverse-surface": "#2d3131",
+                        "surface": "#f7faf9",
+                        "surface-tint": "#006d3b",
+                        "tertiary-fixed-dim": "#b8c3ff",
+                        "surface-container-low": "#f1f4f3",
+                        "primary-fixed-dim": "#30e286",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#bbcbbb",
+                        "tertiary": "#124af0",
+                        "surface-container": "#ebeeed",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed-dim": "#c6c6c9",
+                        "error": "#ba1a1a",
+                        "background": "#f7faf9",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#a3b2ff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e6e9e8",
+                        "on-tertiary-fixed": "#001356",
+                        "inverse-primary": "#30e286",
+                        "surface-bright": "#f7faf9",
+                        "on-primary-fixed-variant": "#00522b",
+                        "on-primary-container": "#00532c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "8px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "sm": "12px",
+                        "xl": "32px",
+                        "base": "4px",
+                        "safe-area-bottom": "44px"
+                    },
+                    "fontFamily": {
+                        "price-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "distance-label": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "price-lg": ["20px", {"lineHeight": "24px", "fontWeight": "700"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "distance-label": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f7faf9;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .order-card {
+            transition: transform 0.1s ease;
+        }
+        .order-card:active {
+            transform: scale(0.98);
+        }
+        .tab-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hidden-list {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface shadow-sm flex justify-between items-center px-md h-16">
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary p-xs hover:bg-surface-container-high transition-colors rounded-full">menu</button>
+<h1 class="font-display-lg text-display-lg text-primary">Orders</h1>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden">
+<img alt="Merchant Profile" class="w-full h-full object-cover" data-alt="A professional portrait of a Tanzanian merchant in a modern retail setting, with warm natural light illuminating a clean storefront in the background. The style is bright and high-contrast, echoing a sleek modern digital commerce environment with vibrant green accents. The merchant wears a friendly expression, suggesting reliable and high-quality logistics services." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD2Cozag5fOpvBLluUykcTMd8pO1jWybpUH_H6loAeRackkNBoE8yDnIAHcey6eu3phGaeRzb1x6DBgjxtEXn0fFgxOEdv2-RARy11f19dzIgs64dHBWy3HGXC7ib2tLOjTvytxciZ9O8GkRRSh9RY6nDE-9ev-CXriQGeC4IGrLOm9Eb9O420dLxYN1gq-cJcO2w-xhVXkQzhuB0Ul6xs6YOTY-oE3Ns6BvHqQLn79v1Ppd4CmZwtUDLrQuIjtnFe47TEa7jKC_oc">
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-20 pb-32 px-md max-w-2xl mx-auto min-h-screen"><div class="bg-surface-container-low p-1 rounded-xl mb-md flex border border-outline-variant"><button class="tab-transition flex-1 py-xs rounded-lg font-label-caps text-label-caps text-on-primary-container bg-primary-container shadow-sm" id="btn-new" onclick="switchTab('new')">NEW</button><button class="tab-transition flex-1 py-xs rounded-lg font-label-caps text-label-caps text-on-surface-variant" id="btn-progress" onclick="switchTab('progress')">PROGRESS</button><button class="tab-transition flex-1 py-xs rounded-lg font-label-caps text-label-caps text-on-surface-variant" id="btn-completed" onclick="switchTab('completed')">COMPLETED</button></div><div class="space-y-md" id="list-new"><!-- Order Request 1 -->
+<div class="order-card bg-surface border border-outline-variant rounded-xl p-md flex flex-col gap-sm shadow-sm">
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="font-label-caps text-label-caps text-outline mb-1">NEW REQUEST • 2 mins ago</p>
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Neema Mollel</h2>
+            <p class="text-on-surface-variant font-body-md mt-1">2x Kilimanjaro Water 1.5L, 1x Fresh Cassava Pack</p>
+        </div>
+        <div class="flex items-center gap-xs px-sm py-base bg-primary-container/20 text-on-primary-container rounded-full">
+            <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+            <span class="font-label-caps text-[10px]">PENDING</span>
+        </div>
+    </div>
+    <div class="flex justify-between items-end border-t border-outline-variant pt-sm mt-xs">
+        <div>
+            <p class="text-on-surface-variant font-body-md">Total Amount</p>
+            <p class="font-price-lg text-price-lg text-primary">TZS 12,500</p>
+        </div>
+        <div class="flex gap-xs">
+            <button class="px-md py-xs border border-outline text-on-surface-variant font-label-caps text-label-caps rounded-lg hover:bg-surface-container-high transition-colors">REJECT</button>
+            <button class="px-md py-xs bg-primary text-on-primary font-label-caps text-label-caps rounded-lg shadow-sm active:scale-95 transition-all">ACCEPT</button>
+        </div>
+    </div>
+</div>
+
+<!-- Order Request 2 -->
+<div class="order-card bg-surface border border-outline-variant rounded-xl p-md flex flex-col gap-sm shadow-sm">
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="font-label-caps text-label-caps text-outline mb-1">NEW REQUEST • 15 mins ago</p>
+            <h2 class="font-headline-sm text-headline-sm text-on-surface">Said Bakari</h2>
+            <p class="text-on-surface-variant font-body-md mt-1">1x Local Eggs (Tray), 2kg Maize Flour</p>
+        </div>
+        <div class="flex items-center gap-xs px-sm py-base bg-primary-container/20 text-on-primary-container rounded-full">
+            <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+            <span class="font-label-caps text-[10px]">PENDING</span>
+        </div>
+    </div>
+    <div class="flex justify-between items-end border-t border-outline-variant pt-sm mt-xs">
+        <div>
+            <p class="text-on-surface-variant font-body-md">Total Amount</p>
+            <p class="font-price-lg text-price-lg text-primary">TZS 24,200</p>
+        </div>
+        <div class="flex gap-xs">
+            <button class="px-md py-xs border border-outline text-on-surface-variant font-label-caps text-label-caps rounded-lg hover:bg-surface-container-high transition-colors">REJECT</button>
+            <button class="px-md py-xs bg-primary text-on-primary font-label-caps text-label-caps rounded-lg shadow-sm active:scale-95 transition-all">ACCEPT</button>
+        </div>
+    </div>
+</div></div>
+<!-- Toggle Switch (Bento style) -->
+
+<!-- Active Orders View -->
+<div class="space-y-md hidden-list" id="list-progress">
+<!-- Order 1 -->
+<div class="order-card bg-surface border border-outline-variant rounded-xl p-md flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">ORDER #SL-8842</p>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Juma Hamisi</h2>
+</div>
+<div class="flex items-center gap-xs px-sm py-base bg-tertiary-container/30 text-on-tertiary-container rounded-full">
+<span class="w-2 h-2 bg-tertiary rounded-full animate-pulse"></span>
+<span class="font-label-caps text-[10px]">PREPARING</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-outline-variant pt-sm mt-xs">
+<div>
+<p class="text-on-surface-variant font-body-md">Total Amount</p>
+<p class="font-price-lg text-price-lg text-primary">TZS 46,500</p>
+</div>
+<button class="px-md py-xs border border-primary text-primary font-label-caps text-label-caps rounded-lg hover:bg-primary/5 transition-colors">
+                        DETAILS
+                    </button>
+</div>
+</div>
+<!-- Order 2 -->
+<div class="order-card bg-surface border-2 border-primary-container rounded-xl p-md flex flex-col gap-sm shadow-sm">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">ORDER #SL-8845</p>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Sarah Mushi</h2>
+</div>
+<div class="flex items-center gap-xs px-sm py-base bg-primary-container text-on-primary-container rounded-full">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span class="font-label-caps text-[10px]">READY FOR PICKUP</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-outline-variant pt-sm mt-xs">
+<div>
+<p class="text-on-surface-variant font-body-md">Total Amount</p>
+<p class="font-price-lg text-price-lg text-primary">TZS 25,000</p>
+</div>
+<button class="px-md py-xs bg-primary text-on-primary font-label-caps text-label-caps rounded-lg shadow-sm active:scale-95 transition-all">
+                        COMPLETE
+                    </button>
+</div>
+</div>
+<!-- Order 3 -->
+<div class="order-card bg-surface border border-outline-variant rounded-xl p-md flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">ORDER #SL-8848</p>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Aisha Mohamed</h2>
+</div>
+<div class="flex items-center gap-xs px-sm py-base bg-tertiary-container/30 text-on-tertiary-container rounded-full">
+<span class="w-2 h-2 bg-tertiary rounded-full animate-pulse"></span>
+<span class="font-label-caps text-[10px]">PREPARING</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-outline-variant pt-sm mt-xs">
+<div>
+<p class="text-on-surface-variant font-body-md">Total Amount</p>
+<p class="font-price-lg text-price-lg text-primary">TZS 18,500</p>
+</div>
+<button class="px-md py-xs border border-primary text-primary font-label-caps text-label-caps rounded-lg hover:bg-primary/5 transition-colors">
+                        DETAILS
+                    </button>
+</div>
+</div>
+</div>
+<!-- Completed Orders View -->
+<div class="hidden-list space-y-md" id="list-completed">
+<div class="order-card bg-surface border border-outline-variant rounded-xl p-md opacity-80">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">ORDER #SL-8830</p>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Bakari M.</h2>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center gap-xs px-sm py-base bg-surface-container-highest text-on-surface-variant rounded-full">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+<span class="font-label-caps text-[10px]">DELIVERED</span>
+</div>
+<p class="text-[10px] text-outline-variant mt-1">1 hour ago</p>
+</div>
+</div>
+<div class="flex justify-between items-end pt-sm border-t border-outline-variant">
+<p class="font-price-lg text-price-lg text-on-surface-variant">TZS 12,500</p>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-md pb-safe-area-bottom h-20 bg-surface border-t border-outline-variant shadow-[0_-4px_16px_rgba(0,0,0,0.08)] rounded-t-xl"><a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-secondary-container transition-colors p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-secondary-container transition-colors p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-caps text-label-caps mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-secondary-container transition-colors p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps mt-1">Account</span>
+</a></nav>
+<script>
+        function switchTab(tab) {
+            const btnActive = document.getElementById('btn-active');
+            const btnCompleted = document.getElementById('btn-completed');
+            const listActive = document.getElementById('list-active');
+            const listCompleted = document.getElementById('list-completed');
+
+            if (tab === 'active') {
+                btnActive.className = "tab-transition flex-1 py-xs rounded-lg font-label-caps text-label-caps text-on-primary-container bg-primary-container shadow-sm";
+                btnCompleted.className = "tab-transition flex-1 py-xs rounded-lg font-label-caps text-label-caps text-on-surface-variant";
+                listActive.classList.remove('hidden-list');
+                listCompleted.classList.add('hidden-list');
+            } else {
+                btnCompleted.className = "tab-transition flex-1 py-xs rounded-lg font-label-caps text-label-caps text-on-primary-container bg-primary-container shadow-sm";
+                btnActive.className = "tab-transition flex-1 py-xs rounded-lg font-label-caps text-label-caps text-on-surface-variant";
+                listCompleted.classList.remove('hidden-list');
+                listActive.classList.add('hidden-list');
+            }
+        }
+    </script>
+
+
+
+
+</body></html>

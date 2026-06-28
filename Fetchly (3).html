@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Delivery Location | ShopLink</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-20-8 {
+            shadow-color: rgba(0, 0, 0, 0.08);
+            shadow-offset: {width: 0, height: 20};
+            shadow-radius: 8;
+        }
+        .tap-highlight-transparent {
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom map marker pulse */
+        @keyframes map-pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .pulse-ring {
+            position: absolute;
+            border-radius: 50%;
+            height: 100%;
+            width: 100%;
+            background-color: #00D177;
+            animation: map-pulse 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-on-surface": "#eef1f0",
+                      "secondary": "#5d5e61",
+                      "on-primary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#2d3131",
+                      "outline-variant": "#bbcbbb",
+                      "surface-container-highest": "#e0e3e2",
+                      "tertiary": "#124af0",
+                      "primary": "#006d3b",
+                      "surface-container": "#ebeeed",
+                      "error": "#ba1a1a",
+                      "surface-variant": "#e0e3e2",
+                      "secondary-container": "#e2e2e5",
+                      "outline": "#6c7b6e",
+                      "on-primary-container": "#00532c",
+                      "tertiary-fixed": "#dde1ff",
+                      "surface": "#f7faf9",
+                      "surface-container-high": "#e6e9e8",
+                      "primary-fixed": "#5bffa0",
+                      "background": "#f7faf9",
+                      "surface-tint": "#006d3b",
+                      "inverse-primary": "#30e286",
+                      "on-tertiary-container": "#0035c0",
+                      "secondary-fixed": "#e2e2e5",
+                      "on-tertiary-fixed-variant": "#0035be",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#001356",
+                      "surface-dim": "#d7dbda",
+                      "primary-fixed-dim": "#30e286",
+                      "on-primary-fixed": "#00210e",
+                      "surface-bright": "#f7faf9",
+                      "on-background": "#181c1c",
+                      "on-secondary-container": "#636467",
+                      "primary-container": "#00d177",
+                      "error-container": "#ffdad6",
+                      "on-surface": "#181c1c",
+                      "surface-container-low": "#f1f4f3",
+                      "on-surface-variant": "#3c4a3f",
+                      "on-secondary-fixed-variant": "#454749",
+                      "on-primary-fixed-variant": "#00522b",
+                      "on-secondary-fixed": "#1a1c1e",
+                      "tertiary-fixed-dim": "#b8c3ff",
+                      "on-tertiary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#a3b2ff",
+                      "secondary-fixed-dim": "#c6c6c9",
+                      "surface-container-lowest": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "xl": "32px",
+                      "xs": "8px",
+                      "sm": "12px",
+                      "md": "16px",
+                      "base": "4px",
+                      "safe-area-bottom": "44px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "price-lg": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "distance-label": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "price-lg": ["20px", {"lineHeight": "24px", "fontWeight": "700"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "distance-label": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body-lg text-on-surface overflow-hidden">
+<!-- Top Navigation Bar -->
+<header class="fixed top-4 left-4 right-4 z-50 rounded-xl bg-surface/90 backdrop-blur-md shadow-lg flex items-center justify-between px-md py-sm max-w-2xl mx-auto">
+<button class="flex items-center justify-center p-xs rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-150 text-on-surface-variant">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm text-primary">Set Delivery Point</h1>
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzWDoe_px4_dsq6Uf22CqfLMI6eyolk4FlUpg82Nl-Vo97RWpSY9kHn3JDx8271zWSP10Q9AHuR6qIC5635AX66puxUhQJBND4HPA5prbDfQO9o-jozC6c-DcDGzdrtpMBbDL55_Bf63nrHjf4oA385JJnVN0dUQvLEvj5KaiynEoyQIkv34OHdmVnNxNutwK2KHCXU2wzwfDaeYWsiDHKeTWSw00DbLMZJPwooQGJAK_AisdFIvh9TwnxL7R9DbXsCMRUeEsYRtht"/>
+</div>
+</header>
+<!-- Map Canvas (The Base Layer) -->
+<main class="relative w-full h-screen">
+<!-- Map Container -->
+<div class="absolute inset-0 bg-surface-dim">
+<img class="w-full h-full object-cover grayscale-[20%] opacity-90" data-alt="A high-angle, detailed map view of Dar es Salaam's urban grid with subtle green and blue navigation lines representing a route. The aesthetic is clean and modern with a light-mode color palette, featuring minimalist geographic details to prioritize legibility. Soft lighting reflects a professional logistics application style with high contrast between the road networks and the surrounding greenery." data-location="Dar es Salaam, Tanzania" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTfA_jxjhVgUQBVVxP8lg06jfIWPBEKs0p3FyI9qX1Ock53vnxf6QgJGaNqeGY-k85embWnSz0OHlLKd4JJ9gBJfbTK6O2sRlbxIUVTg_F5EsXYZ36kMqloun3fiyEc6no8SIIDW793SgEGXiBQwx2vlIKhtvQoYkQkA1Ec3Z02GcQHRXTq_QzeakGxDnaHh4SlYt5-1wtSTbQJ8leEk-wqbwlS94-LdSoNm60W9QVig3LNGEvlhPaWrNj1IfUb73_zywL-ci2ilZE"/>
+<!-- Route Overlay (Pseudo SVG) -->
+<div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+<svg class="w-full h-full opacity-60" viewbox="0 0 400 800">
+<path d="M 200,600 C 220,550 180,450 210,350 S 190,200 200,150" fill="none" stroke="#00D177" stroke-dasharray="1,12" stroke-linecap="round" stroke-width="6"></path>
+</svg>
+</div>
+<!-- Custom Pin: Pickup (Hardware Shop) -->
+<div class="absolute top-[20%] left-[52%] -translate-x-1/2 -translate-y-1/2 z-10">
+<div class="flex flex-col items-center">
+<div class="bg-primary text-on-primary px-sm py-xs rounded-lg shadow-lg mb-base flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">store</span>
+<span class="text-label-caps font-label-caps">Kurasini Hardware</span>
+</div>
+<div class="w-4 h-4 bg-primary rounded-full border-2 border-white shadow-md"></div>
+</div>
+</div>
+<!-- Custom Pin: Delivery (Current Location) -->
+<div class="absolute top-[60%] left-[48%] -translate-x-1/2 -translate-y-1/2 z-10">
+<div class="flex flex-col items-center">
+<div class="relative w-12 h-12 flex items-center justify-center">
+<div class="pulse-ring"></div>
+<div class="w-6 h-6 bg-tertiary-container border-4 border-white rounded-full shadow-xl flex items-center justify-center z-20">
+<span class="material-symbols-outlined text-on-tertiary-container text-[14px]" style="font-variation-settings: 'FILL' 1;">my_location</span>
+</div>
+</div>
+<div class="bg-white text-on-surface px-sm py-xs rounded-lg shadow-lg mt-base flex items-center gap-xs border border-outline-variant">
+<span class="text-label-caps font-label-caps whitespace-nowrap">Your Location (Kijitonyama)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Search/Input Card -->
+<div class="fixed top-[100px] left-md right-md z-40 max-w-xl mx-auto">
+<div class="bg-surface-container-lowest rounded-xl shadow-20-8 p-md border border-outline-variant space-y-md">
+<!-- Pickup Field -->
+<div class="flex items-center gap-md">
+<div class="flex flex-col items-center gap-base">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-0.5 h-8 bg-outline-variant"></div>
+</div>
+<div class="flex-1">
+<label class="text-on-surface-variant font-label-caps text-label-caps block mb-1">PICKUP FROM</label>
+<div class="font-body-lg text-body-lg text-on-surface flex justify-between items-center">
+<span>Kurasini Hardware</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">edit</span>
+</div>
+</div>
+</div>
+<!-- Destination Field -->
+<div class="flex items-center gap-md">
+<div class="w-3 h-3 border-2 border-tertiary rounded-sm"></div>
+<div class="flex-1">
+<label class="text-tertiary font-label-caps text-label-caps block mb-1">DELIVER TO</label>
+<div class="font-body-lg text-body-lg text-on-surface flex justify-between items-center">
+<span class="font-semibold text-primary">Current Location</span>
+<span class="material-symbols-outlined text-primary text-[20px]">gps_fixed</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Sheet (Delivery Details & Action) -->
+<div class="fixed bottom-0 left-0 right-0 z-50 bg-surface rounded-t-xl shadow-[0_-4px_16px_rgba(0,0,0,0.08)] border-t border-outline-variant">
+<!-- Grabber -->
+<div class="w-full flex justify-center py-sm">
+<div class="w-10 h-1 bg-outline-variant rounded-full"></div>
+</div>
+<div class="px-lg pb-safe-area-bottom pt-xs max-w-2xl mx-auto">
+<!-- Delivery Summary -->
+<div class="flex items-center justify-between mb-lg">
+<div>
+<p class="text-on-surface-variant font-label-caps text-label-caps">ESTIMATED ARRIVAL</p>
+<p class="font-headline-sm text-headline-sm">24 - 32 mins</p>
+</div>
+<div class="text-right">
+<p class="text-on-surface-variant font-label-caps text-label-caps">TRANSPORT FEE</p>
+<p class="font-price-lg text-price-lg text-primary">TZS 3,500</p>
+</div>
+</div>
+<!-- Payment Selection Chip -->
+<div class="flex items-center gap-sm mb-lg overflow-x-auto py-base scrollbar-hide">
+<button class="flex items-center gap-xs px-md py-sm bg-primary-container/20 border border-primary-container rounded-full text-on-primary-container shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="font-label-caps text-label-caps">M-PESA</span>
+</button>
+<button class="flex items-center gap-xs px-md py-sm bg-surface-container-high border border-outline-variant rounded-full text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span class="font-label-caps text-label-caps">ADD PAYMENT</span>
+</button>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-primary-container text-on-primary-container font-headline-md text-headline-md py-md rounded-xl shadow-lg active:scale-95 transition-transform duration-150 flex items-center justify-center gap-md mb-md">
+<span>Confirm Location</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Success Feedback Overlay (Hidden by default) -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300" id="feedback">
+<div class="bg-on-surface/80 backdrop-blur-md text-white p-lg rounded-2xl flex flex-col items-center gap-sm">
+<span class="material-symbols-outlined text-[48px] text-primary-container">check_circle</span>
+<p class="font-headline-sm">Location Confirmed</p>
+</div>
+</div>
+<script>
+        // Simple Interaction Logic
+        document.querySelector('button.bg-primary-container').addEventListener('click', function() {
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('opacity-0');
+            feedback.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                feedback.classList.remove('opacity-100');
+                feedback.classList.add('opacity-0');
+            }, 2000);
+        });
+
+        // Handle Map Panning Simulation (Visual only)
+        let isDragging = false;
+        const map = document.querySelector('main');
+        
+        map.addEventListener('mousedown', () => isDragging = true);
+        window.addEventListener('mouseup', () => isDragging = false);
+        
+        map.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            // Visual feedback of interaction
+            map.style.cursor = 'grabbing';
+        });
+    </script>
+</body></html>

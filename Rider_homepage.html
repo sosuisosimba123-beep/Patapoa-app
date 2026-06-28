@@ -1,0 +1,252 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .map-gradient-overlay {
+            background: linear-gradient(to bottom, rgba(247, 250, 249, 0.9) 0%, rgba(247, 250, 249, 0) 20%, rgba(247, 250, 249, 0) 80%, rgba(247, 250, 249, 0.9) 100%);
+        }
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .online-glow {
+            box-shadow: 0 0 20px rgba(0, 209, 119, 0.4);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#30e286",
+                      "on-tertiary-container": "#0035c0",
+                      "on-primary-container": "#00532c",
+                      "tertiary-fixed": "#dde1ff",
+                      "background": "#f7faf9",
+                      "error": "#ba1a1a",
+                      "on-secondary-fixed-variant": "#454749",
+                      "inverse-on-surface": "#eef1f0",
+                      "surface-container-high": "#e6e9e8",
+                      "on-primary-fixed-variant": "#00522b",
+                      "on-surface": "#181c1c",
+                      "on-secondary-fixed": "#1a1c1e",
+                      "surface-container-highest": "#e0e3e2",
+                      "on-surface-variant": "#3c4a3f",
+                      "on-error": "#ffffff",
+                      "tertiary": "#124af0",
+                      "surface-bright": "#f7faf9",
+                      "secondary-container": "#e2e2e5",
+                      "inverse-surface": "#2d3131",
+                      "outline-variant": "#bbcbbb",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#ebeeed",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f1f4f3",
+                      "on-primary-fixed": "#00210e",
+                      "tertiary-container": "#a3b2ff",
+                      "on-background": "#181c1c",
+                      "inverse-primary": "#30e286",
+                      "secondary": "#5d5e61",
+                      "on-tertiary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface": "#f7faf9",
+                      "primary-fixed": "#5bffa0",
+                      "surface-tint": "#006d3b",
+                      "surface-dim": "#d7dbda",
+                      "primary": "#006d3b",
+                      "on-tertiary-fixed": "#001356",
+                      "secondary-fixed-dim": "#c6c6c9",
+                      "on-secondary-container": "#636467",
+                      "tertiary-fixed-dim": "#b8c3ff",
+                      "on-secondary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#e0e3e2",
+                      "primary-container": "#00d177",
+                      "outline": "#6c7b6e",
+                      "on-tertiary-fixed-variant": "#0035be",
+                      "secondary-fixed": "#e2e2e5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "8px",
+                      "sm": "12px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "safe-area-bottom": "44px",
+                      "base": "4px",
+                      "xl": "32px"
+              },
+              "fontFamily": {
+                      "label-caps": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "price-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "distance-label": ["Inter"],
+                      "display-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "price-lg": ["20px", {"lineHeight": "24px", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "distance-label": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/90 dark:bg-surface-dim/90 backdrop-blur-md shadow-sm flex items-center justify-between px-md h-16">
+<div class="flex items-center gap-md">
+<button aria-label="Menu" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm text-primary">ShopLink Deliverer</h1>
+</div>
+<button aria-label="Account" class="w-10 h-10 flex items-center justify-center rounded-full overflow-hidden hover:bg-surface-container-high active:scale-95 transition-transform">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf8J_65HGFTIb0F2wEF92L77kKIZG7jmXAJsV_B_SUSBY4_lq30OIFPJNZ7R5QPmVeABCzwd4AABywRj-i-fwbnk3RrmS4lQeKkihRNXeXVb1CSIYysJrsNgwOQDWaKAE2Dx_zA4iDOS9h8G0xE_3Zf_DRlIlu-Pd1Hw1cDCrzYrGMHrNiSDZR1Qa8OEbceoTppa7ES4mqLc400spJrULci--uNS8rTZBpdTfz4mP_XrV6olUegg4wgn8ZrjPgGQ09pc5OACHFzpGs">
+</button>
+</header>
+<!-- Main Map Canvas -->
+<main class="relative flex-grow w-full">
+<!-- Mock Map Background -->
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover brightness-[0.95] contrast-[1.1]" data-alt="A clean, high-detail satellite and street map view of Dar es Salaam, Tanzania, featuring clear road networks, harbor areas, and urban density. The map uses a light, modern aesthetic with soft greens for vegetation and neutral greys for infrastructure, optimized for high legibility and a professional logistics application feel." data-location="Dar es Salaam, Tanzania" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbTc9D8kLWqV9nsr5U0mB8EmqELVWmNlEdqnpY2t3SXJ2Ld0PgDUrZm8uispBj5SrMCgBwwKHjQvNdbcPpVNv67njjdbQe40iyEnLEy7xS-FppmDbZ295McBe3pglhcyeDDUJuAywHm6LzO3G2o6oOFCEWXb-jF4d-bY2teuzxilYRW8c5m9T4nt_mOHiWGS2jRr_CsitAPy4oCUtrMcXEyNe75JypTI_VeSKlMnT3QBOyBXWkxtH2IikkpcSQX4D8i0fyTFXvFGpx">
+<div class="absolute inset-0 map-gradient-overlay pointer-events-none"></div>
+</div>
+<!-- Floating Map Elements -->
+<div class="absolute inset-0 z-10 pointer-events-none p-md flex flex-col justify-between pt-24 pb-48">
+<!-- Rider Location Indicator (Center-ish) -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
+<div class="relative">
+<div class="absolute inset-0 bg-primary/20 rounded-full animate-ping scale-150"></div>
+<div class="relative w-10 h-10 bg-primary border-4 border-white rounded-full shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]" style="font-variation-settings: 'FILL' 1;">directions_car</span>
+</div>
+</div>
+</div>
+<!-- Heatmap / Activity Chip -->
+<div class="self-end pointer-events-auto bg-surface-container-lowest shadow-sm rounded-full px-sm py-xs flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-primary-container pulse-animation"></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">HIGH DEMAND NEARBY</span>
+</div>
+</div>
+<!-- Floating Status Card & Toggle -->
+<div class="absolute bottom-24 left-0 right-0 z-20 px-md flex flex-col gap-md items-center">
+<!-- Status Card -->
+<div class="w-full max-w-md bg-surface-container-lowest shadow-[0_-4px_16px_rgba(0,0,0,0.08)] rounded-xl p-md flex items-center gap-md transition-all duration-300" id="statusCard">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center transition-colors" id="statusIconBg">
+<span class="material-symbols-outlined text-on-surface-variant" id="statusIcon">cloud_off</span>
+</div>
+<div class="flex-grow">
+<p class="font-headline-sm text-headline-sm text-on-surface" id="statusHeading">You are offline</p>
+<p class="font-body-md text-body-md text-on-surface-variant" id="statusSubtext">Go online to start receiving orders</p>
+</div>
+</div>
+<!-- Online/Offline Toggle Button -->
+<button class="w-full max-w-md h-16 rounded-full bg-primary-container text-on-primary-container font-headline-md text-headline-md flex items-center justify-center gap-sm shadow-lg active:scale-95 duration-150 ease-in-out transition-all" id="toggleOnline">
+<span class="material-symbols-outlined" id="btnIcon">power_settings_new</span>
+<span id="btnText">Go Online</span>
+</button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-sm pb-safe-area-bottom h-20 bg-surface dark:bg-surface-container-lowest shadow-[0_-4px_16px_rgba(0,0,0,0.08)] rounded-t-xl"><!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<!-- Orders -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</a>
+<!-- Earnings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Earnings</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</a></nav>
+<script>
+        const toggleBtn = document.getElementById('toggleOnline');
+        const statusCard = document.getElementById('statusCard');
+        const statusIconBg = document.getElementById('statusIconBg');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusHeading = document.getElementById('statusHeading');
+        const statusSubtext = document.getElementById('statusSubtext');
+        const btnText = document.getElementById('btnText');
+        
+        let isOnline = false;
+
+        toggleBtn.addEventListener('click', () => {
+            isOnline = !isOnline;
+            
+            if (isOnline) {
+                // Online State
+                statusHeading.innerText = "You're online";
+                statusSubtext.innerText = "Finding orders near you...";
+                btnText.innerText = "Go Offline";
+                
+                toggleBtn.classList.remove('bg-primary-container', 'text-on-primary-container');
+                toggleBtn.classList.add('bg-error', 'text-on-error');
+                
+                statusIconBg.classList.remove('bg-surface-container-high');
+                statusIconBg.classList.add('bg-primary-container');
+                statusIcon.innerText = "sensors";
+                statusIcon.classList.add('pulse-animation');
+                statusIcon.classList.remove('text-on-surface-variant');
+                statusIcon.classList.add('text-on-primary-container');
+                
+                statusCard.classList.add('online-glow');
+            } else {
+                // Offline State
+                statusHeading.innerText = "You are offline";
+                statusSubtext.innerText = "Go online to start receiving orders";
+                btnText.innerText = "Go Online";
+                
+                toggleBtn.classList.add('bg-primary-container', 'text-on-primary-container');
+                toggleBtn.classList.remove('bg-error', 'text-on-error');
+                
+                statusIconBg.classList.add('bg-surface-container-high');
+                statusIconBg.classList.remove('bg-primary-container');
+                statusIcon.innerText = "cloud_off";
+                statusIcon.classList.remove('pulse-animation');
+                statusIcon.classList.add('text-on-surface-variant');
+                statusIcon.classList.remove('text-on-primary-container');
+                
+                statusCard.classList.remove('online-glow');
+            }
+        });
+    </script>
+
+
+</body></html>

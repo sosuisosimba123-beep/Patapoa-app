@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bottom-sheet-transition {
+            transition: transform 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        .map-gradient-overlay {
+            background: linear-gradient(to bottom, rgba(247, 250, 249, 0.8) 0%, rgba(247, 250, 249, 0) 20%, rgba(247, 250, 249, 0) 80%, rgba(247, 250, 249, 0.9) 100%);
+        }
+        .pulse-animation {
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 109, 59, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 109, 59, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 109, 59, 0); }
+        }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#eef1f0",
+                        "secondary": "#5d5e61",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#2d3131",
+                        "outline-variant": "#bbcbbb",
+                        "surface-container-highest": "#e0e3e2",
+                        "tertiary": "#124af0",
+                        "primary": "#006d3b",
+                        "surface-container": "#ebeeed",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e0e3e2",
+                        "secondary-container": "#e2e2e5",
+                        "outline": "#6c7b6e",
+                        "on-primary-container": "#00532c",
+                        "tertiary-fixed": "#dde1ff",
+                        "surface": "#f7faf9",
+                        "surface-container-high": "#e6e9e8",
+                        "primary-fixed": "#5bffa0",
+                        "background": "#f7faf9",
+                        "surface-tint": "#006d3b",
+                        "inverse-primary": "#30e286",
+                        "on-tertiary-container": "#0035c0",
+                        "secondary-fixed": "#e2e2e5",
+                        "on-tertiary-fixed-variant": "#0035be",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#001356",
+                        "surface-dim": "#d7dbda",
+                        "primary-fixed-dim": "#30e286",
+                        "on-primary-fixed": "#00210e",
+                        "surface-bright": "#f7faf9",
+                        "on-background": "#181c1c",
+                        "on-secondary-container": "#636467",
+                        "primary-container": "#00d177",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#181c1c",
+                        "surface-container-low": "#f1f4f3",
+                        "on-surface-variant": "#3c4a3f",
+                        "on-secondary-fixed-variant": "#454749",
+                        "on-primary-fixed-variant": "#00522b",
+                        "on-secondary-fixed": "#1a1c1e",
+                        "tertiary-fixed-dim": "#b8c3ff",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#a3b2ff",
+                        "secondary-fixed-dim": "#c6c6c9",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "md": "16px",
+                        "base": "4px",
+                        "safe-area-bottom": "44px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "price-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "distance-label": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "price-lg": ["20px", {"lineHeight": "24px", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-sm-mobile": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "distance-label": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+<!-- MAP BACKGROUND -->
+<div class="fixed inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A clean, high-fidelity digital map of Dar es Salaam, Tanzania, featuring simplified road networks, minimal geographic labels, and soft pastel terrain. The aesthetic is modern and utilitarian, with a bright light-mode color palette dominated by whites, light greys, and subtle pops of green. Several translucent, glowing shop markers are scattered across the grid-like urban layout." data-location="Dar es Salaam, Tanzania" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLyUNalqPfUT9BagcehkF7qiJIoG9o_hN78nt6jCjNre9-JwXsPsv9-MNgQbtNlG6fRStpZlfT_vzILbQNHgMTdpsuEnE6q6pUyynJ_zdsxZXGTihnqoQPFK9un18Yv7LRLzIwssHkjhrbfBwSv0sdujQo7OIZAftzcwXjlnLHwY-sOAr7sLUcIG-SmTg6LfRTbyO-tGCaWuSjLdf81xVNNBHaps4Tebu1UoXrJ_ru9zNUbUPzePO5YsdOIT598eiFJW6N_dLSUbvK"/>
+<div class="absolute inset-0 map-gradient-overlay pointer-events-none"></div>
+<!-- USER LOCATION BLUE DOT -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+<div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center pulse-animation">
+<div class="w-4 h-4 bg-primary border-2 border-white rounded-full"></div>
+</div>
+</div>
+<!-- SHOP PINS (RANDOMIZED POSITIONS) -->
+<div class="absolute top-1/3 left-1/4">
+<div class="bg-white p-1 rounded-full shadow-lg border border-outline-variant flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
+<div class="bg-primary-container p-2 rounded-full">
+<span class="material-symbols-outlined text-on-primary-container !text-sm">storefront</span>
+</div>
+</div>
+</div>
+<div class="absolute top-1/2 left-3/4">
+<div class="bg-white p-1 rounded-full shadow-lg border border-outline-variant flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
+<div class="bg-primary-container p-2 rounded-full">
+<span class="material-symbols-outlined text-on-primary-container !text-sm">construction</span>
+</div>
+</div>
+</div>
+</div>
+<!-- FLOATING TOP BAR (TopAppBar Logic) -->
+<header class="fixed top-4 left-4 right-4 z-50 rounded-xl bg-surface/90 backdrop-blur-md shadow-lg flex items-center justify-between px-md py-sm max-w-2xl mx-auto">
+<div class="flex items-center gap-md flex-1">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+<div class="flex-1 flex items-center bg-surface-container-low px-md py-xs rounded-full border border-outline-variant/30">
+<span class="material-symbols-outlined text-secondary mr-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-body-md text-on-surface-variant placeholder:text-on-surface-variant/60" placeholder="Search for any product..." type="text"/>
+</div>
+</div>
+<div class="ml-md">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container shadow-sm active:scale-95 duration-150 transition-transform cursor-pointer">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A high-quality professional portrait of a Tanzanian man in his late 20s, smiling warmly. He is wearing modern, smart-casual attire. The background is a soft, out-of-focus urban setting with warm sunlight. The image follows a bright, high-fidelity light-mode aesthetic with clean lines and natural color tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDO631wBFahmUeSim2vxLmeVLzY7EHLakToVL69ur7y725TTBy-JzqB3U6BnZH4ti9RqwBiqKY11WqEOAIRCK9UKHxw9QrT-QECEoSSAumK-ivVuW82EaMY5N4PSC-u1bJdecKeuGr2y-9fNuRMuFaJpc1f6Mm6Xggvqevqv3bISQnNQwuAJTB7PmuSMbHAjD5sgW3hmywNiDIECXo8B-wE8vNhQzKeqThnL8gW74tTLHcRZRmjjzjz6vjIDG4Q285ohzzHR7VoLaO5"/>
+</div>
+</div>
+</header>
+<!-- SERVICE CHIPS -->
+<div class="fixed top-24 left-0 right-0 z-40 overflow-x-auto whitespace-nowrap px-4 py-2 flex gap-xs no-scrollbar">
+<button class="bg-primary text-on-primary px-md py-xs rounded-full shadow-sm flex items-center gap-xs font-label-caps text-label-caps active:scale-95 transition-transform">
+<span class="material-symbols-outlined !text-sm">all_inclusive</span>
+            All Items
+        </button>
+<button class="bg-white border border-outline-variant text-on-surface-variant px-md py-xs rounded-full shadow-sm flex items-center gap-xs font-label-caps text-label-caps hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined !text-sm">foundation</span>
+            Hardware
+        </button>
+<button class="bg-white border border-outline-variant text-on-surface-variant px-md py-xs rounded-full shadow-sm flex items-center gap-xs font-label-caps text-label-caps hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined !text-sm">devices</span>
+            Electronics
+        </button>
+<button class="bg-white border border-outline-variant text-on-surface-variant px-md py-xs rounded-full shadow-sm flex items-center gap-xs font-label-caps text-label-caps hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined !text-sm">shopping_basket</span>
+            Groceries
+        </button>
+</div>
+<!-- DRAGGABLE BOTTOM SHEET -->
+<div class="fixed bottom-0 left-0 right-0 z-[60] bg-surface rounded-t-[32px] shadow-[0_-8px_32px_rgba(0,0,0,0.1)] bottom-sheet-transition max-w-2xl mx-auto h-[530px] translate-y-[309px]" id="bottomSheet">
+<!-- Grabber Area -->
+<div class="w-full py-4 flex flex-col items-center cursor-pointer touch-none" onclick="toggleSheet()">
+<div class="w-12 h-1.5 bg-outline-variant/50 rounded-full mb-2"></div>
+<div class="flex items-center justify-between w-full px-lg">
+<h2 class="font-headline-sm text-headline-sm-mobile md:text-headline-sm text-on-surface">Nearby Products</h2>
+<span class="material-symbols-outlined text-secondary" id="sheetArrow">keyboard_arrow_up</span>
+</div>
+</div>
+<!-- Scrolling Content -->
+<div class="h-full overflow-y-auto px-lg pb-safe-area-bottom">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md pt-sm">
+<!-- Product Card 1 -->
+<div class="group bg-surface-container-low rounded-2xl p-md border border-outline-variant/10 hover:border-primary/20 transition-all flex gap-md cursor-pointer active:scale-98">
+<div class="w-24 h-24 rounded-xl overflow-hidden bg-white shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional product shot of high-quality cement bags stacked neatly in a modern warehouse environment. Bright daylight filters through windows, creating a clean and reliable industrial aesthetic. The color palette is composed of soft greys and whites with sharp, crisp details, emphasizing durability and construction readiness." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJEpH0wqENxFQmWTSpmTJ6t0T4TQjwVkYJFEBShZZMY45jJCUlpA9As_hSxk5JHnrN3l9MR0duuAaW32HlpxgHM8eQP5M-IcpNS_UesFNRHnVYys43h9i9BM-NDQksRq05w5-zQmo-3FX5R8wLwv9FZK_gEFHNAcjrIhOV_Ko1gsp6Ijt0cOwLfCR_sZdq9Vr54uJC94-IFwWi-b1EWPU6fU83pABe8LHCQNyYZvuNgt3Hg6SDtYQc6EkvhfGbb6iVPV1LYmw1fb7j"/>
+</div>
+<div class="flex flex-col justify-between flex-1">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-body-lg text-on-surface font-semibold truncate">Cement - Simba</h3>
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined !text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold ml-1">4.8</span>
+</div>
+</div>
+<p class="text-on-surface-variant font-body-md mt-1">TZS 18,500</p>
+</div>
+<div class="flex items-center gap-sm text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined !text-sm">location_on</span>
+<span class="font-distance-label text-distance-label">0.8km away</span>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group bg-surface-container-low rounded-2xl p-md border border-outline-variant/10 hover:border-primary/20 transition-all flex gap-md cursor-pointer active:scale-98">
+<div class="w-24 h-24 rounded-xl overflow-hidden bg-white shrink-0">
+<img class="w-full h-full object-cover" data-alt="A minimalist tech product image of a high-speed white USB-C charger and cable displayed on a clean white marble surface. The lighting is soft and shadowless, reflecting a premium SaaS aesthetic. Accents of modern green and blue light hint at charging activity. The overall mood is sophisticated, functional, and technologically advanced." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkjUhfyYwU4a2fPIhLZvIhQid5Mr65NkwgbjcDUkmiS9qzzjPFyf2c7lxkvO4I0xSe9gETP7Me-lCb2I2K7Q70k8lZkNWZxu6Bw5801H4uTFSWp6nRMnniyRuN59bNQ3XsBUia1b2rEhXdJlcNB8TSyKjvk2Elaunt49ENxLPx_Iw5Qe_P3aEZ2LB0Uqra0h9fjtCl8Ni5quKJwNKkMtp6XIxWyBVrCUT4tZLox_TdD-eGYxYnzSpNtexGkvLK7teCrkGFiVThi3QJ"/>
+</div>
+<div class="flex flex-col justify-between flex-1">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-body-lg text-on-surface font-semibold truncate">iPhone Charger</h3>
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined !text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold ml-1">4.9</span>
+</div>
+</div>
+<p class="text-on-surface-variant font-body-md mt-1">TZS 25,000</p>
+</div>
+<div class="flex items-center gap-sm text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined !text-sm">location_on</span>
+<span class="font-distance-label text-distance-label">1.2km away</span>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group bg-surface-container-low rounded-2xl p-md border border-outline-variant/10 hover:border-primary/20 transition-all flex gap-md cursor-pointer active:scale-98">
+<div class="w-24 h-24 rounded-xl overflow-hidden bg-white shrink-0">
+<img class="w-full h-full object-cover" data-alt="A vibrant still-life of fresh tropical fruits including mangoes, avocados, and bananas arranged artistically in a hand-woven Tanzanian basket. The scene is bright and airy, shot in natural sunlight with a high-key light-mode aesthetic. The colors are rich and saturated, showcasing freshness and high quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLH_G6rLj5mjSAukZhOhVE4g55iW412CxPOsHWLIYuJtbKPf0sEEcubfzrZeitZKU2XDwuKRs-RSpHpWBHuBvcn5Q4f-HiM3jq1gxGxTYbp4pbgqjZYvDm48uxxL54Kz9no7BJxifRDidswv_Iozz4JQF8weCBaN4Rx8NK14nxVloMkNP-d-lw2JsfV6P-D9yjz9QBJNrvn85r_Ema_Rw21sSXsFPFQ8iqmyIMA74D5qZjorMJF-dtroyhYBq1z2JiU2-ITHwZD_e4"/>
+</div>
+<div class="flex flex-col justify-between flex-1">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-body-lg text-on-surface font-semibold truncate">Fresh Avocados (x4)</h3>
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined !text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold ml-1">4.7</span>
+</div>
+</div>
+<p class="text-on-surface-variant font-body-md mt-1">TZS 5,000</p>
+</div>
+<div class="flex items-center gap-sm text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined !text-sm">location_on</span>
+<span class="font-distance-label text-distance-label">0.5km away</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- BOTTOM NAVBAR (BottomNavBar Logic) -->
+<nav class="fixed bottom-0 w-full z-[70] bg-surface flex justify-around items-center px-4 pt-2 pb-safe-area-bottom rounded-t-xl border-t border-outline-variant shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
+<a class="flex flex-col items-center justify-center text-primary font-bold active:scale-90 transition-transform py-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase tracking-wider">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-low transition-colors active:scale-90 py-2" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase tracking-wider">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-low transition-colors active:scale-90 py-2" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase tracking-wider">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary hover:bg-surface-container-low transition-colors active:scale-90 py-2" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase tracking-wider">Profile</span>
+</a>
+</nav>
+<!-- FAB -->
+<div class="fixed bottom-24 right-6 z-[55]">
+<button class="bg-primary-container text-on-primary-container w-14 h-14 rounded-full shadow-lg flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined !text-3xl">shopping_cart</span>
+</button>
+</div>
+<script>
+        let isSheetOpen = false;
+        const bottomSheet = document.getElementById('bottomSheet');
+        const sheetArrow = document.getElementById('sheetArrow');
+
+        function toggleSheet() {
+            if (isSheetOpen) {
+                bottomSheet.style.transform = 'translateY(35vh)';
+                sheetArrow.style.transform = 'rotate(0deg)';
+                isSheetOpen = false;
+            } else {
+                bottomSheet.style.transform = 'translateY(0)';
+                sheetArrow.style.transform = 'rotate(180deg)';
+                isSheetOpen = true;
+            }
+        }
+
+        // Draggable interaction placeholder
+        let startY;
+        bottomSheet.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+
+        bottomSheet.addEventListener('touchend', (e) => {
+            const endY = e.changedTouches[0].clientY;
+            if (startY - endY > 50 && !isSheetOpen) {
+                toggleSheet();
+            } else if (endY - startY > 50 && isSheetOpen) {
+                toggleSheet();
+            }
+        }, { passive: true });
+    </script>
+</body></html>

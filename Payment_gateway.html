@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-on-surface": "#eef1f0",
+                    "secondary": "#5d5e61",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#2d3131",
+                    "outline-variant": "#bbcbbb",
+                    "surface-container-highest": "#e0e3e2",
+                    "tertiary": "#124af0",
+                    "primary": "#006d3b",
+                    "surface-container": "#ebeeed",
+                    "error": "#ba1a1a",
+                    "surface-variant": "#e0e3e2",
+                    "secondary-container": "#e2e2e5",
+                    "outline": "#6c7b6e",
+                    "on-primary-container": "#00532c",
+                    "tertiary-fixed": "#dde1ff",
+                    "surface": "#f7faf9",
+                    "surface-container-high": "#e6e9e8",
+                    "primary-fixed": "#5bffa0",
+                    "background": "#f7faf9",
+                    "surface-tint": "#006d3b",
+                    "inverse-primary": "#30e286",
+                    "on-tertiary-container": "#0035c0",
+                    "secondary-fixed": "#e2e2e5",
+                    "on-tertiary-fixed-variant": "#0035be",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#001356",
+                    "surface-dim": "#d7dbda",
+                    "primary-fixed-dim": "#30e286",
+                    "on-primary-fixed": "#00210e",
+                    "surface-bright": "#f7faf9",
+                    "on-background": "#181c1c",
+                    "on-secondary-container": "#636467",
+                    "primary-container": "#00d177",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#181c1c",
+                    "surface-container-low": "#f1f4f3",
+                    "on-surface-variant": "#3c4a3f",
+                    "on-secondary-fixed-variant": "#454749",
+                    "on-primary-fixed-variant": "#00522b",
+                    "on-secondary-fixed": "#1a1c1e",
+                    "tertiary-fixed-dim": "#b8c3ff",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#a3b2ff",
+                    "secondary-fixed-dim": "#c6c6c9",
+                    "surface-container-lowest": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "xl": "32px",
+                    "xs": "8px",
+                    "sm": "12px",
+                    "md": "16px",
+                    "base": "4px",
+                    "safe-area-bottom": "44px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "price-lg": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "distance-label": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "price-lg": ["20px", {"lineHeight": "24px", "fontWeight": "700"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "distance-label": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.payment-option-active {
+    border-color: #00d177 !important;
+    background-color: #f1f4f3 !important
+    }
+.map-bg {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuCtvFovgMF0GpP6PvH-pHFvaB-rSlPChluvcEF4aDDQ2GefK827icrKP86ey70Kpv8NX9DiWKg3mE2o7SJrlebtVXTwTfRY3cmCJiDU0VJyEUq1YVdheuWOn9dpZzZV2BtrwEuqNJmXLkkVFuF7bsI7uEyvBsWUeKyMABuzdf3ZxgZGPlsfsf6W4CdCHX5vB0i5La32aPFswmm37FYkop9Sw_ycqjaFboUy-NlL5p_GUmZ2MWZtz0AwqN37kGUJ7Xir37fxWIe63nOs);
+    background-size: cover;
+    background-position: center
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col items-center">
+<!-- Map Background Layer (Strategic Brand Placement) -->
+<div class="fixed inset-0 z-0 map-bg opacity-20 grayscale brightness-110" data-location="Dar es Salaam, Tanzania" style=""></div>
+<!-- Top Navigation Anchor -->
+<header class="fixed top-4 left-4 right-4 z-50 rounded-xl bg-surface/90 backdrop-blur-md shadow-lg flex items-center justify-between px-md py-sm max-w-2xl mx-auto">
+<div class="flex items-center gap-md">
+<button aria-label="Back" class="active:scale-95 duration-150 hover:bg-surface-container-high p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm-mobile md:text-headline-sm text-primary">Select Payment Method</h1>
+</div>
+<div class="h-8 w-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">person</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="relative z-10 w-full max-w-2xl px-md pt-32 pb-40 flex flex-col gap-lg">
+<!-- Summary Card -->
+<section class="bg-surface-container-lowest rounded-xl p-lg shadow-lg border border-outline-variant flex justify-between items-center">
+<div>
+<p class="text-secondary font-label-caps uppercase tracking-wider mb-base">Total Amount</p>
+<h2 class="font-display-lg text-display-lg text-on-surface">TZS 23,000</h2>
+</div>
+<div class="bg-primary-container/10 p-md rounded-full">
+<span class="material-symbols-outlined text-primary text-[32px]" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</div>
+</section>
+<!-- Payment Options Grid -->
+<section class="flex flex-col gap-sm">
+<h3 class="font-headline-sm text-on-surface px-base">Payment Channels</h3>
+<div class="grid grid-cols-1 gap-sm">
+<!-- M-Pesa -->
+<label class="group cursor-pointer relative flex items-center justify-between p-md bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all active:scale-[0.98] payment-option" onclick="selectPayment(this)">
+<input checked="" class="hidden" name="payment" type="radio"/>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-red-600 flex items-center justify-center overflow-hidden shadow-sm">
+<img class="w-full h-full object-contain p-1" data-alt="A clean, flat vector logo of Vodacom M-Pesa with its characteristic red background and white stylized font, presented in a modern logistics app interface. The lighting is crisp and even, emphasizing the brand's utilitarian and reliable identity in the Tanzanian market." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr0pzTLFsA9Qt-KIMwrRwEO_mQ0peY8NiMcBcJMok19WwfR-IDdKNJn1h6jeCLZUwB2nTzuWP4ko2vEPwveC5asjRk9T0dN9KU_Nk7wdMMNq0CNoA_NkGvsyJpFOY3fTsM1utk7QkjB_MZl8ZQ8r1WLL4bNTgh3L5aTWXGYQ8cRY92wkM7If4L0tWIbOyIi5MZaBsKKnD81uQXdRbKMSQaQj-YMWhjU3PNdbC9ZTdAnh5X_2IYsYwC_lC7X0B2wvCbHtG6MnHNG36x"/>
+</div>
+<div>
+<span class="font-headline-sm text-on-surface block">M-Pesa</span>
+<span class="text-secondary text-body-md">Vodacom Tanzania</span>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-outline group-focus-within:border-primary flex items-center justify-center indicator">
+<div class="w-3 h-3 rounded-full bg-primary scale-100 transition-transform"></div>
+</div>
+</label>
+<!-- Airtel Money -->
+<label class="group cursor-pointer relative flex items-center justify-between p-md bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all active:scale-[0.98] payment-option" onclick="selectPayment(this)">
+<input class="hidden" name="payment" type="radio"/>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-red-500 flex items-center justify-center overflow-hidden shadow-sm">
+<img class="w-full h-full object-contain p-1" data-alt="A professional high-fidelity digital logo for Airtel Money featuring the iconic red and white circular emblem. The visual style is minimalist and functional, designed to look clear on a mobile device screen for financial transactions. The background is slightly textured to suggest a premium digital experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8UPBluCHkho0SYuMEzEyZV6dKzkLoulRXAXxN_H7yt6o9NWbzY7JCMoy9sqH--BR31hNH41cFhlwAIppnxi36VUU34lTvvD6PmSuj0kSd1O2pZ_C5QMRTb5tS68R7WBBszHH531Z0K2jjG3LSc2Foxc5EP9fe-aFSmoN4FUuldoF2jmVGy0RcefjsifVVGiRmMwMFPyAzkcsDfaniw9zMQE8qVyY9CdoPLl1DGmf-QLRixtFM4COLJTX-FHB4XiJc-YzgjjrfQIjt"/>
+</div>
+<div>
+<span class="font-headline-sm text-on-surface block">Airtel Money</span>
+<span class="text-secondary text-body-md">Airtel Tanzania</span>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-outline group-focus-within:border-primary flex items-center justify-center indicator">
+<div class="w-3 h-3 rounded-full bg-primary scale-0 transition-transform"></div>
+</div>
+</label>
+<!-- Tigo Pesa -->
+<label class="group cursor-pointer relative flex items-center justify-between p-md bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all active:scale-[0.98] payment-option" onclick="selectPayment(this)">
+<input class="hidden" name="payment" type="radio"/>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-blue-900 flex items-center justify-center overflow-hidden shadow-sm">
+<img class="w-full h-full object-contain p-1" data-alt="A stylized digital representation of the Tigo Pesa mobile money logo, characterized by its deep blue and bright white color scheme. The image is rendered as a clean icon for a modern mobile application, focusing on high outdoor legibility and professional reliability in a fast-paced commerce setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9UOlgXdCY7ZEEtk9kNav1eoUxXFbZa8WuSoXplxtrOU80O4o-kWZG9y1CIyI_R4qKl8FxTs1dptubHYhaC9pSIDQGB-fU0uwTkRCmCP-LhyM2naLU5HvnJnGTyxQzjIFzXvMDZBHWyZA_oXoLmHWnX9IFLiFphw4n9iWPbrS_HYUiPOS5quvzjVTicAh6RDft7rc2PUwrCxnJxX6xYNN3h5Jr4co0uZoV6T39XbceA9wgmAginROSFtP9EcIXpTmNEYUSOcmIgmdv"/>
+</div>
+<div>
+<span class="font-headline-sm text-on-surface block">Tigo Pesa</span>
+<span class="text-secondary text-body-md">Tigo Tanzania</span>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-outline group-focus-within:border-primary flex items-center justify-center indicator">
+<div class="w-3 h-3 rounded-full bg-primary scale-0 transition-transform"></div>
+</div>
+</label>
+<!-- HaloPesa -->
+<label class="group cursor-pointer relative flex items-center justify-between p-md bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all active:scale-[0.98] payment-option" onclick="selectPayment(this)">
+<input class="hidden" name="payment" type="radio"/>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-orange-500 flex items-center justify-center overflow-hidden shadow-sm">
+<img class="w-full h-full object-contain p-1" data-alt="A bright and vibrant digital icon for HaloPesa, featuring a high-contrast orange background with white brand lettering. The design follows a modern functional aesthetic, optimized for clarity on a map-centric application. The lighting is soft and natural, emphasizing the utilitarian nature of the service." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBpsKQS-7E7UKLgT72jF4uFeUPOF-6n4LvwAFUcbzW9ThFPx8AX2JpA6oPV2prkBm_tkpEDJWFgYfoGbv4uqSxUqdIxYCV6rUlHpBvV_wULCNcgr5Gxaj7HYS1JkCnPWsqaaZF4l7pkyo8W1-XJaHIJMJ-w_wkFulAphjDV2kzQO2XN2Y2BTv4_hCVwBSgNuJZGGHad5-Zf8-nnI3NBROH_tRgiNHVQoQhLkBOxoIcvyWl59VfbhrdAd-NBedLk-LdkqE_6WKvZpqh"/>
+</div>
+<div>
+<span class="font-headline-sm text-on-surface block">HaloPesa</span>
+<span class="text-secondary text-body-md">Halotel Tanzania</span>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-outline group-focus-within:border-primary flex items-center justify-center indicator">
+<div class="w-3 h-3 rounded-full bg-primary scale-0 transition-transform"></div>
+</div>
+</label>
+<!-- Bank Card -->
+<label class="group cursor-pointer relative flex items-center justify-between p-md bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all active:scale-[0.98] payment-option" onclick="selectPayment(this)">
+<input class="hidden" name="payment" type="radio"/>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center overflow-hidden shadow-sm border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-[28px]">credit_card</span>
+</div>
+<div>
+<span class="font-headline-sm text-on-surface block">Bank Card</span>
+<span class="text-secondary text-body-md">Visa, Mastercard</span>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-outline group-focus-within:border-primary flex items-center justify-center indicator">
+<div class="w-3 h-3 rounded-full bg-primary scale-0 transition-transform"></div>
+</div>
+</label>
+<!-- Cash on Delivery -->
+<label class="group cursor-pointer relative flex items-center justify-between p-md bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all active:scale-[0.98] payment-option" onclick="selectPayment(this)">
+<input class="hidden" name="payment" type="radio"/>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center overflow-hidden shadow-sm border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-[28px]">payments</span>
+</div>
+<div>
+<span class="font-headline-sm text-on-surface block">Cash on Delivery</span>
+<span class="text-secondary text-body-md">Pay when you receive</span>
+</div>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-outline group-focus-within:border-primary flex items-center justify-center indicator">
+<div class="w-3 h-3 rounded-full bg-primary scale-0 transition-transform"></div>
+</div>
+</label>
+</div>
+</section>
+<!-- Security Badge -->
+<div class="flex items-center justify-center gap-xs text-secondary py-sm">
+<span class="material-symbols-outlined text-body-md" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-label-caps uppercase text-[10px]">Secure 256-bit Encrypted Payment</span>
+</div>
+</main>
+<!-- Bottom Action Anchor -->
+<footer class="fixed bottom-0 w-full max-w-2xl z-50 bg-surface/95 backdrop-blur-md rounded-t-3xl shadow-[0_-8px_32px_rgba(0,0,0,0.1)] px-lg pt-lg pb-safe-area-bottom">
+<div class="flex flex-col gap-md">
+<div class="flex justify-between items-center px-xs">
+<span class="text-secondary font-body-lg">Final Total</span>
+<span class="text-on-surface font-headline-md">TZS 23,000</span>
+</div>
+<button class="w-full bg-primary py-md rounded-full text-on-primary font-headline-sm text-headline-sm shadow-lg active:scale-95 transition-transform duration-150 flex items-center justify-center gap-sm">
+<span>Pay Now</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</footer>
+<script>
+        function selectPayment(element) {
+            // Remove active classes from all options
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('border-primary', 'bg-primary-container/10');
+                opt.querySelector('.indicator > div').classList.add('scale-0');
+                opt.querySelector('.indicator > div').classList.remove('scale-100');
+            });
+
+            // Add active classes to selected
+            element.classList.add('border-primary', 'bg-primary-container/10');
+            const radio = element.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            const indicator = element.querySelector('.indicator > div');
+            indicator.classList.remove('scale-0');
+            indicator.classList.add('scale-100');
+            
+            // Haptic feedback simulation
+            if (window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(10);
+            }
+        }
+
+        // Initialize first selection
+        document.addEventListener('DOMContentLoaded', () => {
+            const initial = document.querySelector('input[name="payment"]:checked').closest('.payment-option');
+            if (initial) selectPayment(initial);
+        });
+    </script>
+</body></html>

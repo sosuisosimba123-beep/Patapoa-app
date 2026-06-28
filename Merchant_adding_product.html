@@ -1,0 +1,286 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        /* Custom map-first vibe for the merchant dashboard */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#124af0",
+                        "error-container": "#ffdad6",
+                        "background": "#f7faf9",
+                        "surface-container-low": "#f1f4f3",
+                        "on-secondary-fixed": "#1a1c1e",
+                        "primary-fixed-dim": "#30e286",
+                        "tertiary-fixed-dim": "#b8c3ff",
+                        "on-secondary-fixed-variant": "#454749",
+                        "surface-container-highest": "#e0e3e2",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#0035c0",
+                        "on-background": "#181c1c",
+                        "inverse-surface": "#2d3131",
+                        "secondary-container": "#e2e2e5",
+                        "inverse-primary": "#30e286",
+                        "surface-container": "#ebeeed",
+                        "on-tertiary-fixed-variant": "#0035be",
+                        "secondary-fixed-dim": "#c6c6c9",
+                        "on-secondary-container": "#636467",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e0e3e2",
+                        "secondary": "#5d5e61",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eef1f0",
+                        "surface-dim": "#d7dbda",
+                        "primary": "#006d3b",
+                        "surface-bright": "#f7faf9",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#e2e2e5",
+                        "on-tertiary-fixed": "#001356",
+                        "on-primary-container": "#00532c",
+                        "outline-variant": "#bbcbbb",
+                        "surface-container-high": "#e6e9e8",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#5bffa0",
+                        "tertiary-container": "#a3b2ff",
+                        "on-surface-variant": "#3c4a3f",
+                        "on-surface": "#181c1c",
+                        "on-primary-fixed": "#00210e",
+                        "outline": "#6c7b6e",
+                        "on-primary-fixed-variant": "#00522b",
+                        "primary-container": "#00d177",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#006d3b",
+                        "tertiary-fixed": "#dde1ff",
+                        "surface": "#f7faf9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "safe-area-bottom": "44px",
+                        "sm": "12px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "price-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "distance-label": ["Inter"]
+                    },
+                    "fontSize": {
+                        "price-lg": ["20px", {"lineHeight": "24px", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "distance-label": ["13px", {"lineHeight": "16px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md">
+<!-- Top Navigation Anchor (Shared Component: TopAppBar) -->
+<!-- Using context of "Edit Product" implies a sub-page, thus "Back" leading instead of "Menu" as per UX goal -->
+<header class="fixed top-4 left-4 right-4 z-50 rounded-xl bg-surface/90 backdrop-blur-md shadow-lg flex items-center justify-between px-md py-sm max-w-2xl mx-auto">
+<div class="flex items-center gap-3">
+<button aria-label="Go back" class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-150 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm-mobile md:text-headline-sm text-primary">Edit Product</h1>
+</div>
+
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-24 pb-32 px-md max-w-2xl mx-auto w-full">
+<form class="space-y-lg" id="productForm">
+<!-- Image Uploader Section (Bento Style Card) -->
+<section class="bg-surface-container-low rounded-xl p-md border border-outline-variant/30 flex flex-col gap-sm">
+<p class="font-label-caps text-label-caps text-secondary px-1">Product Visuals <span class="opacity-60 font-normal lowercase">(Optional)</span></p>
+<div class="relative group aspect-video rounded-lg overflow-hidden bg-surface-container-highest border-2 border-dashed border-outline-variant flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors">
+<img alt="Product Preview" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="A professional, high-fidelity studio product photograph of a sleek crimson athletic sneaker positioned diagonally on a minimalist light grey pedestal. The lighting is soft and directional, creating subtle highlights and shadows that emphasize the shoe's textured mesh and sleek synthetic overlays. The environment is clean and modern, following a bright, airy light-mode design language consistent with a premium Tanzanian e-commerce app. Professional commercial photography style with a shallow depth of field." id="productPreview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1kNwk39weydhsBXyNCgDO6e7DR8bEcBUkUo__5NKdY6-n0uVZ9cjEkXLmT7z02AxqJK1IoKdYyrFxXZNPZH5FPWcW6rD6OzbZStP-5YR-h1CGqFi1BJtvHJvlr6kGljzosHeeugPLH51WMaOkpXoWeHtqxo2-f3oa49zCZ6L9yipkufGh56d14cxIpgWT7LbBLkhvfQynScxlmBtWd048aFDab3akTCjhNdDqoZT2wQhDMMX33HsjTXagvEcmRB3w46Bf0GKznAUc">
+<div class="relative z-10 flex flex-col items-center text-center gap-xs px-md">
+<span class="material-symbols-outlined text-primary text-4xl">add_a_photo</span>
+<p class="font-headline-sm text-headline-sm-mobile text-on-surface">Update Photo</p>
+<p class="text-body-md text-on-surface-variant">Recommended size: 1200x800px</p>
+</div>
+</div>
+</section>
+<!-- Basic Details -->
+<section class="grid grid-cols-1 gap-md">
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/20 space-y-md">
+<p class="font-label-caps text-label-caps text-secondary">General Information</p>
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1" for="pName">Product Name</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg p-md text-body-lg focus:ring-2 focus:ring-primary transition-all" id="pName" placeholder="Enter product name" type="text" value="Nike Air Max Crimson">
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1" for="pCategory">Category</label>
+<select class="w-full bg-surface-container-low border-none rounded-lg p-md text-body-lg focus:ring-2 focus:ring-primary appearance-none transition-all" id="pCategory">
+<option>Footwear</option>
+<option>Apparel</option>
+<option>Accessories</option>
+<option>Electronics</option>
+</select>
+</div>
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1" for="pPrice">Price (TZS)</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg p-md text-price-lg text-primary focus:ring-2 focus:ring-primary transition-all" id="pPrice" placeholder="0.00" type="number" value="245000">
+</div>
+</div>
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1" for="pDesc">Description</label>
+<textarea class="w-full bg-surface-container-low border-none rounded-lg p-md text-body-md focus:ring-2 focus:ring-primary transition-all resize-none" id="pDesc" placeholder="Describe your product for customers..." rows="4">Premium athletic footwear with responsive cushioning and a breathable mesh upper for maximum performance in tropical climates.</textarea>
+</div>
+</div>
+</section>
+<!-- Inventory & Tax -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Inventory Bento Card -->
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/20 space-y-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-base">inventory_2</span>
+<p class="font-label-caps text-label-caps text-secondary">Inventory</p>
+</div>
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1" for="pSku">SKU</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg p-md text-body-md focus:ring-2 focus:ring-primary uppercase tracking-wider" id="pSku" placeholder="Stock Keeping Unit" type="text" value="NK-AIR-CRM-01">
+</div>
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1" for="pQty">Quantity in Stock <span class="opacity-60 font-normal lowercase">(Optional)</span></label>
+<div class="flex items-center gap-md">
+<button class="bg-surface-container-high w-12 h-12 rounded-lg flex items-center justify-center active:scale-90 transition-transform" type="button">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<input class="flex-grow text-center bg-surface-container-low border-none rounded-lg p-md text-headline-sm font-bold" id="pQty" type="number" value="48">
+<button class="bg-primary-container text-on-primary-container w-12 h-12 rounded-lg flex items-center justify-center active:scale-90 transition-transform" type="button">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Logistics & Tax Bento Card -->
+<div class="bg-surface rounded-xl p-md shadow-sm border border-outline-variant/20 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-md">
+<span class="material-symbols-outlined text-secondary text-base">receipt_long</span>
+<p class="font-label-caps text-label-caps text-secondary">Tax &amp; Compliance</p>
+</div>
+<div class="flex items-center justify-between p-md bg-surface-container-low rounded-lg transition-colors hover:bg-surface-container-high cursor-pointer group" id="taxToggleContainer">
+<div class="flex flex-col">
+<span class="font-body-lg font-semibold">Tax inclusive</span>
+<span class="text-body-md text-on-surface-variant">VAT is included in price</span>
+</div>
+<button class="w-12 h-6 rounded-full bg-primary-container relative transition-colors" id="taxToggle" type="button">
+<div class="absolute top-1 right-1 w-4 h-4 bg-on-primary rounded-full shadow-sm transition-all transform" id="toggleDot"></div>
+</button>
+</div>
+</div>
+<div class="mt-md p-md bg-tertiary-fixed rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary">info</span>
+<p class="text-xs text-on-tertiary-fixed-variant font-medium">Standard EFD receipt will be generated upon sale.</p>
+</div>
+</div>
+</section>
+</form>
+</main>
+<!-- Bottom Action Bar (Contextual) -->
+<footer class="fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-outline-variant/20 p-md flex items-center gap-md safe-bottom"><div class="flex justify-around items-center w-full max-w-2xl mx-auto">
+  <button class="flex flex-col items-center gap-1 text-secondary">
+    <span class="material-symbols-outlined">home</span>
+    <span class="text-xs font-medium">Home</span>
+  </button>
+  <button class="flex flex-col items-center gap-1 text-secondary">
+    <span class="material-symbols-outlined">shopping_cart</span>
+    <span class="text-xs font-medium">Orders</span>
+  </button>
+  <button class="flex flex-col items-center gap-1 text-primary">
+    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+    <span class="text-xs font-bold">Inventory</span>
+  </button>
+  <button class="flex flex-col items-center gap-1 text-secondary">
+    <span class="material-symbols-outlined">person</span>
+    <span class="text-xs font-medium">Account</span>
+  </button>
+</div></footer>
+<!-- Interactive Layer -->
+<script>
+        // Toggle Logic for "Tax Inclusive"
+        const taxToggleContainer = document.getElementById('taxToggleContainer');
+        const taxToggle = document.getElementById('taxToggle');
+        const toggleDot = document.getElementById('toggleDot');
+        let isTaxInclusive = true;
+
+        taxToggleContainer.addEventListener('click', () => {
+            isTaxInclusive = !isTaxInclusive;
+            if (isTaxInclusive) {
+                taxToggle.classList.replace('bg-outline', 'bg-primary-container');
+                toggleDot.classList.replace('left-1', 'right-1');
+            } else {
+                taxToggle.classList.replace('bg-primary-container', 'bg-outline');
+                toggleDot.classList.replace('right-1', 'left-1');
+            }
+        });
+
+        // Micro-interactions for Number Input
+        const qtyInput = document.getElementById('pQty');
+        const minusBtn = document.querySelector('button .material-symbols-outlined[textContent="remove"]').parentNode;
+        const plusBtn = document.querySelector('button .material-symbols-outlined[textContent="add"]').parentNode;
+
+        minusBtn.addEventListener('click', () => {
+            if (qtyInput.value > 0) qtyInput.value--;
+        });
+        plusBtn.addEventListener('click', () => {
+            qtyInput.value++;
+        });
+
+        // Image Uploader Feedback
+        const imageCard = document.querySelector('.group.aspect-video');
+        imageCard.addEventListener('click', () => {
+            // Mock file picker feedback
+            imageCard.style.ring = "2px solid #006d3b";
+            setTimeout(() => { imageCard.style.ring = "none"; }, 500);
+        });
+    </script>
+
+
+</body></html>
