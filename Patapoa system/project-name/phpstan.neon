@@ -1,0 +1,21 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - app
+        - config
+        - database
+        - routes
+    treatPhpDocTypesAsCertain: false
+
+    # The level 5 is quite strict, we might want to ignore some specific Laravel magic if Larastan doesn't catch it all
+    ignoreErrors:
+        - '#Access to an undefined property Illuminate\\Http\\Request::\$[a-zA-Z0-9_]+#'
+        - '#Cannot access property \$user on .*Model#'
+
+    excludePaths:
+        - ./*/*/File.php
+
+    checkMissingIterableValueType: false

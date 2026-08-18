@@ -35,4 +35,25 @@ return [
         ],
     ],
 
+    'clickpesa' => [
+        'client_id' => env('CLICKPESA_CLIENT_ID'),
+        'client_secret' => env('CLICKPESA_CLIENT_SECRET'),
+        'api_key' => env('CLICKPESA_API_KEY'),
+        'base_url' => env('CLICKPESA_BASE_URL', 'https://api.clickpesa.com'),
+        'webhook_secret' => env('CLICKPESA_WEBHOOK_SECRET'),
+    ],
+
+    'fcm' => [
+        'key' => env('FCM_SERVER_KEY'), // Legacy Key (Server Key)
+        'project_id' => env('FCM_PROJECT_ID'),
+    ],
+
+    'tomtom' => [
+        'key' => env('TOMTOM_API_KEY'),
+    ],
+
+    'firebase' => [
+        'credentials' => env('FIREBASE_CREDENTIALS'),
+    ],
+
 ];

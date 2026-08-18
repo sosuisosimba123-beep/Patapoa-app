@@ -6,6 +6,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int|null $order_id
+ * @property string $type
+ * @property string $status
+ * @property string $amount
+ * @property string $currency
+ * @property string|null $payment_method
+ * @property string|null $transaction_reference
+ * @property string|null $description
+ * @property array|null $metadata
+ * @property \Illuminate\Support\Carbon|null $processed_at
+ *
+ * @property-read \App\Models\User $user
+ * @property-read \App\Models\Order|null $order
+ */
 class Transaction extends Model
 {
     use HasFactory;

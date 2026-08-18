@@ -15,7 +15,7 @@ class UserController extends Controller
             return $this->errorResponse('Unauthorized', 403);
         }
 
-        $query = User::with(['merchant', 'rider', 'wallet'])
+        $query = User::with(['merchant', 'deliveryPartner', 'wallet'])
             ->orderBy('created_at', 'desc');
 
         $users = $this->paginateQuery($query, $request, 50, 200);
@@ -26,13 +26,13 @@ class UserController extends Controller
     public function show(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        
+
         if ($request->user()->id !== $user->id && !$request->user()->isAdmin()) {
             return $this->errorResponse('Unauthorized', 403);
         }
 
         return $this->successResponse(
-            $user->load(['merchant', 'rider', 'wallet']),
+            $user->load(['merchant', 'deliveryPartner', 'wallet']),
             'User retrieved successfully'
         );
     }
@@ -40,7 +40,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        
+
         if ($request->user()->id !== $user->id && !$request->user()->isAdmin()) {
             return $this->errorResponse('Unauthorized', 403);
         }
@@ -63,7 +63,7 @@ class UserController extends Controller
     public function updateLocation(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        
+
         if ($request->user()->id !== $user->id) {
             return $this->errorResponse('Unauthorized', 403);
         }
@@ -77,8 +77,8 @@ class UserController extends Controller
             return $this->errorResponse('Validation failed', 422, $validator->errors()->toArray());
         }
 
-        if ($user->rider) {
-            $user->rider->update([
+        if ($user->deliveryPartner) {
+            $user->deliveryPartner->update([
                 'current_latitude' => $request->latitude,
                 'current_longitude' => $request->longitude,
                 'last_location_update' => now(),
@@ -91,7 +91,7 @@ class UserController extends Controller
     public function updateFcmToken(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        
+
         if ($request->user()->id !== $user->id) {
             return $this->errorResponse('Unauthorized', 403);
         }

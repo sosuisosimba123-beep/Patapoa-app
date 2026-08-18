@@ -16,8 +16,7 @@ class PaymentService {
       });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        return data['data'] ?? data;
+        return jsonDecode(response.body);
       } else {
         final data = jsonDecode(response.body);
         throw Exception(data['message'] ?? 'Failed to initiate payment');
@@ -27,34 +26,9 @@ class PaymentService {
     }
   }
 
-  Future<Map<String, dynamic>> processMpesaStkPush({
-    required int orderId,
-    required String phoneNumber,
-    required double amount,
-  }) async {
+  Future<Map<String, dynamic>> checkPaymentStatus(int orderId) async {
     try {
-      final response = await _apiService.post(ApiConfig.paymentsInitiate, {
-        'order_id': orderId,
-        'payment_method': 'mpesa',
-        'phone_number': phoneNumber,
-        'amount': amount,
-      });
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        return data['data'] ?? data;
-      } else {
-        final data = jsonDecode(response.body);
-        throw Exception(data['message'] ?? 'M-Pesa STK push failed');
-      }
-    } catch (e) {
-      throw Exception('Error processing M-Pesa payment: $e');
-    }
-  }
-
-  Future<Map<String, dynamic>> checkPaymentStatus(String paymentReference) async {
-    try {
-      final response = await _apiService.get('${ApiConfig.paymentsCallback}/$paymentReference');
+      final response = await _apiService.get(ApiConfig.paymentsStatus(orderId));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

@@ -1,18 +1,21 @@
 import 'package:json_annotation/json_annotation.dart';
+import '../utils/number_utils.dart';
 
 part 'user.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, createFactory: false)
 class User {
   final int id;
   final String name;
   final String? email;
   final String phone;
   final String userType;
-  final bool isActive;
-  final bool isVerified;
+  final bool? isActive;
+  final bool? isVerified;
   final String? profileImage;
   final String? fcmToken;
+  final Map<String, dynamic>? merchant;
+  final Map<String, dynamic>? rider;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   
@@ -22,15 +25,40 @@ class User {
     this.email,
     required this.phone,
     required this.userType,
-    required this.isActive,
-    required this.isVerified,
+    this.isActive,
+    this.isVerified,
     this.profileImage,
     this.fcmToken,
+    this.merchant,
+    this.rider,
     this.createdAt,
     this.updatedAt,
   });
+
+  bool get isMerchantOnboarded => 
+    userType == 'merchant' && 
+    merchant != null && 
+    merchant!['latitude'] != null && 
+    merchant!['latitude'] != 0.0;
   
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: NumberUtils.paramInt(json['id']),
+      name: json['name'] as String,
+      email: json['email'] as String?,
+      phone: json['phone'] as String,
+      userType: json['user_type'] as String,
+      isActive: json['is_active'] as bool?,
+      isVerified: json['is_verified'] as bool?,
+      profileImage: json['profile_image'] as String?,
+      fcmToken: json['fcm_token'] as String?,
+      merchant: json['merchant'] as Map<String, dynamic>?,
+      rider: json['rider'] as Map<String, dynamic>?,
+      createdAt: json['created_at'] == null ? null : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null ? null : DateTime.parse(json['updated_at'] as String),
+    );
+  }
+
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
 
@@ -72,13 +100,13 @@ class RegisterRequest {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class AuthResponse {
-  final User user;
-  final String token;
+  final User? user;
+  final String? token;
   final String? tokenType;
   
   AuthResponse({
-    required this.user,
-    required this.token,
+    this.user,
+    this.token,
     this.tokenType,
   });
   

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1b5ff4e8-0c52-4597-9bed-e7541e5f7030" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/brain/app_config.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/brain/brain_rules.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/brain/gemini_client.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/brain/services/image_resolution_service.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/brain/services/inventory_brain.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/brain/services/synthesis_brain.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/barcode_scanner_screen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_onboarding_screen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/services/barcode_service.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/services/map_marker_service.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/services/websocket_service.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/widgets/liquid_glass_container.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/widgets/patapoa_glass_card.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa app/lib/widgets/patapoa_product_image.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/PrimaryCategoryController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/VerifyEmailController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/PlatformSetting.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/PrimaryCategory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/SecondaryCategory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/AiStandardizationService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/CircuitBreaker.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/LogisticsService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/MerchantService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/OrderService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/ProductEnrichmentService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/WalletService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/migrations/2026_08_13_170000_cleanup_category_system.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/migrations/2026_08_13_180000_create_new_category_system.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/DatabaseCleanupSeeder.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/NewCategorySeeder.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/phpstan.neon" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/tests/Feature/BarcodeScanTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/tests/Feature/DistanceCalculatorTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/tests/Feature/IdempotencyTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/tests/Feature/ProductEnrichmentTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Patapoa system/project-name/tests/Unit/CircuitBreakerTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/planningMode.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/studiobot.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.obsidian/app.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.obsidian/appearance.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.obsidian/core-plugins.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.obsidian/graph.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.obsidian/workspace.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin dashboard mercant management.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin delivery managment.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin overview.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin transaction ledger.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fetchly (1).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fetchly (2).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fetchly (3).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fetchly (4).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fetchly (5).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fetchly (6).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fetchly (7).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GoogleService-Info.plist" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IMPLEMENTATION_SUMMARY.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Inventory_editing.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Location_edit.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Mercant_homepage.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Merchant_adding_product.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Merchant_inventory.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Merchant_orders.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Merchant_payout.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Merchant_profile.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Order_reguest.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/.env" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/android/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/android/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/android/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/android/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/android/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/assets/images/patapoa_fixed_logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/assets/images/patapoa_logo.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/config/api_config.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/config/api_config.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/config/map_config.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/config/map_config.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/features/admin_portal/presentation/admin_overview_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/features/admin_portal/presentation/admin_overview_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/features/auth/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/features/auth/login_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/features/auth/register_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/features/auth/register_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/features/cart/presentation/cart_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/features/cart/presentation/cart_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/features/onboarding/presentation/store_location_picker_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/features/onboarding/presentation/store_location_picker_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/features/role_selection/role_selection_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/features/role_selection/role_selection_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/order.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/order.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/order.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/order.g.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/product.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/product.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/product.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/product.g.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/user.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/user.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/user.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/user.g.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/providers/auth_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/providers/auth_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/providers/cart_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/providers/cart_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/providers/location_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/providers/location_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/providers/rider_location_provider.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/admin/admin_overview_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/admin/admin_overview_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/admin/modules/add_rider_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/admin/modules/add_rider_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/admin/modules/delivery_logistics_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/admin/modules/delivery_logistics_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/cart_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/cart_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/coming_soon_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/coming_soon_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/customer_profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/customer_profile_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/customer_shell.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/customer_shell.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/explore_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/explore_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/location_edit_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/location_edit_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/order_summary_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/order_summary_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/orders_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/orders_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/payment_gateway_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/payment_gateway_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/product_detail_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/product_detail_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/success_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/success_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/tracking_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/tracking_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/inventory_editing_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/inventory_editing_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/mercant_homepage_screen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_adding_product_screen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_inventory_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_inventory_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_orders_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_orders_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_payout_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_payout_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_profile_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_shell.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_shell.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_withdraw_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_withdraw_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/store_location_picker_screen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_cash_received_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_cash_received_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_earnings_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_earnings_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_homepage_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_homepage_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_login_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_orders_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_orders_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_profile_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_registration1_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_registration1_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_registration2_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_registration2_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_shell.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_shell.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_withdraw_procedures_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_withdraw_procedures_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_withdraw_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_withdraw_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/route_assign_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/route_assign_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/api_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/api_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/location_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/location_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/merchant_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/merchant_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/notification_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/notification_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/product_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/product_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/request_queue_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/request_queue_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/rider_service.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/tomtom_service.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/theme/app_theme.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/theme/app_theme.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/utils/api_error_handler.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/utils/api_error_handler.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/utils/number_utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/utils/number_utils.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/utils/tomtom_tester.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/utils/osm_tester.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/widgets/common/patapoa_image.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa fixed logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Admin/AdminController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Admin/AdminController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/AdminController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/AdminController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/AuthController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/AuthController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/CategoryController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/MasterProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/MasterProductController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/MerchantController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/MerchantController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/OrderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/OrderController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/ProductController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/RiderController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/TransactionController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/TransactionController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Controllers/Api/UserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Http/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Address.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Address.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Category.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/DeliveryPricingRule.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/DeliveryPricingRule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/MasterProduct.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/MasterProduct.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Merchant.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Merchant.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Notification.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Notification.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Order.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Order.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/OrderItem.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/OrderItem.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Product.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Product.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Rider.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Transaction.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/Transaction.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Models/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Providers/RouteServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Providers/RouteServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/ClickpesaService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/ClickpesaService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/FcmNotificationService.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/PushNotificationService.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/PushNotificationService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/app/Services/TomTomService.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/config/services.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/config/services.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/factories/UserFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/factories/UserFactory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/migrations/2026_06_28_100000_add_performance_indexes.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/migrations/2026_06_28_100000_add_performance_indexes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/migrations/2026_07_21_052441_create_master_products_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/migrations/2026_07_21_052441_create_master_products_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/migrations/2026_07_28_090000_add_performance_indexes.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/migrations/2026_07_28_090000_add_performance_indexes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/CategorySeeder.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/DatabaseSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/DemoDataSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/DemoDataSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/DummyTestingSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/DummyTestingSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/ManualOrderSimulationSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/ManualOrderSimulationSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/MasterProductSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/MasterProductSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/TestUserSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/database/seeders/TestUserSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/dashboard.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/dashboard.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/deliveries.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/deliveries.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/merchants.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/merchants.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/orders.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/orders.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/settings.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/settings.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/transactions.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/resources/views/admin/transactions.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/test_ussd.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/test_ussd.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/tests/Feature/PaymentTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/tests/Feature/PaymentTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa system/project-name/tests/TestCase.php" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa system/project-name/tests/TestCase.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Payment_gateway.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_cash_received_confirmation.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_homepage.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_negative_balance.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_positive_balance.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_profile.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_registration1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_registration2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_withdraw_procedures.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rider_withdraw_success.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Route_assign.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SCREENS_INTEGRATION_COMPLETE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SCREENS_ORGANIZATION_REPORT.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SESSION_3_COMPLETION_SUMMARY.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Untitled.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/error.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fix_device_guard.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/google-services.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/patapoa-app-firebase-adminsdk-fbsvc-b98d8e32da.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/queue.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/queue_error.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/role selection.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_patapoa.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server_error.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/system_err.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/system_out.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/system_start.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_php.bat" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="3HpBAKrqfuIHjU5K9kOAKpPijFI" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  }
+}</component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1b5ff4e8-0c52-4597-9bed-e7541e5f7030" name="Changes" comment="" />
+      <created>1786555005289</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1786555005289</updated>
+    </task>
+    <servers />
+  </component>
+</project>

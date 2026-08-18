@@ -1,53 +1,39 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
-import 'package:latlong2/latlong.dart';
 
-class AddressSuggestion {
-  const AddressSuggestion({required this.label, required this.position});
-
-  final String label;
-  final LatLng position;
-}
-
-/// Location Service — wraps Geolocator and provides real-time GPS capabilities
 class LocationService {
-  static final LocationService _instance = LocationService._internal();
-  factory LocationService() => _instance;
-  LocationService._internal();
+  StreamSubscription<Position>? _positionStreamSubscription;
 
-  StreamSubscription<Position>? _positionStream;
+  Future<bool> isLocationServiceEnabled() async {
+    return await Geolocator.isLocationServiceEnabled();
+  }
 
-  /// Get the current position once (high accuracy)
-  Future<Position?> getCurrentPosition() async {
+  Future<LocationPermission> checkPermission() async {
+    return await Geolocator.checkPermission();
+  }
+
+  Future<LocationPermission> requestPermission() async {
+    return await Geolocator.requestPermission();
+  }
+
+  Future<Position?> getCurrentPosition({LocationAccuracy accuracy = LocationAccuracy.high}) async {
     try {
-      final permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        return null;
-      }
       return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        desiredAccuracy: accuracy,
+        timeLimit: const Duration(seconds: 15),
       );
     } catch (e) {
       return null;
     }
   }
 
-  /// Get the last known position (fast, low power)
   Future<Position?> getLastKnownPosition() async {
-    try {
-      return await Geolocator.getLastKnownPosition();
-    } catch (e) {
-      return null;
-    }
+    return await Geolocator.getLastKnownPosition();
   }
 
-  /// Stream of position updates (for live tracking)
   Stream<Position> getPositionStream({
     LocationAccuracy accuracy = LocationAccuracy.high,
-    int distanceFilter = 50, // meters
+    int distanceFilter = 0,
   }) {
     return Geolocator.getPositionStream(
       locationSettings: LocationSettings(
@@ -57,52 +43,49 @@ class LocationService {
     );
   }
 
-  /// Start listening to position updates
   void startTracking({
+    int distanceFilter = 10,
     required Function(Position) onUpdate,
-    LocationAccuracy accuracy = LocationAccuracy.high,
-    int distanceFilter = 50,
   }) {
-    _positionStream?.cancel();
-    _positionStream = getPositionStream(
-      accuracy: accuracy,
+    stopTracking();
+    _positionStreamSubscription = getPositionStream(
       distanceFilter: distanceFilter,
     ).listen(onUpdate);
   }
 
-  /// Stop listening to position updates
   void stopTracking() {
-    _positionStream?.cancel();
-    _positionStream = null;
+    _positionStreamSubscription?.cancel();
+    _positionStreamSubscription = null;
   }
 
-  /// Calculate distance between two coordinates in meters
-  double distanceBetween(
-    double startLatitude,
-    double startLongitude,
-    double endLatitude,
-    double endLongitude,
-  ) {
-    return Geolocator.distanceBetween(
-      startLatitude,
-      startLongitude,
-      endLatitude,
-      endLongitude,
+  double distanceBetween(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
+    return Geolocator.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude);
+  }
+
+  /// Explicit implementation requested for manual coordinate simulation/fetching
+  Future<Position> getDeviceLocation() async {
+    // 1. Check if GPS service is enabled
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled on this device.');
+    }
+
+    // 2. Check & Request Permissions
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions were denied.');
+      }
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied.');
+    } 
+
+    // 3. Get actual device coordinates
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
     );
-  }
-
-  /// Check if location services are enabled
-  Future<bool> isLocationServiceEnabled() async {
-    return await Geolocator.isLocationServiceEnabled();
-  }
-
-  /// Check current permission status
-  Future<LocationPermission> checkPermission() async {
-    return await Geolocator.checkPermission();
-  }
-
-  /// Request permission
-  Future<LocationPermission> requestPermission() async {
-    return await Geolocator.requestPermission();
   }
 }

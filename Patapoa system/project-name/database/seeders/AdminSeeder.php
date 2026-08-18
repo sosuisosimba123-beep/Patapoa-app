@@ -13,14 +13,16 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@patapoa.co.tz',
-            'phone' => '+255700000000',
-            'password' => Hash::make('admin123'),
-            'user_type' => 'admin',
-            'is_active' => true,
-            'is_verified' => true,
-        ]);
+        User::updateOrCreate(
+            ['phone' => '+255700000000'],
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@patapoa.co.tz',
+                'password' => Hash::make('admin123'),
+                'user_type' => 'admin',
+                'is_active' => true,
+                'is_verified' => true,
+            ]
+        );
     }
 }

@@ -37,6 +37,7 @@ class CartProvider with ChangeNotifier {
     0, 
     (sum, item) => sum + (item.product.price * item.quantity)
   );
+
   bool get isLoading => _isLoading;
 
   CartProvider() {
@@ -53,10 +54,13 @@ class CartProvider with ChangeNotifier {
       
       if (cartData != null) {
         final List<dynamic> decoded = jsonDecode(cartData);
-        _items = decoded.map((json) => CartItem.fromJson(json)).toList();
+        _items = decoded
+          .where((json) => json != null && json['product'] != null)
+          .map((json) => CartItem.fromJson(json))
+          .toList();
       }
     } catch (e) {
-      // Handle error silently
+      debugPrint("Error loading cart: $e");
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -69,11 +73,20 @@ class CartProvider with ChangeNotifier {
       final cartData = jsonEncode(_items.map((item) => item.toJson()).toList());
       await prefs.setString('cart', cartData);
     } catch (e) {
-      // Handle error silently
+      debugPrint("Error saving cart: $e");
     }
   }
 
-  void addItem(Product product, {int quantity = 1}) {
+  String? addItem(Product product, {int quantity = 1, bool force = false}) {
+    // Check if adding from a different merchant
+    if (_items.isNotEmpty && _items.first.product.merchantId != product.merchantId) {
+      if (force) {
+        _items.clear();
+      } else {
+        return "DIFFERENT_MERCHANT";
+      }
+    }
+
     final existingIndex = _items.indexWhere((item) => item.product.id == product.id);
     
     if (existingIndex >= 0) {
@@ -84,6 +97,7 @@ class CartProvider with ChangeNotifier {
     
     _saveCart();
     notifyListeners();
+    return null;
   }
 
   void removeItem(int productId) {

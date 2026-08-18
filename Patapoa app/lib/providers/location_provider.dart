@@ -2,22 +2,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import '../config/operational_config.dart';
 import '../services/location_service.dart';
-import '../services/rider_service.dart';
+import '../services/delivery_partner_service.dart';
+import '../services/osm_service.dart';
 
 /// Location Provider — shared GPS state across the app
-/// Manages real-time user position, permission status, and address
-/// 
-/// For riders: uses distance-based throttling to avoid hammering the backend.
-/// Updates are only sent to the server when the rider has moved more than
-/// [minimumDistance] meters AND at least [minimumInterval] seconds have passed
-/// since the last update.
 class LocationProvider with ChangeNotifier {
   final LocationService _locationService = LocationService();
-  final RiderService _riderService = RiderService();
+  final DeliveryPartnerService _riderService = DeliveryPartnerService();
+  final OsmService _osmService = OsmService();
 
   LatLng? _currentPosition;
   LatLng? get currentPosition => _currentPosition;
+
+  String? _currentAddress;
+  String? get currentAddress => _currentAddress;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -30,6 +30,16 @@ class LocationProvider with ChangeNotifier {
 
   bool _serviceEnabled = false;
   bool get serviceEnabled => _serviceEnabled;
+
+  bool get isServiceable {
+    if (_currentPosition == null) return true; // Assume true while loading to avoid flickering
+    return OperationalConfig.isWithinAnyZone(_currentPosition!);
+  }
+
+  OperationalZone? get nearestZone {
+    if (_currentPosition == null) return null;
+    return OperationalConfig.getNearestZone(_currentPosition!);
+  }
 
   StreamSubscription<Position>? _streamSubscription;
 
@@ -46,39 +56,73 @@ class LocationProvider with ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    _serviceEnabled = await _locationService.isLocationServiceEnabled();
-    if (!_serviceEnabled) {
-      _error = 'Location services are disabled. Please enable them in settings.';
+    try {
+      // 1. Check if location services (GPS hardware) are enabled
+      _serviceEnabled = await _locationService.isLocationServiceEnabled();
+      if (!_serviceEnabled) {
+        _error = 'Location services are disabled on this device. Please turn on GPS.';
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      // 2. Check & Request Permissions
+      LocationPermission permission = await _locationService.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await _locationService.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _permissionGranted = false;
+          _error = 'Location permissions were denied.';
+          _isLoading = false;
+          notifyListeners();
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _permissionGranted = false;
+        _error = 'Location permissions are permanently denied. Please enable them in settings.';
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      _permissionGranted = true;
+
+      // 3. Get actual device coordinates
+      Position? position;
+      try {
+        // Request fresh position with high accuracy
+        position = await _locationService.getCurrentPosition(
+          accuracy: LocationAccuracy.high,
+        );
+      } catch (e) {
+        debugPrint('Error getting current position: $e');
+      }
+
+      // Fallback to last known if current fails
+      position ??= await _locationService.getLastKnownPosition();
+
+      if (position != null) {
+        _currentPosition = LatLng(position.latitude, position.longitude);
+        _error = null;
+        try {
+          _currentAddress = await _osmService.reverseGeocode(_currentPosition!);
+        } catch (e) {
+          _currentAddress = 'Unknown Location';
+        }
+      } else {
+        // Default fallback only if everything fails
+        _currentPosition = const LatLng(-6.7924, 39.2083);
+        _currentAddress = 'Dar es Salaam (Default)';
+        _error = 'Could not acquire live GPS signal. Using default location.';
+      }
+    } catch (e) {
+      _error = 'Location initialization failed: $e';
+    } finally {
       _isLoading = false;
       notifyListeners();
-      return;
     }
-
-    final permission = await _locationService.checkPermission();
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      _permissionGranted = false;
-      _error = 'Location permission denied. Please allow access in settings.';
-      _isLoading = false;
-      notifyListeners();
-      return;
-    }
-
-    _permissionGranted = true;
-
-    // Try to get current position, fallback to last known
-    Position? position = await _locationService.getCurrentPosition();
-    position ??= await _locationService.getLastKnownPosition();
-
-    if (position != null) {
-      _currentPosition = LatLng(position.latitude, position.longitude);
-    } else {
-      // Default to Dar es Salaam as fallback
-      _currentPosition = const LatLng(-6.7924, 39.2083);
-    }
-
-    _isLoading = false;
-    notifyListeners();
   }
 
   /// Refresh current position manually
@@ -90,6 +134,7 @@ class LocationProvider with ChangeNotifier {
     final position = await _locationService.getCurrentPosition();
     if (position != null) {
       _currentPosition = LatLng(position.latitude, position.longitude);
+      _currentAddress = await _osmService.reverseGeocode(_currentPosition!);
     }
 
     _isLoading = false;

@@ -1,190 +1,269 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../utils/app_permissions.dart';
+import '../../widgets/liquid_glass_container.dart';
 
-class RoleSelectionScreen extends StatelessWidget {
+class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final horizontalPadding = MediaQuery.sizeOf(context).width < 360
-        ? 14.0
-        : 16.0;
-
-    return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 520),
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding,
-                    vertical: 18,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight - 36,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
-                          child: Container(
-                            color: Colors.black,
-                            padding: const EdgeInsets.all(18),
-                            child: AspectRatio(
-                              aspectRatio: 1,
-                              child: Image.asset(
-                                'assets/images/patapoa_logo.jpeg',
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Patapoa',
-                          style: Theme.of(context).textTheme.headlineMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: colorScheme.primary,
-                              ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Choose your role to continue',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: colorScheme.onSurfaceVariant),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 22),
-                        _RoleCard(
-                          title: 'Customer',
-                          subtitle:
-                              'Search products, compare shops, order delivery',
-                          icon: Icons.shopping_bag_outlined,
-                          color: colorScheme.primary,
-                          onTap: () async {
-                            await AppPermissions.requestNotificationPermission(context);
-                            if (context.mounted) context.go('/customer/explore');
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        _RoleCard(
-                          title: 'Merchant',
-                          subtitle:
-                              'Manage shop, inventory, and incoming orders',
-                          icon: Icons.storefront_outlined,
-                          color: colorScheme.tertiary,
-                          onTap: () async {
-                            await AppPermissions.requestNotificationPermission(context);
-                            if (context.mounted) context.go('/merchant/home');
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        _RoleCard(
-                          title: 'Delivery Partner',
-                          subtitle:
-                              'Go online, accept requests, deliver orders',
-                          icon: Icons.pedal_bike_outlined,
-                          color: colorScheme.secondary,
-                          onTap: () async {
-                            await AppPermissions.requestAllRiderPermissions(context);
-                            if (context.mounted) context.go('/delivery-partner/login');
-                          },
-                        ),
-                        const SizedBox(height: 18),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  static void _showComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Coming soon')));
-  }
+  State<RoleSelectionScreen> createState() => _RoleSelectionScreenState();
 }
 
-class _RoleCard extends StatelessWidget {
-  const _RoleCard({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
+class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
+  String _selectedRole = 'customer';
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    return Material(
-      color: colorScheme.surfaceContainerLow,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(14),
+    return Scaffold(
+      body: AnimatedLiquidBackground(
+        child: Column(
+          children: [
+            // Top Space Section - Dark Background with Logo
+            Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.35,
+              decoration: const BoxDecoration(
+                color: Color(0xFF181C1C), // Dark background
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(32),
                 ),
-                child: Icon(icon, color: color),
               ),
-              const SizedBox(width: 12),
-              Expanded(
+              child: SafeArea(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/patapoa official logo.png',
+                        height: 120,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'PATAPOA',
+                        style: textTheme.headlineMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+    
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
-                      style: textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
+                      'Join Patapoa as...',
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 8),
                     Text(
-                      subtitle,
-                      style: textTheme.bodySmall?.copyWith(
+                      'Choose your role to get started with the best local commerce experience in Tanzania.',
+                      style: textTheme.bodyMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+    
+                    // Role Cards
+                    _buildRoleCard(
+                      id: 'customer',
+                      title: 'Customer',
+                      subtitle: 'Get products nearby instantly',
+                      icon: Icons.shopping_bag_outlined,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildRoleCard(
+                      id: 'merchant',
+                      title: 'Merchant',
+                      subtitle: 'Sell to local customers daily',
+                      icon: Icons.storefront_outlined,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildRoleCard(
+                      id: 'rider',
+                      title: 'Deliverer',
+                      subtitle: 'Earn by delivering orders',
+                      icon: Icons.motorcycle_outlined,
+                    ),
+    
+                    const SizedBox(height: 40),
+    
+                    // Continue Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: FilledButton(
+                        onPressed: _isLoading ? null : _handleContinue,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Continue',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Icon(Icons.arrow_forward),
+                                ],
+                              ),
+                      ),
+                    ),
+    
+                    const SizedBox(height: 24),
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Already have an account? ',
+                            style: textTheme.labelLarge?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => context.go('/login'),
+                            child: Text(
+                              'Log in',
+                              style: textTheme.labelLarge?.copyWith(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  Widget _buildRoleCard({
+    required String id,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+  }) {
+    final isSelected = _selectedRole == id;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return GestureDetector(
+      onTap: () => setState(() => _selectedRole = id),
+      child: LiquidGlassContainer(
+        padding: const EdgeInsets.all(20),
+        borderRadius: 20,
+        opacity: isSelected ? 0.2 : 0.05,
+        blur: isSelected ? 10 : 5,
+        color: isSelected ? colorScheme.primary : Colors.white,
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? colorScheme.primary.withValues(alpha: 0.15)
+                    : colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                icon,
+                color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                size: 32,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Custom Radio built with Container to avoid deprecated members
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? colorScheme.primary : colorScheme.outlineVariant,
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                ? Center(child: Container(width: 12, height: 12, decoration: BoxDecoration(color: colorScheme.primary, shape: BoxShape.circle)))
+                : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleContinue() async {
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (_selectedRole == 'customer') {
+      context.go('/register', extra: 'customer');
+    } else if (_selectedRole == 'merchant') {
+      context.go('/register', extra: 'merchant');
+    } else if (_selectedRole == 'rider') {
+      context.go('/delivery-partner/login');
+    }
   }
 }

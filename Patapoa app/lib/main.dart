@@ -1,23 +1,132 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:patapoa/features/customer/customer_flow_screens.dart';
-import 'package:patapoa/features/customer/customer_models.dart';
-import 'package:patapoa/features/delivery_partner/delivery_partner_screens.dart';
-import 'package:patapoa/features/merchant/merchant_flow_screens.dart';
-import 'package:patapoa/features/role_selection/role_selection_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:io' show Platform;
+
+// Theme
 import 'package:patapoa/theme/app_theme.dart';
+
+// Providers
 import 'package:patapoa/providers/auth_provider.dart';
 import 'package:patapoa/providers/cart_provider.dart';
 import 'package:patapoa/providers/location_provider.dart';
-import 'package:patapoa/screens/auth/login_screen.dart';
-import 'package:patapoa/screens/auth/register_screen.dart';
-import 'package:patapoa/screens/auth/otp_screen.dart';
+
+// Models
 import 'package:patapoa/models/product.dart';
 import 'package:patapoa/models/order.dart';
 
-void main() {
-  runApp(const PatapoaApp());
+// Auth Screens
+import 'package:patapoa/features/auth/login_screen.dart';
+import 'package:patapoa/features/auth/register_screen.dart';
+import 'package:patapoa/features/role_selection/role_selection_screen.dart';
+
+// Customer Screens
+import 'package:patapoa/screens/customer/customer_shell.dart';
+import 'package:patapoa/screens/customer/explore_screen.dart';
+import 'package:patapoa/screens/customer/product_detail_screen.dart';
+import 'package:patapoa/features/cart/presentation/cart_screen.dart';
+import 'package:patapoa/screens/customer/order_summary_screen.dart';
+import 'package:patapoa/screens/customer/tracking_screen.dart';
+import 'package:patapoa/screens/customer/payment_gateway_screen.dart';
+import 'package:patapoa/screens/customer/success_screen.dart';
+import 'package:patapoa/screens/customer/orders_screen.dart';
+import 'package:patapoa/screens/customer/customer_profile_screen.dart';
+
+// Merchant Screens
+import 'package:patapoa/screens/merchant/merchant_shell.dart';
+import 'package:patapoa/screens/merchant/merchant_homepage_screen.dart';
+import 'package:patapoa/screens/merchant/merchant_orders_screen.dart';
+import 'package:patapoa/screens/merchant/merchant_inventory_screen.dart';
+import 'package:patapoa/screens/merchant/merchant_payout_screen.dart';
+import 'package:patapoa/screens/merchant/merchant_profile_screen.dart';
+import 'package:patapoa/screens/merchant/merchant_withdraw_screen.dart';
+import 'package:patapoa/screens/merchant/merchant_onboarding_screen.dart';
+import 'package:patapoa/screens/merchant/add_product_screen.dart';
+import 'package:patapoa/screens/merchant/barcode_scanner_screen.dart';
+import 'package:patapoa/screens/merchant/inventory_editing_screen.dart';
+import 'package:patapoa/features/onboarding/presentation/store_location_picker_screen.dart';
+
+// Rider Screens
+import 'package:patapoa/screens/rider/rider_shell.dart';
+import 'package:patapoa/screens/rider/rider_homepage_screen.dart';
+import 'package:patapoa/screens/rider/rider_login_screen.dart';
+import 'package:patapoa/screens/rider/rider_registration1_screen.dart';
+import 'package:patapoa/screens/rider/rider_registration2_screen.dart';
+import 'package:patapoa/screens/rider/rider_orders_screen.dart';
+import 'package:patapoa/screens/rider/route_assign_screen.dart';
+import 'package:patapoa/screens/rider/rider_earnings_screen.dart';
+import 'package:patapoa/screens/rider/rider_withdraw_screen.dart';
+import 'package:patapoa/screens/rider/rider_profile_screen.dart';
+import 'package:patapoa/screens/rider/rider_cash_received_screen.dart';
+import 'package:patapoa/screens/rider/rider_withdraw_procedures_screen.dart';
+import 'package:patapoa/screens/rider/rider_withdraw_success_screen.dart';
+
+// Admin Screens removed as they shifted to Web
+import 'package:patapoa/utils/osm_tester.dart';
+import 'package:patapoa/services/notification_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+void main() async {
+  // Global Error Handler
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    debugPrint("CRITICAL ERROR: ${details.exception}");
+  };
+
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // Fix for potential login/auth sync issues
+    if (kDebugMode) {
+        debugPrint("Clearing local storage for clean test...");
+        // const storage = FlutterSecureStorage();
+        // await storage.deleteAll();
+    }
+
+    // 1. Load Env
+    try {
+      await dotenv.load(fileName: ".env");
+    } catch (e) {
+      debugPrint("Warning: .env file missing: $e");
+    }
+
+    // 2. Initialize Firebase
+    try {
+      await Firebase.initializeApp();
+    } catch (e) {
+      debugPrint("Firebase init failed: $e");
+    }
+
+    // 3. Initialize Push Notifications (Only if supported)
+    try {
+      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+        final ns = NotificationService();
+        await ns.initialize().timeout(const Duration(seconds: 5));
+      }
+    } catch (e) {
+      debugPrint("Notification Service failed (skipping): $e");
+    }
+
+    // 3. Optional Diagnostics (non-blocking)
+    if (kDebugMode) {
+      OsmTester.runFullDiagnostic().catchError((e) => debugPrint("OSM test failed: $e"));
+    }
+
+    runApp(
+      const riverpod.ProviderScope(
+        child: PatapoaApp(),
+      ),
+    );
+  } catch (e, stackTrace) {
+    debugPrint("App failed to start: $e");
+    debugPrint(stackTrace.toString());
+
+    // Emergency Fallback App
+    runApp(MaterialApp(home: Scaffold(body: Center(child: Text("Fatal Error on Startup: $e")))));
+  }
 }
 
 class PatapoaApp extends StatelessWidget {
@@ -25,171 +134,90 @@ class PatapoaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Configure Router inside build to ensure it picks up context if needed
     final router = GoRouter(
-      initialLocation: '/login',
+      initialLocation: '/role',
+      debugLogDiagnostics: true,
       routes: [
-        GoRoute(
-          path: '/login',
-          builder: (context, state) => const LoginScreen(),
-        ),
+        GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
         GoRoute(
           path: '/register',
-          builder: (context, state) => const RegisterScreen(),
+          builder: (context, state) {
+            final role = state.extra is String ? state.extra as String : null;
+            return RegisterScreen(initialRole: role);
+          },
         ),
-        GoRoute(path: '/otp', builder: (context, state) => const OtpScreen()),
-        GoRoute(
-          path: '/role',
-          builder: (context, state) => const RoleSelectionScreen(),
-        ),
+        GoRoute(path: '/role', builder: (context, state) => const RoleSelectionScreen()),
+
+        // Customer
         ShellRoute(
           builder: (context, state, child) => CustomerShell(child: child),
           routes: [
-            GoRoute(
-              path: '/customer/explore',
-              builder: (context, state) => const CustomerExploreScreen(),
-            ),
-            GoRoute(
-              path: '/customer/orders',
-              builder: (context, state) => const CustomerOrdersScreen(),
-            ),
-            GoRoute(
-              path: '/customer/profile',
-              builder: (context, state) => const CustomerProfileScreen(),
-            ),
-            GoRoute(
-              path: '/customer/cart',
-              builder: (context, state) => const CustomerCartScreen(),
-            ),
+            GoRoute(path: '/customer/explore', builder: (context, state) => const ExploreScreen()),
+            GoRoute(path: '/customer/orders', builder: (context, state) => const CustomerOrdersScreen()),
+            GoRoute(path: '/customer/profile', builder: (context, state) => const CustomerProfileScreen()),
+            GoRoute(path: '/customer/cart', builder: (context, state) => const CartScreen()),
           ],
         ),
-        GoRoute(
-          path: '/customer/product',
-          builder: (context, state) {
-            final product = state.extra as Product;
-            return CustomerProductDetailsScreen(product: product);
-          },
-        ),
+        GoRoute(path: '/customer/product', builder: (context, state) => ProductDetailScreen(product: state.extra as Product)),
         GoRoute(
           path: '/customer/order-summary',
           builder: (context, state) {
-            final draft = state.extra as CustomerOrderDraft;
-            return CustomerOrderSummaryScreen(draft: draft);
-          },
+            final extra = state.extra as Map<String, dynamic>?;
+            return OrderSummaryScreen(addressId: extra?['address_id'] as int? ?? 0);
+          }
         ),
-        GoRoute(
-          path: '/customer/delivery-location',
-          builder: (context, state) {
-            final draft = state.extra as CustomerOrderDraft;
-            return CustomerDeliveryLocationScreen(draft: draft);
-          },
-        ),
-        GoRoute(
-          path: '/customer/tracking',
-          builder: (context, state) {
-            final order = state.extra as Order;
-            return CustomerTrackingScreen(order: order);
-          },
-        ),
-        GoRoute(
-          path: '/customer/payment-gateway',
-          builder: (context, state) {
-            final order = state.extra as CustomerPlacedOrder;
-            return CustomerPaymentGatewayScreen(order: order);
-          },
-        ),
-        GoRoute(
-          path: '/customer/success',
-          builder: (context, state) {
-            final order = state.extra as CustomerPlacedOrder;
-            return CustomerSuccessScreen(order: order);
-          },
-        ),
+        GoRoute(path: '/customer/tracking', builder: (context, state) => TrackingScreen(order: state.extra as Order)),
+        GoRoute(path: '/customer/payment-gateway', builder: (context, state) => PaymentGatewayScreen(order: state.extra as Order)),
+        GoRoute(path: '/customer/success', builder: (context, state) => SuccessScreen(order: state.extra as Order)),
+
+        // Merchant
         ShellRoute(
           builder: (context, state, child) => MerchantShell(child: child),
           routes: [
-            GoRoute(
-              path: '/merchant/home',
-              builder: (context, state) => const MerchantHomeScreen(),
-            ),
-            GoRoute(
-              path: '/merchant/orders',
-              builder: (context, state) => const MerchantOrdersScreen(),
-            ),
-            GoRoute(
-              path: '/merchant/inventory',
-              builder: (context, state) => const MerchantInventoryScreen(),
-            ),
-            GoRoute(
-              path: '/merchant/payouts',
-              builder: (context, state) => const MerchantPayoutScreen(),
-            ),
-            GoRoute(
-              path: '/merchant/profile',
-              builder: (context, state) => const MerchantProfileScreen(),
-            ),
+            GoRoute(path: '/merchant/home', builder: (context, state) => const MerchantHomeScreen()),
+            GoRoute(path: '/merchant/orders', builder: (context, state) => const MerchantOrdersScreen()),
+            GoRoute(path: '/merchant/inventory', builder: (context, state) => const MerchantInventoryScreen()),
+            GoRoute(path: '/merchant/payouts', builder: (context, state) => const MerchantPayoutScreen()),
+            GoRoute(path: '/merchant/profile', builder: (context, state) => const MerchantProfileScreen()),
           ],
         ),
+        GoRoute(path: '/merchant/onboarding', builder: (context, state) => const MerchantOnboardingScreen()),
+        GoRoute(path: '/merchant/withdraw', builder: (context, state) => const MerchantWithdrawScreen()),
+        GoRoute(path: '/merchant/barcode-scan', builder: (context, state) => const BarcodeScannerScreen()),
         GoRoute(
-          path: '/merchant/add-product',
-          builder: (context, state) => const MerchantAddProductScreen(),
+          path: '/merchant/add-product', 
+          builder: (context, state) => AddProductScreen(initialData: state.extra as Map<String, dynamic>?)
         ),
-        GoRoute(
-          path: '/merchant/edit-product',
-          builder: (context, state) {
-            final product = state.extra as Product;
-            return MerchantEditProductScreen(product: product);
-          },
-        ),
-        GoRoute(
-          path: '/delivery-partner/login',
-          builder: (context, state) => const DeliveryPartnerLoginScreen(),
-        ),
-        GoRoute(
-          path: '/delivery-partner/register/step1',
-          builder: (context, state) =>
-              const DeliveryPartnerRegistrationStep1Screen(),
-        ),
-        GoRoute(
-          path: '/delivery-partner/register/step2',
-          builder: (context, state) =>
-              const DeliveryPartnerRegistrationStep2Screen(),
-        ),
+        GoRoute(path: '/merchant/edit-product', builder: (context, state) => MerchantEditProductScreen(product: state.extra as Product)),
+        GoRoute(path: '/merchant/location-setup', builder: (context, state) => const StoreLocationPickerScreen()),
+
+        // Rider
+        GoRoute(path: '/delivery-partner/login', builder: (context, state) => const RiderLoginScreen()),
+        GoRoute(path: '/delivery-partner/register/step1', builder: (context, state) => const RiderRegistrationStep1Screen()),
+        GoRoute(path: '/delivery-partner/register/step2', builder: (context, state) => RiderRegistrationStep2Screen(registrationData: state.extra as Map<String, dynamic>? ?? {})),
         ShellRoute(
-          builder: (context, state, child) =>
-              DeliveryPartnerShell(child: child),
+          builder: (context, state, child) => RiderShell(child: child),
           routes: [
-            GoRoute(
-              path: '/delivery-partner/home',
-              builder: (context, state) => const DeliveryPartnerHomeScreen(),
-            ),
-            GoRoute(
-              path: '/delivery-partner/orders',
-              builder: (context, state) => const DeliveryPartnerOrdersScreen(),
-            ),
-            GoRoute(
-              path: '/delivery-partner/route-assign',
-              builder: (context, state) =>
-                  const DeliveryPartnerRouteAssignScreen(),
-            ),
-            GoRoute(
-              path: '/delivery-partner/earnings',
-              builder: (context, state) =>
-                  const DeliveryPartnerEarningsScreen(),
-            ),
-            GoRoute(
-              path: '/delivery-partner/profile',
-              builder: (context, state) => const DeliveryPartnerProfileScreen(),
-            ),
+            GoRoute(path: '/delivery-partner/home', builder: (context, state) => const RiderHomeScreen()),
+            GoRoute(path: '/delivery-partner/orders', builder: (context, state) => const RiderOrdersScreen()),
+            GoRoute(path: '/delivery-partner/earnings', builder: (context, state) => const RiderEarningsScreen()),
+            GoRoute(path: '/delivery-partner/profile', builder: (context, state) => const RiderProfileScreen()),
           ],
         ),
+        GoRoute(path: '/delivery-partner/route-assign', builder: (context, state) => RouteAssignScreen(orderData: state.extra as Map<String, dynamic>?)),
+        GoRoute(path: '/delivery-partner/withdraw', builder: (context, state) => const RiderWithdrawScreen()),
+        GoRoute(path: '/delivery-partner/withdraw-procedures', builder: (context, state) => const RiderWithdrawProceduresScreen()),
+        GoRoute(path: '/delivery-partner/withdraw-success', builder: (context, state) => const RiderWithdrawSuccessScreen()),
         GoRoute(
-          path: '/delivery-partner/withdraw',
-          builder: (context, state) => const DeliveryPartnerWithdrawScreen(),
-        ),
-        GoRoute(
-          path: '/delivery-partner/withdraw-success',
-          builder: (context, state) =>
-              const DeliveryPartnerWithdrawSuccessScreen(),
+          path: '/delivery-partner/cash-confirmation',
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            return RiderCashReceivedScreen(
+              orderId: extra['orderId'] as int,
+              amount: extra['amount'] as double,
+            );
+          },
         ),
       ],
     );
@@ -204,6 +232,7 @@ class PatapoaApp extends StatelessWidget {
         title: 'Patapoa',
         theme: buildPatapoaTheme(),
         routerConfig: router,
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

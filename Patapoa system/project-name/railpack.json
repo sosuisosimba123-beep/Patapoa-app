@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "packages": {
+    "php": "8.3"
+  },
+  "variables": {
+    "RAILPACK_PHP_ROOT_DIR": "/public"
+  }
+}

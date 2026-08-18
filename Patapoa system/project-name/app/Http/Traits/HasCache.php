@@ -12,7 +12,16 @@ trait HasCache
      */
     protected function cachePrefix(): string
     {
-        return 'api_' . class_basename($this);
+        $version = Cache::get('api_cache_version', 1);
+        return 'v' . $version . ':api_' . class_basename($this);
+    }
+
+    /**
+     * Increment global cache version to effectively flush all API caches.
+     */
+    protected function globalCacheFlush(): void
+    {
+        Cache::increment('api_cache_version');
     }
 
     /**
@@ -65,7 +74,7 @@ trait HasCache
     ) {
         $limit = min((int) request()->get('limit', $defaultLimit), $maxLimit);
         $page = max((int) request()->get('page', 1), 1);
-        
+
         $fullKey = "{$cacheKey}:{$limit}:{$page}";
 
         return $this->remember($fullKey, function () use ($query, $limit, $page) {

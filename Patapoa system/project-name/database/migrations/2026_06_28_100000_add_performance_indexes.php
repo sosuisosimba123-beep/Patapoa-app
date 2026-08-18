@@ -14,7 +14,6 @@ return new class extends Migration
         // Products table indexes
         Schema::table('products', function (Blueprint $table) {
             $table->index('merchant_id');
-            $table->index('category_id');
             $table->index(['is_available', 'is_featured']);
             $table->index('price');
             $table->index('created_at');
@@ -89,12 +88,6 @@ return new class extends Migration
             $table->index('is_active');
         });
 
-        // Categories table indexes
-        Schema::table('categories', function (Blueprint $table) {
-            $table->index('is_active');
-            $table->index('sort_order');
-        });
-
         // Wallets table indexes
         Schema::table('wallets', function (Blueprint $table) {
             $table->index('user_id');
@@ -108,7 +101,6 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             $table->dropIndex(['merchant_id']);
-            $table->dropIndex(['category_id']);
             $table->dropIndex(['is_available', 'is_featured']);
             $table->dropIndex(['price']);
             $table->dropIndex(['created_at']);
@@ -173,11 +165,6 @@ return new class extends Migration
             $table->dropIndex(['phone']);
             $table->dropIndex(['user_type']);
             $table->dropIndex(['is_active']);
-        });
-
-        Schema::table('categories', function (Blueprint $table) {
-            $table->dropIndex(['is_active']);
-            $table->dropIndex(['sort_order']);
         });
 
         Schema::table('wallets', function (Blueprint $table) {

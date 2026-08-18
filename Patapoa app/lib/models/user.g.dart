@@ -6,24 +6,6 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-User _$UserFromJson(Map<String, dynamic> json) => User(
-  id: (json['id'] as num).toInt(),
-  name: json['name'] as String,
-  email: json['email'] as String?,
-  phone: json['phone'] as String,
-  userType: json['user_type'] as String,
-  isActive: json['is_active'] as bool,
-  isVerified: json['is_verified'] as bool,
-  profileImage: json['profile_image'] as String?,
-  fcmToken: json['fcm_token'] as String?,
-  createdAt: json['created_at'] == null
-      ? null
-      : DateTime.parse(json['created_at'] as String),
-  updatedAt: json['updated_at'] == null
-      ? null
-      : DateTime.parse(json['updated_at'] as String),
-);
-
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
@@ -34,8 +16,11 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
   'is_verified': instance.isVerified,
   'profile_image': instance.profileImage,
   'fcm_token': instance.fcmToken,
+  'merchant': instance.merchant,
+  'rider': instance.rider,
   'created_at': instance.createdAt?.toIso8601String(),
   'updated_at': instance.updatedAt?.toIso8601String(),
+  'is_merchant_onboarded': instance.isMerchantOnboarded,
 };
 
 LoginRequest _$LoginRequestFromJson(Map<String, dynamic> json) => LoginRequest(
@@ -67,8 +52,10 @@ Map<String, dynamic> _$RegisterRequestToJson(RegisterRequest instance) =>
     };
 
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
-  user: User.fromJson(json['user'] as Map<String, dynamic>),
-  token: json['token'] as String,
+  user: json['user'] == null
+      ? null
+      : User.fromJson(json['user'] as Map<String, dynamic>),
+  token: json['token'] as String?,
   tokenType: json['token_type'] as String?,
 );
 
