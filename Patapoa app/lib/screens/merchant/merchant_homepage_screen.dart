@@ -80,7 +80,7 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
     return Row(
       children: [
         Image.asset(
-          'assets/images/patapoa official logo.png',
+          'assets/images/patapoa new logo.png',
           height: 32,
           fit: BoxFit.contain,
         ),

@@ -28,8 +28,15 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       final authProvider = context.read<AuthProvider>();
+      String identity = _loginController.text.trim();
+      
+      // If it looks like a phone number, strip + to match username
+      if (identity.startsWith('+')) {
+        identity = identity.substring(1);
+      }
+
       final success = await authProvider.login(
-        _loginController.text,
+        identity,
         _passwordController.text,
       );
 
@@ -112,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       // Logo/Brand
                       Image.asset(
-                        'assets/images/patapoa official logo.png',
+                        'assets/images/patapoa new logo.png',
                         height: 80,
                         fit: BoxFit.contain,
                       ),
@@ -186,9 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {
-                            // TODO: Implement forgot password
-                          },
+                          onPressed: () => context.go('/forgot-password'),
                           child: Text('Forgot Password?', style: TextStyle(color: colorScheme.primary)),
                         ),
                       ),

@@ -74,19 +74,21 @@ class LiquidGlassContainer extends StatelessWidget {
               ),
               // Diagonal High-Gloss Shine
               Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.1),
-                        Colors.white.withValues(alpha: 0.0),
-                        Colors.white.withValues(alpha: 0.0),
-                        Colors.white.withValues(alpha: 0.05),
-                      ],
-                      stops: const [0.0, 0.3, 0.7, 1.0],
+                child: IgnorePointer(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(borderRadius),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withValues(alpha: 0.1),
+                          Colors.white.withValues(alpha: 0.0),
+                          Colors.white.withValues(alpha: 0.0),
+                          Colors.white.withValues(alpha: 0.05),
+                        ],
+                        stops: const [0.0, 0.3, 0.7, 1.0],
+                      ),
                     ),
                   ),
                 ),

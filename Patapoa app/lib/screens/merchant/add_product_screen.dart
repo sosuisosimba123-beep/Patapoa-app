@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 import '../../services/merchant_service.dart';
 import '../../services/product_service.dart';
 import '../../models/product.dart';
+import '../../models/pexels_image.dart';
 import '../../widgets/patapoa_product_image.dart';
+import '../../widgets/pexels_image_picker.dart';
 
 class AddProductScreen extends StatefulWidget {
   final Map<String, dynamic>? initialData;
@@ -87,6 +89,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
     });
   }
 
+  Future<void> _showPexelsPicker() async {
+    final PexelsImage? selected = await showModalBottomSheet<PexelsImage>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => PexelsImagePicker(initialQuery: _nameController.text),
+    );
+
+    if (selected != null) {
+      setState(() {
+        _imageUrl = selected.src; // Use the Pexels URL directly
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pexels image URL linked to product!')));
+      }
+    }
+  }
+
   Future<void> _saveToInventory() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedSecondary == null) {
@@ -161,10 +181,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   _buildSearchAndFilter(colorScheme, textTheme),
                   const SizedBox(height: 24),
                   Center(
-                    child: PatapoaProductImage(
-                      imageUrl: _imageUrl,
-                      categorySlug: _categorySlug,
-                      width: 120, height: 120,
+                    child: Column(
+                      children: [
+                        PatapoaProductImage(
+                          imageUrl: _imageUrl,
+                          categorySlug: _categorySlug,
+                          width: 120, height: 120,
+                        ),
+                        TextButton.icon(
+                          onPressed: _showPexelsPicker,
+                          icon: const Icon(Icons.image_search),
+                          label: const Text('Search High-Quality Image'),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -258,7 +287,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
         controller: controller,
         decoration: InputDecoration(labelText: label, prefixIcon: Icon(icon), suffixIcon: suffixIcon, border: const OutlineInputBorder()),
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-        validator: (v) => (!label.contains('Optional') && (v == null || v.isEmpty)) ? 'Required' : null,
+        validator: (v) {
+          if (!label.contains('Optional') && (v == null || v.trim().isEmpty)) {
+            return 'Required';
+          }
+          if (v != null && RegExp(r'[<>{}\[\]\\]').hasMatch(v)) {
+            return 'Invalid characters detected';
+          }
+          return null;
+        },
       ),
     );
   }

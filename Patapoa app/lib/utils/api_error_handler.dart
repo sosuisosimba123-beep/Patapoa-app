@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'crashlytics_service.dart';
 
 /// Base class for all application-specific exceptions
 class AppException implements Exception {
@@ -57,13 +58,15 @@ class ApiErrorHandler {
       throw NetworkException('Connection issue: ${e.message}');
     } on AppException {
       rethrow;
-    } catch (e) {
+    } catch (e, stackTrace) {
       // Check for SocketException without importing dart:io to support Web
       final errorString = e.toString();
       if (errorString.contains('SocketException')) {
         throw NetworkException();
       }
-      throw AppException('An unexpected error occurred: $e');
+      final appException = AppException('An unexpected error occurred: $e');
+      CrashlyticsService().recordError(e, stackTrace);
+      throw appException;
     }
   }
 

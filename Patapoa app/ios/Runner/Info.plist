@@ -32,6 +32,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.884787724969-o51fo0iirejc5on6omcr2jdh4mocupdo</string>
+				<string>com.nacci.patapoa.app</string>
 			</array>
 		</dict>
 	</array>

@@ -14,6 +14,8 @@ import '../../widgets/patapoa_product_image.dart';
 import '../../widgets/liquid_glass_container.dart';
 import '../../services/map_marker_service.dart';
 import '../../config/map_config.dart';
+import '../../config/api_config.dart';
+import '../../utils/analytics_service.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -190,6 +192,11 @@ class _ExploreScreenState extends State<ExploreScreen> with SingleTickerProvider
   }
 
   void _showMerchantStorePreview(Map<String, dynamic> merchant) {
+    AnalyticsService.logStoreSelected(
+      storeId: merchant['id']?.toString() ?? 'unknown',
+      storeName: merchant['store_name'] ?? 'Local Store',
+      city: merchant['city'],
+    );
     _mapController.move(
       LatLng(
         double.parse(merchant['latitude'].toString()) - 0.002, 
@@ -367,6 +374,16 @@ class _ExploreScreenState extends State<ExploreScreen> with SingleTickerProvider
                             }
                             final cat = _categories[index - 1];
                             return ChoiceChip(
+                              avatar: cat.imageUrl != null 
+                                ? CircleAvatar(
+                                    backgroundColor: Colors.transparent,
+                                    child: Image.network(
+                                      '${ApiConfig.imageBaseUrl}/${cat.imageUrl}',
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (_, __, ___) => const Icon(Icons.category, size: 16),
+                                    ),
+                                  )
+                                : null,
                               label: Text(cat.name),
                               selected: _selectedPrimaryCategoryId == cat.id,
                               onSelected: (selected) {

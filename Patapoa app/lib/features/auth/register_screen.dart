@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/liquid_glass_container.dart';
+import '../../screens/common/verify_email_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   final String? initialRole;
@@ -22,6 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late String _selectedUserType;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _acceptedTerms = false;
 
   @override
   void initState() {
@@ -40,39 +42,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _handleRegister() async {
-    if (_formKey.currentState!.validate()) {
-      final authProvider = context.read<AuthProvider>();
-      final success = await authProvider.register(
-        name: _nameController.text,
-        phone: _phoneController.text,
-        password: _passwordController.text,
-        passwordConfirmation: _confirmPasswordController.text,
-        userType: _selectedUserType,
-        email: _emailController.text,
+    if (!_formKey.currentState!.validate()) return;
+
+    if (!_acceptedTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please accept the Privacy Policy to continue.')),
       );
+      return;
+    }
+    
+    final authProvider = context.read<AuthProvider>();
+    final success = await authProvider.register(
+      name: _nameController.text.trim(),
+      phone: _phoneController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+      passwordConfirmation: _confirmPasswordController.text.trim(),
+      userType: _selectedUserType,
+    );
 
-      if (success && mounted) {
-        final user = authProvider.user;
-        if (user == null) {
-          context.go('/role');
-          return;
-        }
-
-        final userType = user.userType;
-        if (userType == 'customer') {
-          context.go('/customer/explore');
-        } else if (userType == 'merchant') {
-          context.go('/merchant/onboarding');
-        } else if (userType == 'rider') {
-          context.go('/delivery-partner/home');
-        } else {
-          context.go('/role');
-        }
-      } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.errorMessage ?? 'Registration failed')),
-        );
-      }
+    if (success && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerifyEmailScreen(email: _emailController.text.trim()),
+        ),
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(authProvider.errorMessage ?? 'Registration failed')),
+      );
     }
   }
 
@@ -83,14 +82,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (mounted) {
       if (success) {
         context.go('/role'); // AuthProvider will handle further redirection
-      } else if (authProvider.partialSocialData != null) {
-        // Pre-fill fields with social data
-        final data = authProvider.partialSocialData!;
-        _nameController.text = data['name'] ?? '';
-        _emailController.text = data['email'] ?? '';
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please complete your profile (Phone & Password)')),
-        );
       } else if (authProvider.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(authProvider.errorMessage!)),
@@ -123,7 +114,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       // Logo/Brand
                       Image.asset(
-                        'assets/images/patapoa official logo.png',
+                        'assets/images/patapoa new logo.png',
                         height: 80,
                         fit: BoxFit.contain,
                       ),
@@ -185,8 +176,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null || value.trim().isEmpty) {
                             return 'Please enter your name';
+                          }
+                          // Filter out potentially harmful characters
+                          if (RegExp(r'[<>{}\[\]\\]').hasMatch(value)) {
+                            return 'Invalid characters in name';
                           }
                           return null;
                         },
@@ -208,8 +203,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null || value.trim().isEmpty) {
                             return 'Please enter your phone number';
+                          }
+                          // Strict phone validation
+                          if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value.trim())) {
+                            return 'Enter a valid phone number';
                           }
                           return null;
                         },
@@ -231,10 +230,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null || value.trim().isEmpty) {
                             return 'Email is mandatory';
                           }
-                          if (!value.contains('@')) {
+                          // Strict email validation
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
                             return 'Enter a valid email';
                           }
                           return null;
@@ -270,8 +270,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a password';
                           }
-                          if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
+                          if (value.length < 8) {
+                            return 'Password must be at least 8 characters';
                           }
                           return null;
                         },
@@ -313,6 +313,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                       ),
                       const SizedBox(height: 24),
+    
+                      // Privacy Policy Checkbox
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _acceptedTerms,
+                            onChanged: (v) => setState(() => _acceptedTerms = v ?? false),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => setState(() => _acceptedTerms = !_acceptedTerms),
+                              child: const Text.rich(
+                                TextSpan(
+                                  text: 'I agree to the ',
+                                  children: [
+                                    TextSpan(
+                                      text: 'Privacy Policy',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                    TextSpan(text: ' and Terms of Service'),
+                                  ],
+                                ),
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
     
                       // Register Button
                       Consumer<AuthProvider>(

@@ -6,6 +6,8 @@ import '../../providers/auth_provider.dart';
 import '../../services/address_service.dart';
 import '../../widgets/patapoa_product_image.dart';
 import '../../widgets/liquid_glass_container.dart';
+import '../../utils/analytics_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -37,6 +39,18 @@ class _CartScreenState extends State<CartScreen> {
     final auth = provider.Provider.of<AuthProvider>(context, listen: false);
     if (!auth.isAuthenticated) { context.go('/login'); return; }
     if (_selectedAddress == null) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a delivery address'))); return; }
+
+    final cart = provider.Provider.of<CartProvider>(context, listen: false);
+    AnalyticsService.logBeginCheckout(
+      value: cart.totalAmount,
+      items: cart.items.map((i) => AnalyticsEventItem(
+        itemId: i.product.id.toString(),
+        itemName: i.product.fullDisplayName,
+        itemCategory: i.product.categorySlug,
+        price: i.product.price,
+        quantity: i.quantity,
+      )).toList(),
+    );
 
     setState(() => _isProcessing = true);
     // Proceed to order summary/checkout

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../config/api_config.dart';
 
 /// A reusable widget that displays product images with fallbacks.
 class PatapoaProductImage extends StatelessWidget {
   /// Optional URL for the network product photo.
   final String? imageUrl;
 
-  /// Required slug string to map to local icons.
+  /// Required slug string to map to network icons.
   final String categorySlug;
 
   /// Width of the image container. Defaults to 60.0.
@@ -31,40 +32,40 @@ class PatapoaProductImage extends StatelessWidget {
     this.fit = BoxFit.cover,
   });
 
-  /// Maps the category slug to the corresponding local asset path.
-  String _getAssetPath(String slug) {
-    const String basePath = 'assets/images/3d_categories/';
+  /// Maps the category slug to the corresponding image filename on the server.
+  String _getImageName(String slug) {
+    const String folder = 'secondary category';
     
     // Mapping based on the new architecture
     switch (slug) {
       case 'biscuits-cookies':
-        return '${basePath}biscuits & cookies.png';
+        return '$folder/biscuits & cookies.png';
       case 'chocolate-sweets':
-        return '${basePath}chocolate & sweets.png';
+        return '$folder/chocolate & sweets.png';
       case 'crisps-cereals':
-        return '${basePath}crisps & cereals.png';
+        return '$folder/crisps & cereals.png';
       case 'cooking-oil-fats':
-        return '${basePath}cooking oil & fats.png';
+        return '$folder/cooking oil & fats.png';
       case 'detergent-soap':
-        return '${basePath}detergant & soap.png';
+        return '$folder/detergant & soap.png';
       case 'dishwashing-materials':
-        return '${basePath}dishwashing materials.png';
+        return '$folder/dishwashing materials.png';
       case 'baby-care':
-        return '${basePath}baby care.png';
+        return '$folder/baby care.png';
       case 'audio-devices':
-        return '${basePath}audio devices.png';
+        return '$folder/audio devices.png';
       case 'chargers-cables':
-        return '${basePath}chargers & cables.png';
+        return '$folder/chargers & cables.png';
       case 'batteries-lighting':
-        return '${basePath}batteries & lighting.png';
+        return '$folder/batteries & lighting.png';
       default:
-        return '${basePath}bakery&breakfast.png'; // Generic fallback
+        return '$folder/bakery&breakfast.png'; // Generic fallback
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final assetPath = _getAssetPath(categorySlug);
+    final imageName = _getImageName(categorySlug);
     final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(12);
 
     return Container(
@@ -76,12 +77,12 @@ class PatapoaProductImage extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: effectiveBorderRadius,
-        child: _buildImageContent(assetPath),
+        child: _buildImageContent(imageName),
       ),
     );
   }
 
-  Widget _buildImageContent(String assetPath) {
+  Widget _buildImageContent(String imageName) {
     if (imageUrl != null && imageUrl!.isNotEmpty) {
       return CachedNetworkImage(
         imageUrl: imageUrl!,
@@ -95,23 +96,45 @@ class PatapoaProductImage extends StatelessWidget {
             child: CircularProgressIndicator(strokeWidth: 2),
           ),
         ),
-        errorWidget: (context, url, error) => _buildAssetImage(assetPath),
+        errorWidget: (context, url, error) => _buildCategoryImage(imageName),
       );
     }
 
-    return _buildAssetImage(assetPath);
+    return _buildCategoryImage(imageName);
   }
 
-  Widget _buildAssetImage(String assetPath) {
+  Widget _buildCategoryImage(String imageName) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Image.asset(
-        assetPath,
+      child: Image.network(
+        '${ApiConfig.imageBaseUrl}/$imageName',
         width: width,
         height: height,
         fit: BoxFit.contain,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          );
+        },
         errorBuilder: (context, error, stackTrace) {
-          return const Icon(Icons.shopping_basket, color: Colors.grey);
+          // Final fallback to a local asset if even the network category image fails
+          return Image.asset(
+            'assets/images/patapoa new logo.png', // Or some other generic fallback asset you have
+            width: width,
+            height: height,
+            fit: BoxFit.contain,
+            errorBuilder: (context, e, s) => const Icon(Icons.shopping_basket, color: Colors.grey),
+          );
         },
       ),
     );

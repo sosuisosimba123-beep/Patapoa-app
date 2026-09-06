@@ -5,6 +5,7 @@ import '../../models/product.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/patapoa_product_image.dart';
 import '../../widgets/liquid_glass_container.dart';
+import '../../utils/analytics_service.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key, required this.product});
@@ -17,9 +18,30 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   int _quantity = 1;
 
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.logItemViewed(
+      itemId: widget.product.id.toString(),
+      itemName: widget.product.fullDisplayName,
+      category: widget.product.categorySlug,
+      price: widget.product.price,
+    );
+  }
+
   void _addToCart() async {
     final cart = provider.Provider.of<CartProvider>(context, listen: false);
     final error = cart.addItem(widget.product, quantity: _quantity);
+    
+    if (error == null) {
+      AnalyticsService.logAddToCart(
+        itemId: widget.product.id.toString(),
+        itemName: widget.product.fullDisplayName,
+        category: widget.product.categorySlug,
+        price: widget.product.price,
+        quantity: _quantity,
+      );
+    }
 
     if (error == "DIFFERENT_MERCHANT") {
       final confirm = await showDialog<bool>(

@@ -12,7 +12,12 @@
           "package_name": "com.example.patapoa"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "620191086234-rfbvppbmvvinocvj8q7775qfehijd5e1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAqhY9phAEJBu6vnC0kAPa3Z8l5tb-vRzk"
@@ -20,7 +25,63 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "620191086234-rfbvppbmvvinocvj8q7775qfehijd5e1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "620191086234-c1c985v2qds3obk4uqbb89284df3tcn3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.patapoa.com"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620191086234:android:c271b31321c469601fd123",
+        "android_client_info": {
+          "package_name": "com.nacci.patapoa.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "620191086234-fnmh077dp2l5tvn8gag5mekiij6f2avv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nacci.patapoa.app",
+            "certificate_hash": "31a5ddc9d80b2c12a93d6210928af9752d67bfde"
+          }
+        },
+        {
+          "client_id": "620191086234-rfbvppbmvvinocvj8q7775qfehijd5e1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqhY9phAEJBu6vnC0kAPa3Z8l5tb-vRzk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "620191086234-rfbvppbmvvinocvj8q7775qfehijd5e1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "620191086234-c1c985v2qds3obk4uqbb89284df3tcn3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.patapoa.com"
+              }
+            }
+          ]
         }
       }
     }

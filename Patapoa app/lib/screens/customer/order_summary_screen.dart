@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../services/order_service.dart';
 import '../../widgets/liquid_glass_container.dart';
+import '../../utils/analytics_service.dart';
 
 class OrderSummaryScreen extends StatefulWidget {
   const OrderSummaryScreen({super.key, required this.addressId});
@@ -24,6 +25,10 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   Future<void> _placeOrder() async {
     final cart = context.read<CartProvider>();
     if (cart.items.isEmpty) return;
+
+    AnalyticsService.logAddPaymentInfo(
+      paymentType: _selectedPaymentMethod,
+    );
 
     setState(() => _isProcessing = true);
 

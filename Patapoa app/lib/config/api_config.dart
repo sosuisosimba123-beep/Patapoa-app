@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiConfig {
-  static const bool isProduction = false;
+  static const bool isProduction = true;
 
   // For Android Emulator - use 10.0.2.2 to access localhost
   // For iOS Simulator - use 127.0.0.1
   // For Physical Device - use your computer's IP address
   static String get baseUrl {
     if (isProduction) {
-      return 'https://api.patapoa.co.tz/api/v1';
+      return 'https://patapoa.online/api/v1';
     }
 
     if (kIsWeb) {
@@ -20,6 +20,8 @@ class ApiConfig {
     // Use 10.0.2.2 for Android Emulator, 127.0.0.1 for others
     return 'http://10.0.2.2:8000/api/v1';
   }
+
+  static const String imageBaseUrl = 'https://patapoa.online/storage/3d_categories';
 
   // Auth Endpoints
   static const String authLogin = '/auth/login';

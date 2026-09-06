@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/order.dart';
 import '../../widgets/liquid_glass_container.dart';
+import '../../utils/analytics_service.dart';
 
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen({super.key, required this.order});
@@ -9,6 +10,13 @@ class SuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Log the successful order
+    AnalyticsService.logOrderCompleted(
+      orderId: order.id.toString(),
+      totalAmount: order.total,
+      paymentMethod: order.paymentMethod,
+    );
+
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 

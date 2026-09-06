@@ -1,26 +1,35 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:pocketbase/pocketbase.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../services/api_service.dart';
-import '../config/api_config.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import '../services/pocketbase_services.dart';
 import '../models/user.dart';
 import '../services/notification_service.dart';
+import '../utils/location_helper.dart';
 
 class AuthProvider with ChangeNotifier {
-  final ApiService _apiService = ApiService();
   final NotificationService _notificationService = NotificationService();
   late final GoogleSignIn _googleSignIn;
   bool _isGoogleInitialized = false;
 
+  User? _user;
+  bool _isLoading = false;
+  String? _errorMessage;
+  Map<String, dynamic>? _partialSocialData;
+
   AuthProvider() {
     _initializeGoogleSignIn();
+    _syncWithPocketBase();
+    // Listen to auth changes in PocketBase to keep Provider in sync
+    pb.authStore.onChange.listen((_) {
+      _syncWithPocketBase();
+    });
   }
 
   void _initializeGoogleSignIn() {
-    if (_isGoogleInitialized) {
-      return;
-    }
+    if (_isGoogleInitialized) return;
     _googleSignIn = GoogleSignIn(
       scopes: ['email', 'profile'],
       clientId: kIsWeb ? '884787724969-cc10epqnnd4dfj7c1als8uhrmf13h5vd.apps.googleusercontent.com' : null,
@@ -28,109 +37,89 @@ class AuthProvider with ChangeNotifier {
     _isGoogleInitialized = true;
   }
 
-  User? _user;
-  String? _token;
-  bool _isLoading = false;
-  String? _errorMessage;
-
-  // For social login flow
-  Map<String, dynamic>? _partialSocialData;
-  Map<String, dynamic>? get partialSocialData => _partialSocialData;
-
   User? get user => _user;
-  String? get token => _token;
-  bool get isAuthenticated => _token != null;
+  String? get token => pb.authStore.token;
+  bool get isAuthenticated => pb.authStore.isValid;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  Map<String, dynamic>? get partialSocialData => _partialSocialData;
 
-  Future<bool> checkAuthStatus() async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      final isAuth = await _apiService.isAuthenticated();
-      if (isAuth) {
-        _token = await _apiService.getAuthToken();
-        await _fetchUserProfile();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      _errorMessage = e.toString();
-      return false;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> _fetchUserProfile() async {
-    try {
-      final response = await _apiService.get(ApiConfig.authMe);
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = json.decode(response.body);
-        final Map<String, dynamic>? data = jsonResponse['data'];
-        if (data != null) {
-          _user = User.fromJson(data);
+  void _syncWithPocketBase() {
+    if (pb.authStore.isValid && pb.authStore.model != null) {
+      final model = pb.authStore.model;
+      if (model is RecordModel) {
+        _user = User.fromJson({
+          'id': model.id,
+          ...model.data,
+          'created': model.created,
+          'updated': model.updated,
+        });
+      } else {
+        // Safe check for Admin or other models
+        try {
+          final data = (model as dynamic);
+          _user = User(
+            id: model.id,
+            name: 'Superuser',
+            email: data.email,
+            userType: 'admin',
+            isActive: true,
+            isVerified: true,
+            createdAt: DateTime.parse(model.created),
+            updatedAt: DateTime.parse(model.updated),
+          );
+        } catch (e) {
+          debugPrint('Error syncing non-record model: $e');
+          _user = null;
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching user profile: $e');
+    } else {
+      _user = null;
     }
+    notifyListeners();
   }
 
-  Future<bool> login(String login, String password, {String? userType}) async {
+  Future<bool> login(String email, String password, {String? userType}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final request = {
-        'login': login,
-        'password': password,
-        'user_type': userType,
-      }..removeWhere((key, value) => value == null);
-
-      final response = await _apiService.post(
-        ApiConfig.authLogin,
-        request,
-      );
-
-      final Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic>? data = jsonResponse['data'];
-        if (data == null) {
-          _errorMessage = 'Invalid response from server';
-          return false;
-        }
-
-        final authResponse = AuthResponse.fromJson(data);
-
-        _token = authResponse.token;
-        _user = authResponse.user;
-
-        if (_token != null) {
-          await _apiService.setAuthToken(_token!);
-          await _syncFcmToken(); // Add this
-          notifyListeners();
-          return true;
-        } else {
-          // If no token, maybe we need to verify OTP first
-          notifyListeners();
-          return true;
-        }
+      debugPrint('Attempting login for: $email');
+      
+      if (userType == 'admin') {
+        await pb.admins.authWithPassword(email, password);
       } else {
-        if (jsonResponse['errors'] != null) {
-          final Map<String, dynamic> errors = jsonResponse['errors'];
-          _errorMessage = errors.values.map((e) => e is List ? e.first : e).join('\n');
-        } else {
-          _errorMessage = jsonResponse['message'] ?? 'Login failed';
+        final authData = await pb.collection('users').authWithPassword(email, password);
+        debugPrint('Login success: ${authData.record?.id}');
+        
+        // If userType is provided, verify it matches
+        if (userType != null && authData.record != null) {
+          final actualRole = authData.record!.data['userType'];
+          debugPrint('Checking role: expected $userType, got $actualRole');
+          if (actualRole != userType) {
+            pb.authStore.clear();
+            _errorMessage = 'Invalid account type for this login.';
+            return false;
+          }
         }
-        return false;
       }
+      
+      await _syncFcmToken();
+      return true;
+    } on ClientException catch (e) {
+      debugPrint('PocketBase Login Error: ${e.response}');
+      final msg = e.response['message'] ?? 'Login failed.';
+      final errors = e.response['data'] as Map<String, dynamic>?;
+      if (errors != null && errors.isNotEmpty) {
+        _errorMessage = errors.entries.map((e) => '${e.key}: ${e.value['message']}').join('\n');
+      } else {
+        _errorMessage = msg;
+      }
+      return false;
     } catch (e) {
-      _errorMessage = 'Login error: $e';
+      debugPrint('Unexpected Login Error: $e');
+      _errorMessage = 'An unexpected error occurred: $e';
       return false;
     } finally {
       _isLoading = false;
@@ -141,201 +130,64 @@ class AuthProvider with ChangeNotifier {
   Future<bool> register({
     required String name,
     required String phone,
+    required String email,
     required String password,
-    required String passwordConfirmation,
     required String userType,
-    String? email,
+    String? passwordConfirmation,
   }) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final request = RegisterRequest(
-        name: name,
-        phone: phone,
-        password: password,
-        passwordConfirmation: passwordConfirmation,
-        userType: userType,
-        email: email,
-      );
+      debugPrint('Attempting registration for: $email');
+      // 1. Create the user record
+      final body = {
+        'username': phone.replaceAll('+', ''), // Phone as username (removing + for compatibility)
+        'email': email,
+        'password': password,
+        'passwordConfirm': passwordConfirmation ?? password,
+        'name': name,
+        'phone': phone,
+        'userType': userType,
+      };
+      debugPrint('Registration body: $body');
+      
+      await pb.collection('users').create(body: body);
+      debugPrint('User created successfully');
 
-      final response = await _apiService.post(
-        ApiConfig.authRegister,
-        request.toJson(),
-      );
+      // 2. Login immediately to get the token
+      await pb.collection('users').authWithPassword(email, password);
+      debugPrint('Login after registration success');
 
-      final Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final Map<String, dynamic>? data = jsonResponse['data'];
-        if (data == null) {
-          _errorMessage = 'Invalid response from server';
-          return false;
-        }
-
-        final authResponse = AuthResponse.fromJson(data);
-
-        _token = authResponse.token;
-        _user = authResponse.user;
-
-        if (_token != null) {
-          await _apiService.setAuthToken(_token!);
-          await _syncFcmToken(); // Add this
-          notifyListeners();
-          return true;
-        } else {
-          // If no token, maybe we need to verify OTP first
-          notifyListeners();
-          return true;
-        }
-      } else {
-        if (jsonResponse['errors'] != null) {
-          final Map<String, dynamic> errors = jsonResponse['errors'];
-          _errorMessage = errors.values.map((e) => e is List ? e.first : e).join('\n');
-        } else {
-          _errorMessage = jsonResponse['message'] ?? 'Registration failed';
-        }
-        return false;
+      // 3. Request verification email
+      try {
+        await pb.collection('users').requestVerification(email);
+        debugPrint('Verification email requested');
+      } catch (e) {
+        debugPrint('Warning: Could not send verification email: $e');
+        // We don't fail the whole registration if email fails (maybe SMTP not set up)
       }
+
+      await _syncFcmToken();
+      return true;
+    } on ClientException catch (e) {
+      debugPrint('PocketBase Registration Error: ${e.response}');
+      final msg = e.response['message'] ?? 'Registration failed.';
+      final errors = e.response['data'] as Map<String, dynamic>?;
+      if (errors != null && errors.isNotEmpty) {
+        _errorMessage = errors.entries.map((e) => '${e.key}: ${e.value['message']}').join('\n');
+      } else {
+        _errorMessage = msg;
+      }
+      return false;
     } catch (e) {
-      debugPrint('Registration error: $e');
-      if (e.toString().contains('422')) {
-        _errorMessage = 'This phone number is already registered. Please login instead.';
-      } else {
-        _errorMessage = 'Connection error. Please check if the server is running.';
-      }
+      debugPrint('Unexpected Registration Error: $e');
+      _errorMessage = 'An unexpected error occurred: $e';
       return false;
     } finally {
       _isLoading = false;
       notifyListeners();
-    }
-  }
-
-  Future<bool> sendOtp(String phone) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    try {
-      final request = OtpSendRequest(phone: phone);
-      final response = await _apiService.post(
-        ApiConfig.authOtpSend,
-        request.toJson(),
-      );
-
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        final data = json.decode(response.body);
-        if (data['errors'] != null) {
-          final Map<String, dynamic> errors = data['errors'];
-          _errorMessage = errors.values.map((e) => e is List ? e.first : e).join('\n');
-        } else {
-          _errorMessage = data['message'] ?? 'Failed to send OTP';
-        }
-        return false;
-      }
-    } catch (e) {
-      _errorMessage = 'OTP send error: $e';
-      return false;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<bool> verifyOtp(String phone, String otp) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    try {
-      final request = OtpVerifyRequest(phone: phone, otp: otp);
-      final response = await _apiService.post(
-        ApiConfig.authOtpVerify,
-        request.toJson(),
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = json.decode(response.body);
-        final Map<String, dynamic> data = jsonResponse.containsKey('data')
-            ? jsonResponse['data']
-            : jsonResponse;
-
-        final authResponse = AuthResponse.fromJson(data);
-
-        _token = authResponse.token;
-        _user = authResponse.user;
-
-        if (_token != null) {
-          await _apiService.setAuthToken(_token!);
-          await _syncFcmToken(); // Add this
-          notifyListeners();
-          return true;
-        } else {
-          // If no token, maybe we need to verify OTP first
-          notifyListeners();
-          return true;
-        }
-      } else {
-        final data = json.decode(response.body);
-        if (data['errors'] != null) {
-          final Map<String, dynamic> errors = data['errors'];
-          _errorMessage = errors.values.map((e) => e is List ? e.first : e).join('\n');
-        } else {
-          _errorMessage = data['message'] ?? 'Verification failed';
-        }
-        return false;
-      }
-    } catch (e) {
-      _errorMessage = 'Verification error: $e';
-      return false;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> logout() async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      if (_token != null) {
-        await _apiService.post(ApiConfig.authLogout, {});
-      }
-    } catch (e) {
-      // Ignore logout API errors
-      debugPrint('Logout API error: $e');
-    } finally {
-      _token = null;
-      _user = null;
-      await _apiService.clearAuthToken();
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  void clearError() {
-    _errorMessage = null;
-    notifyListeners();
-  }
-
-  Future<void> _syncFcmToken() async {
-    if (_user == null) {
-      return;
-    }
-    try {
-      final fcmToken = await _notificationService.getToken();
-      if (fcmToken != null) {
-        await _apiService.put(ApiConfig.userUpdateFcmToken(_user!.id), {'fcm_token': fcmToken});
-      }
-
-      // Subscribe to role-specific topic
-      await _notificationService.subscribeToRole(_user!.userType);
-    } catch (e) {
-      debugPrint('FCM Sync error: $e');
     }
   }
 
@@ -346,65 +198,117 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        _isLoading = false;
-        notifyListeners();
-        return false;
-      }
-
-      final body = {
-        'email': googleUser.email,
-        'name': googleUser.displayName ?? '',
-        'social_id': googleUser.id,
-        'provider': 'google',
-        'user_type': userType,
-      };
-
-      final response = await _apiService.post(ApiConfig.authSocialLogin, body);
-      final Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonResponse['data'];
-
-        if (data['is_new_user'] == true) {
-          // User needs to complete profile (phone/password)
-          _partialSocialData = {
-            'email': data['email'],
-            'name': data['name'],
-            'social_id': data['social_id'],
-            'provider': data['provider'],
-            'user_type': userType,
-          };
-          _isLoading = false;
-          notifyListeners();
-          return false; // Return false but partialSocialData is set
+      final authData = await pb.collection('users').authWithOAuth2(
+        'google',
+        (url) async {
+          await FlutterWebAuth2.authenticate(
+            url: url.toString(),
+            callbackUrlScheme: 'com.nacci.patapoa.app',
+          );
         }
+      );
 
-        final authResponse = AuthResponse.fromJson(data);
-        _token = authResponse.token;
-        _user = authResponse.user;
-
-        if (_token != null) {
-          await _apiService.setAuthToken(_token!);
-          notifyListeners();
-          return true;
+      if (authData.record != null) {
+        // If it's a new user, we might need to set the userType
+        if (authData.record!.data['userType'] == null) {
+           await pb.collection('users').update(authData.record!.id, body: {
+             'userType': userType,
+           });
         }
+        await _syncFcmToken();
+        return true;
       }
-
-      _errorMessage = jsonResponse['message'] ?? 'Google Sign-In failed';
       return false;
     } catch (e) {
-      debugPrint('Google Sign-In error raw: $e');
-      if (e.toString().contains('401') || e.toString().contains('invalid_client')) {
-        _errorMessage = 'Authorization Error: Please ensure this origin is registered in Google Cloud Console under "Authorized JavaScript origins".';
-      } else {
-        _errorMessage = 'Google Sign-In error: $e';
-      }
+      _errorMessage = 'Google Sign-In failed: $e';
       return false;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<bool> sendOtp(String phone) async {
+    // Placeholder for PocketBase phone auth if implemented
+    return true; 
+  }
+
+  Future<bool> verifyOtp(String phone, String otp) async {
+    // Placeholder for PocketBase phone auth if implemented
+    return true;
+  }
+
+  Future<void> logout() async {
+    pb.authStore.clear();
+    _user = null;
+    notifyListeners();
+  }
+
+  Future<void> requestPasswordReset(String email) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+    try {
+      await pb.collection('users').requestPasswordReset(email);
+    } catch (e) {
+      _errorMessage = 'Failed to send reset email: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _syncFcmToken() async {
+    if (_user == null) return;
+    try {
+      final fcmToken = await _notificationService.getToken();
+      if (fcmToken != null) {
+        await pb.collection('users').update(_user!.id, body: {
+          'fcm_token': fcmToken,
+        });
+      }
+      await _notificationService.subscribeToRole(_user!.userType);
+    } catch (e) {
+      debugPrint('FCM Sync error: $e');
+    }
+  }
+
+  /// Tests sending device coordinates to PocketBase.
+  Future<bool> updateUserLocation() async {
+    if (_user == null || !isAuthenticated) {
+      _errorMessage = 'User not authenticated';
+      notifyListeners();
+      return false;
+    }
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      debugPrint('Capturing location...');
+      final coords = await LocationHelper.getCurrentCoordinates();
+      debugPrint('Captured: $coords. Sending to PocketBase...');
+
+      await pb.collection('users').update(_user!.id, body: {
+        'latitude': coords['latitude'],
+        'longitude': coords['longitude'],
+      });
+
+      debugPrint('Location updated successfully in PocketBase.');
+      return true;
+    } catch (e) {
+      _errorMessage = 'Location update failed: $e';
+      debugPrint(_errorMessage);
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void clearError() {
+    _errorMessage = null;
+    notifyListeners();
   }
 }

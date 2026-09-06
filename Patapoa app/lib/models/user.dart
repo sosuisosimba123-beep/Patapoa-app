@@ -5,15 +5,17 @@ part 'user.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, createFactory: false)
 class User {
-  final int id;
+  final String id;
   final String name;
   final String? email;
-  final String phone;
+  final String? phone;
   final String userType;
-  final bool? isActive;
-  final bool? isVerified;
+  final bool isActive;
+  final bool isVerified;
   final String? profileImage;
   final String? fcmToken;
+  final double? latitude;
+  final double? longitude;
   final Map<String, dynamic>? merchant;
   final Map<String, dynamic>? rider;
   final DateTime? createdAt;
@@ -23,12 +25,14 @@ class User {
     required this.id,
     required this.name,
     this.email,
-    required this.phone,
+    this.phone,
     required this.userType,
-    this.isActive,
-    this.isVerified,
+    this.isActive = true,
+    this.isVerified = false,
     this.profileImage,
     this.fcmToken,
+    this.latitude,
+    this.longitude,
     this.merchant,
     this.rider,
     this.createdAt,
@@ -43,19 +47,21 @@ class User {
   
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: NumberUtils.paramInt(json['id']),
-      name: json['name'] as String,
+      id: json['id'].toString(),
+      name: json['name'] ?? json['username'] ?? 'User',
       email: json['email'] as String?,
-      phone: json['phone'] as String,
-      userType: json['user_type'] as String,
-      isActive: json['is_active'] as bool?,
-      isVerified: json['is_verified'] as bool?,
-      profileImage: json['profile_image'] as String?,
+      phone: json['phone'] as String?,
+      userType: json['userType'] ?? json['user_type'] ?? 'customer',
+      isActive: json['isActive'] ?? json['is_active'] ?? true,
+      isVerified: json['verified'] ?? json['is_verified'] ?? false,
+      profileImage: json['profileImage'] ?? json['profile_image'] as String?,
       fcmToken: json['fcm_token'] as String?,
+      latitude: json['latitude'] != null ? double.tryParse(json['latitude'].toString()) : null,
+      longitude: json['longitude'] != null ? double.tryParse(json['longitude'].toString()) : null,
       merchant: json['merchant'] as Map<String, dynamic>?,
       rider: json['rider'] as Map<String, dynamic>?,
-      createdAt: json['created_at'] == null ? null : DateTime.parse(json['created_at'] as String),
-      updatedAt: json['updated_at'] == null ? null : DateTime.parse(json['updated_at'] as String),
+      createdAt: json['created'] == null ? (json['created_at'] == null ? null : DateTime.parse(json['created_at'])) : DateTime.parse(json['created']),
+      updatedAt: json['updated'] == null ? (json['updated_at'] == null ? null : DateTime.parse(json['updated_at'])) : DateTime.parse(json['updated']),
     );
   }
 

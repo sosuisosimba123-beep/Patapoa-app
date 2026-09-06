@@ -1,0 +1,11 @@
+.idea/
+project-name/vendor/
+project-name/node_modules/
+project-name/storage/*.key
+project-name/storage/framework/cache/data/*
+project-name/storage/framework/sessions/*
+project-name/storage/framework/testing/*
+project-name/storage/framework/views/*
+project-name/storage/logs/*
+project-name/.env
+project-name/.phpunit.result.cache

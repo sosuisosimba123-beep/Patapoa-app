@@ -30,8 +30,13 @@ class _RiderLoginScreenState extends State<RiderLoginScreen> {
     }
 
     final authProvider = provider.Provider.of<AuthProvider>(context, listen: false);
+    String identity = _phoneController.text.trim();
+    if (identity.startsWith('+')) {
+      identity = identity.substring(1);
+    }
+
     final success = await authProvider.login(
-      _phoneController.text,
+      identity,
       _passwordController.text,
       userType: 'rider',
     );
@@ -65,7 +70,7 @@ class _RiderLoginScreenState extends State<RiderLoginScreen> {
             children: [
               const SizedBox(height: 40),
               Image.asset(
-                'assets/images/patapoa official logo.png',
+                'assets/images/patapoa new logo.png',
                 height: 100,
                 fit: BoxFit.contain,
               ),

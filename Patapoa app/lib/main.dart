@@ -21,6 +21,7 @@ import 'package:patapoa/models/order.dart';
 // Auth Screens
 import 'package:patapoa/features/auth/login_screen.dart';
 import 'package:patapoa/features/auth/register_screen.dart';
+import 'package:patapoa/features/auth/forgot_password_screen.dart';
 import 'package:patapoa/features/role_selection/role_selection_screen.dart';
 
 // Customer Screens
@@ -68,22 +69,40 @@ import 'package:patapoa/screens/rider/rider_withdraw_success_screen.dart';
 import 'package:patapoa/utils/osm_tester.dart';
 import 'package:patapoa/services/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:patapoa/services/pocketbase_services.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:patapoa/utils/analytics_service.dart';
+import 'package:patapoa/firebase_options.dart';
+import 'dart:async';
 
 void main() async {
-  // Global Error Handler
-  FlutterError.onError = (details) {
-    FlutterError.presentError(details);
-    debugPrint("CRITICAL ERROR: ${details.exception}");
-  };
+  runZonedGuarded(() async {
+    // Global Error Handler
+    FlutterError.onError = (details) {
+      FlutterError.presentError(details);
+      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+      debugPrint("CRITICAL ERROR: ${details.exception}");
+    };
 
-  try {
     WidgetsFlutterBinding.ensureInitialized();
+
+    // Set up asynchronous error handling
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
+    try {
+      await initPocketBase();
+    } catch (e) {
+      debugPrint("PocketBase init failed: $e");
+    }
 
     // Fix for potential login/auth sync issues
     if (kDebugMode) {
-        debugPrint("Clearing local storage for clean test...");
-        // const storage = FlutterSecureStorage();
-        // await storage.deleteAll();
+      debugPrint("Clearing local storage for clean test...");
+      // const storage = FlutterSecureStorage();
+      // await storage.deleteAll();
     }
 
     // 1. Load Env
@@ -95,7 +114,11 @@ void main() async {
 
     // 2. Initialize Firebase
     try {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      // Enable Crashlytics collection in non-debug mode or as per requirement
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
     } catch (e) {
       debugPrint("Firebase init failed: $e");
     }
@@ -120,13 +143,7 @@ void main() async {
         child: PatapoaApp(),
       ),
     );
-  } catch (e, stackTrace) {
-    debugPrint("App failed to start: $e");
-    debugPrint(stackTrace.toString());
-
-    // Emergency Fallback App
-    runApp(MaterialApp(home: Scaffold(body: Center(child: Text("Fatal Error on Startup: $e")))));
-  }
+  }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
 }
 
 class PatapoaApp extends StatelessWidget {
@@ -138,6 +155,7 @@ class PatapoaApp extends StatelessWidget {
     final router = GoRouter(
       initialLocation: '/role',
       debugLogDiagnostics: true,
+      observers: [AnalyticsService.observer],
       routes: [
         GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
         GoRoute(
@@ -147,6 +165,7 @@ class PatapoaApp extends StatelessWidget {
             return RegisterScreen(initialRole: role);
           },
         ),
+        GoRoute(path: '/forgot-password', builder: (context, state) => const ForgotPasswordScreen()),
         GoRoute(path: '/role', builder: (context, state) => const RoleSelectionScreen()),
 
         // Customer

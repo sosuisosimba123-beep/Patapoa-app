@@ -22,36 +22,42 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
       body: AnimatedLiquidBackground(
         child: Column(
           children: [
-            // Top Space Section - Dark Background with Logo
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.35,
-              decoration: const BoxDecoration(
-                color: Color(0xFF181C1C), // Dark background
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(32),
+            // Top Space Section - Glass Header with Logo
+            LiquidGlassContainer(
+              borderRadius: 0,
+              padding: EdgeInsets.zero,
+              blur: 20,
+              opacity: 0.8,
+              color: const Color(0xFF181C1C),
+              child: Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.35,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(32),
+                  ),
                 ),
-              ),
-              child: SafeArea(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/patapoa official logo.png',
-                        height: 120,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'PATAPOA',
-                        style: textTheme.headlineMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
+                child: SafeArea(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/patapoa new logo.png',
+                          height: 140,
+                          fit: BoxFit.contain,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 12),
+                        Text(
+                          'PATAPOA',
+                          style: textTheme.headlineMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 4,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart' as provider;
 import '../../providers/auth_provider.dart';
 import '../../widgets/liquid_glass_container.dart';
+import '../../utils/crashlytics_service.dart';
+import 'package:flutter/foundation.dart';
 
 class CustomerProfileScreen extends StatelessWidget {
   const CustomerProfileScreen({super.key});
@@ -34,12 +36,49 @@ class CustomerProfileScreen extends StatelessWidget {
             _ProfileTile(icon: Icons.payment_outlined, title: 'Payment Methods', onTap: () {
                // Navigation to Payment settings
             }),
-          ], colorScheme),
+          ]),
           const SizedBox(height: 24),
           _buildSection('Support', [
             _ProfileTile(icon: Icons.help_outline, title: 'Help Center', onTap: () {}),
             _ProfileTile(icon: Icons.privacy_tip, title: 'Privacy Policy', onTap: () {}),
-          ], colorScheme),
+          ]),
+          if (kDebugMode) ...[
+            const SizedBox(height: 24),
+            _buildSection('Debug (Internal)', [
+              _ProfileTile(
+                icon: Icons.my_location,
+                title: 'Sync My Location (PB Test)',
+                onTap: () async {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Updating location in PocketBase...')),
+                  );
+                  final success = await auth.updateUserLocation();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(success 
+                          ? 'Location synced successfully!' 
+                          : 'Update failed: ${auth.errorMessage}'),
+                        backgroundColor: success ? Colors.green : Colors.red,
+                      ),
+                    );
+                  }
+                },
+              ),
+              _ProfileTile(
+                icon: Icons.bug_report_outlined,
+                title: 'Test Crash (Crashlytics)',
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Triggering crash in 2 seconds...')),
+                  );
+                  Future.delayed(const Duration(seconds: 2), () {
+                    CrashlyticsService().triggerTestCrash();
+                  });
+                },
+              ),
+            ]),
+          ],
           const SizedBox(height: 32),
           FilledButton.icon(
             onPressed: () async {
@@ -72,7 +111,7 @@ class CustomerProfileScreen extends StatelessWidget {
     return const CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50));
   }
 
-  Widget _buildSection(String title, List<Widget> children, ColorScheme colorScheme) {
+  Widget _buildSection(String title, List<Widget> children) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: const EdgeInsets.only(left: 8, bottom: 8), child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold))),
       LiquidGlassContainer(

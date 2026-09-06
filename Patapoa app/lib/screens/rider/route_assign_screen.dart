@@ -1,5 +1,7 @@
 import 'dart:math' as math;
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:latlong2/latlong.dart';
@@ -9,7 +11,7 @@ import '../../features/delivery_partner/delivery_partner_models.dart';
 import '../../config/map_config.dart';
 import '../../services/osm_service.dart';
 import '../../services/map_marker_service.dart';
-
+import '../../services/delivery_partner_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RouteAssignScreen extends StatefulWidget {
@@ -23,8 +25,10 @@ class RouteAssignScreen extends StatefulWidget {
 
 class _RouteAssignScreenState extends State<RouteAssignScreen> {
   final OsmService _osmService = OsmService();
+  final DeliveryPartnerService _riderService = DeliveryPartnerService();
   List<LatLng> _routePoints = [];
   late DeliveryOrder _order;
+  bool _isUpdating = false;
 
   @override
   void initState() {
@@ -166,6 +170,17 @@ class _RouteAssignScreenState extends State<RouteAssignScreen> {
   }
 
   Widget _buildBottomSheet(ColorScheme colorScheme, TextTheme textTheme, DeliveryOrder order) {
+    String buttonText = 'Arrived at Pickup';
+    String nextStatus = 'picked_up';
+
+    if (order.status == 'picked_up') {
+      buttonText = 'Arrived at Customer';
+      nextStatus = 'delivered';
+    } else if (order.status == 'delivered') {
+      buttonText = 'Complete Order';
+      nextStatus = 'completed';
+    }
+
     return Positioned(
       bottom: 0, left: 0, right: 0,
       child: Container(
@@ -179,12 +194,73 @@ class _RouteAssignScreenState extends State<RouteAssignScreen> {
               Text(order.customerName, style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
               Text('${order.customerRating}★ Top Tier', style: textTheme.bodyMedium),
             ])),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.call), style: IconButton.styleFrom(backgroundColor: colorScheme.primaryContainer)),
+            IconButton(
+              onPressed: () => _launchCaller(order.customerPhone), 
+              icon: const Icon(Icons.call), 
+              style: IconButton.styleFrom(backgroundColor: colorScheme.primaryContainer)
+            ),
           ]),
           const SizedBox(height: 24),
-          SizedBox(width: double.infinity, height: 60, child: FilledButton(onPressed: () {}, child: const Text('Arrived at Pickup'))),
+          SizedBox(
+            width: double.infinity, 
+            height: 60, 
+            child: FilledButton(
+              onPressed: _isUpdating ? null : () => _updateStatus(int.parse(order.id), nextStatus), 
+              child: _isUpdating 
+                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : Text(buttonText)
+            )
+          ),
         ]),
       ),
     );
+  }
+
+  Future<void> _launchCaller(String phone) async {
+    final uri = Uri.parse('tel:$phone');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
+  Future<void> _updateStatus(int orderId, String status) async {
+    setState(() => _isUpdating = true);
+    try {
+      await _riderService.updateOrderStatus(orderId, status).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw TimeoutException('Connection timed out. Please try again.'),
+      );
+      if (status == 'completed') {
+        if (mounted) {
+          context.go('/delivery-partner/home');
+        }
+        return;
+      }
+      // Refresh local order state
+      if (mounted) {
+        setState(() {
+          _order = DeliveryOrder(
+            id: _order.id,
+            customerName: _order.customerName,
+            customerRating: _order.customerRating,
+            customerPhone: _order.customerPhone,
+            pickupLocation: _order.pickupLocation,
+            dropoffLocation: _order.dropoffLocation,
+            pickupDistance: _order.pickupDistance,
+            items: _order.items,
+            totalAmount: _order.totalAmount,
+            deliveryFee: _order.deliveryFee,
+            earnings: _order.earnings,
+            status: status,
+            orderDate: _order.orderDate,
+            isCashOnDelivery: _order.isCashOnDelivery,
+          );
+        });
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    } finally {
+      if (mounted) setState(() => _isUpdating = false);
+    }
   }
 }
