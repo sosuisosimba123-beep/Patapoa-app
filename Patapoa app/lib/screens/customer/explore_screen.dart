@@ -574,31 +574,40 @@ class _SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return LiquidGlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      borderRadius: 24,
-      opacity: 0.1,
-      blur: 15,
-      color: Colors.black,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        border: Border.all(color: Colors.black12, width: 0.5),
+      ),
       child: TextField(
         controller: controller,
         onSubmitted: onSubmitted,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
         decoration: InputDecoration(
-          hintText: 'Search for groceries...',
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
+          hintText: 'Search for groceries, snacks...',
+          hintStyle: TextStyle(color: Colors.grey.withOpacity(0.6), fontWeight: FontWeight.normal),
           prefixIcon: Icon(Icons.search, color: colorScheme.primary),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.close, color: Colors.white54),
-            onPressed: () {
-              controller.clear();
-              onSubmitted('');
-            }
-          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          suffixIcon: controller.text.isNotEmpty 
+            ? IconButton(
+                icon: const Icon(Icons.close, size: 20),
+                onPressed: () {
+                  controller.clear();
+                  onSubmitted('');
+                }
+              )
+            : const Icon(Icons.tune_outlined, color: Colors.grey, size: 20),
         ),
       ),
     );

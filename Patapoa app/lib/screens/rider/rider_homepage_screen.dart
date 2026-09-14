@@ -29,16 +29,27 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
   bool _isOnline = false;
   List<Map<String, dynamic>> _orders = [];
   Timer? _locationTimer;
+  Map<String, dynamic>? _profile;
 
   @override
   void initState() {
     super.initState();
+    _loadProfile();
     _loadOrders();
 
     // Initialize custom markers
     WidgetsBinding.instance.addPostFrameCallback((_) {
       MapMarkerService().initialize(context);
     });
+  }
+
+  Future<void> _loadProfile() async {
+    try {
+      final profile = await _riderService.getProfile();
+      if (mounted) setState(() { _profile = profile; });
+    } catch (e) {
+      debugPrint('Error loading profile: $e');
+    }
   }
 
   Future<void> _loadOrders() async {
@@ -161,10 +172,20 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
               height: 32,
               fit: BoxFit.contain,
             ),
-            const SizedBox(width: 8),
-            Text('Partner', style: textTheme.titleMedium?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold)),
+            const SizedBox(width: 12),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Partner', style: textTheme.labelSmall?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                Text(
+                  _profile?['name'] ?? _profile?['user']?['name'] ?? 'Loading...', 
+                  style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.black87)
+                ),
+              ],
+            ),
             const Spacer(),
-            CircleAvatar(radius: 20, backgroundColor: colorScheme.primaryContainer, child: Icon(Icons.person, color: colorScheme.primary)),
+            CircleAvatar(radius: 20, backgroundColor: colorScheme.primaryContainer.withOpacity(0.3), child: Icon(Icons.person, color: colorScheme.primary)),
           ])),
         ),
       ),

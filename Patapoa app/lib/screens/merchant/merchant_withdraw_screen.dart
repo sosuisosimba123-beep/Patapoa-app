@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/merchant_service.dart';
 import '../../utils/number_utils.dart';
-import '../../widgets/patapoa_glass_card.dart';
 
 class MerchantWithdrawScreen extends StatefulWidget {
   const MerchantWithdrawScreen({super.key});
@@ -59,7 +58,7 @@ class _MerchantWithdrawScreenState extends State<MerchantWithdrawScreen> {
         'provider': _selectedProvider.toLowerCase().replaceAll(' ', '_'),
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Payout request submitted successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Withdrawal request submitted!')));
         context.pop();
       }
     } catch (e) {
@@ -78,16 +77,11 @@ class _MerchantWithdrawScreenState extends State<MerchantWithdrawScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
-      appBar: AppBar(
-        title: const Text('Withdraw Funds', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconData(0x0, fontFamily: '').codePoint != 0 ? const IconThemeData(color: Colors.white) : const IconThemeData(color: Colors.white),
-      ),
+      appBar: AppBar(title: const Text('Withdraw Funds')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Form(
@@ -95,32 +89,37 @@ class _MerchantWithdrawScreenState extends State<MerchantWithdrawScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start, 
             children: [
-              _buildBalanceCard(textTheme),
+              _buildBalanceCard(colorScheme, textTheme),
               const SizedBox(height: 32),
               
-              _buildSectionTitle('WITHDRAWAL AMOUNT'),
+              _buildLabel('WITHDRAWAL AMOUNT'),
               const SizedBox(height: 12),
-              _buildGlassTextField(
+              TextFormField(
                 controller: _amountController,
-                hint: 'e.g. 50,000',
-                prefixText: 'TZS ',
                 keyboardType: TextInputType.number,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                decoration: const InputDecoration(
+                  prefixText: 'TZS ',
+                  hintText: '0.00',
+                ),
                 validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
               ),
               
               const SizedBox(height: 32),
-              _buildSectionTitle('PAYOUT PROVIDER'),
+              _buildLabel('PAYOUT PROVIDER'),
               const SizedBox(height: 12),
-              _buildProviderChips(),
+              _buildProviderGrid(),
               
               const SizedBox(height: 32),
-              _buildSectionTitle('MOBILE MONEY NUMBER'),
+              _buildLabel('MOBILE MONEY NUMBER'),
               const SizedBox(height: 12),
-              _buildGlassTextField(
+              TextFormField(
                 controller: _phoneController,
-                hint: '07XX XXX XXX',
-                prefixText: '+255 ',
                 keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  prefixText: '+255 ',
+                  hintText: '07XX XXX XXX',
+                ),
                 validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
               ),
               
@@ -130,14 +129,9 @@ class _MerchantWithdrawScreenState extends State<MerchantWithdrawScreen> {
                 height: 60, 
                 child: FilledButton(
                   onPressed: _isLoading ? null : _requestWithdrawal,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Colors.cyanAccent,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
                   child: _isLoading 
-                    ? const CircularProgressIndicator(color: Colors.black) 
-                    : const Text('CONFIRM WITHDRAWAL', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
+                    ? const CircularProgressIndicator(color: Colors.white) 
+                    : const Text('CONFIRM WITHDRAWAL', style: TextStyle(fontWeight: FontWeight.bold)),
                 )
               ),
             ],
@@ -147,89 +141,60 @@ class _MerchantWithdrawScreenState extends State<MerchantWithdrawScreen> {
     );
   }
 
-  Widget _buildBalanceCard(TextTheme textTheme) {
-    return PatapoaGlassCard(
-      color: Colors.cyan,
-      opacity: 0.15,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('CURRENT AVAILABLE BALANCE', style: TextStyle(color: Colors.cyanAccent, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
-          const SizedBox(height: 8),
-          Text(
-            'TZS ${NumberUtils.formatCurrency(_stats?['available_balance'] ?? 0)}', 
-            style: textTheme.headlineMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w900)
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2),
-    );
-  }
-
-  Widget _buildGlassTextField({
-    required TextEditingController controller,
-    required String hint,
-    required String prefixText,
-    required TextInputType keyboardType,
-    String? Function(String?)? validator,
-  }) {
-    return PatapoaGlassCard(
-      padding: EdgeInsets.zero,
-      borderRadius: 16,
-      opacity: 0.05,
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        validator: validator,
-        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-        decoration: InputDecoration(
-          prefixText: prefixText,
-          prefixStyle: const TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold),
-          hintText: hint,
-          hintStyle: const TextStyle(color: Colors.white12),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.all(20),
+  Widget _buildBalanceCard(ColorScheme colorScheme, TextTheme textTheme) {
+    return Card(
+      color: colorScheme.primaryContainer.withOpacity(0.1),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: colorScheme.primary.withOpacity(0.2))),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('AVAILABLE BALANCE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.grey)),
+                const SizedBox(height: 8),
+                Text(
+                  'TZS ${NumberUtils.formatCurrency(_stats?['available_balance'] ?? 0)}', 
+                  style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900, color: colorScheme.primary)
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildProviderChips() {
+  Widget _buildLabel(String text) {
+    return Text(text, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1));
+  }
+
+  Widget _buildProviderGrid() {
     final providers = ['M-Pesa', 'Tigo Pesa', 'Airtel Money', 'HaloPesa'];
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: providers.map((p) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 3, crossAxisSpacing: 12, mainAxisSpacing: 12),
+      itemCount: providers.length,
+      itemBuilder: (context, i) {
+        final p = providers[i];
         final isSelected = _selectedProvider == p;
         return InkWell(
           onTap: () => setState(() => _selectedProvider = p),
           borderRadius: BorderRadius.circular(12),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.cyanAccent.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05),
+              color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isSelected ? Colors.cyanAccent : Colors.white10,
-                width: 1.5,
-              ),
+              border: Border.all(color: isSelected ? Colors.transparent : Colors.black12),
             ),
-            child: Text(
-              p,
-              style: TextStyle(
-                color: isSelected ? Colors.cyanAccent : Colors.white60,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
+            alignment: Alignment.center,
+            child: Text(p, style: TextStyle(color: isSelected ? Colors.white : Colors.black87, fontWeight: FontWeight.bold)),
           ),
         );
-      }).toList(),
+      },
     );
   }
 }

@@ -19,6 +19,14 @@ class PrimaryCategory {
     this.secondaryCategories,
   });
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PrimaryCategory && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
   factory PrimaryCategory.fromJson(Map<String, dynamic> json) {
     return PrimaryCategory(
       id: NumberUtils.paramInt(json['id']),
@@ -51,6 +59,14 @@ class SecondaryCategory {
     this.imageUrl,
     this.primaryCategory,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SecondaryCategory && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 
   factory SecondaryCategory.fromJson(Map<String, dynamic> json) {
     return SecondaryCategory(

@@ -260,14 +260,15 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      debugPrint('Starting Google Fast-Track for $userType...');
+      debugPrint('Initiating Google Fast-Track Sign-In...');
       final authData = await pb.collection('users').authWithOAuth2(
         'google',
         (url) async {
-          await FlutterWebAuth2.authenticate(
+          final result = await FlutterWebAuth2.authenticate(
             url: url.toString(),
             callbackUrlScheme: 'com.nacci.patapoa.app',
           );
+          return result;
         }
       );
 
@@ -277,25 +278,27 @@ class AuthProvider with ChangeNotifier {
         
         // Auto-assign role if missing or if user explicitly chose to upgrade
         if (currentRole == null || (currentRole == 'customer' && userType != 'customer')) {
+           final targetRole = (currentRole == 'customer' && userType != 'customer') ? userType : (currentRole ?? userType);
            await pb.collection('users').update(model.id, body: {
-             'user_type': userType,
-             'userType': userType,
-             'role': userType,
+             'user_type': targetRole,
+             'userType': targetRole,
+             'role': targetRole,
            });
+           // Force refresh to update local authStore model immediately
            await pb.collection('users').authRefresh();
         }
 
-        // Fast-track: Sync with MySQL in background
+        // Parallel background sync with Laravel/MySQL
         _syncWithLaravel(model, userType);
         
         await _syncFcmToken();
-        debugPrint('Google Auth Successful. Redirecting...');
+        debugPrint('Authentication successful. Directing to app...');
         return true;
       }
       return false;
     } catch (e) {
       debugPrint('Google Auth Error: $e');
-      _errorMessage = 'Login failed. Please try again.';
+      _errorMessage = 'Google Sign-In was cancelled or failed. Please try again.';
       return false;
     } finally {
       _isLoading = false;

@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import '../../../services/osm_service.dart';
 import '../../../services/api_service.dart';
+import '../../../services/pocketbase_services.dart';
 import '../../../providers/location_provider.dart';
 import '../../../config/map_config.dart';
+import '../../../utils/app_permissions.dart';
 
 class StoreLocationPickerScreen extends StatefulWidget {
   const StoreLocationPickerScreen({super.key});
@@ -33,6 +35,15 @@ class _StoreLocationPickerScreenState extends State<StoreLocationPickerScreen> {
   void initState() {
     super.initState();
     _cityController.text = 'Dar es Salaam'; // Default
+    // Auto-detect location on entry
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initLocation());
+  }
+
+  Future<void> _initLocation() async {
+    final hasPermission = await AppPermissions.requestLocationPermission(context);
+    if (hasPermission) {
+      await _locateMe();
+    }
   }
 
   Future<void> _detectAddress(LatLng pos) async {
@@ -54,9 +65,10 @@ class _StoreLocationPickerScreenState extends State<StoreLocationPickerScreen> {
     final locationProvider = Provider.of<LocationProvider>(context, listen: false);
     await locationProvider.refreshPosition();
     
-    if (locationProvider.currentPosition != null) {
+    if (locationProvider.currentPosition != null && mounted) {
       setState(() {
         _selectedLocation = locationProvider.currentPosition!;
+        _hasInitialized = true;
       });
       _mapController.move(_selectedLocation, 16.0);
       _detectAddress(_selectedLocation);
@@ -128,6 +140,7 @@ class _StoreLocationPickerScreenState extends State<StoreLocationPickerScreen> {
 
     setState(() => _isLoading = true);
     try {
+      // 1. Save to MySQL (Laravel)
       await _apiService.post('/merchant/location', {
         'latitude': _selectedLocation.latitude,
         'longitude': _selectedLocation.longitude,
@@ -136,6 +149,31 @@ class _StoreLocationPickerScreenState extends State<StoreLocationPickerScreen> {
         'city': _cityController.text,
         'address': _detectedAddress,
       });
+
+      // 2. Save to PocketBase (merchant_activity)
+      try {
+        final userId = pb.authStore.model?.id;
+        if (userId != null) {
+          final records = await pb.collection('merchant_activity').getList(
+            filter: 'user = "$userId"',
+            page: 1, perPage: 1
+          );
+
+          final data = {
+            'user': userId,
+            'is_accepting_orders': true,
+            'last_seen': DateTime.now().toIso8601String(),
+          };
+
+          if (records.items.isNotEmpty) {
+            await pb.collection('merchant_activity').update(records.items.first.id, body: data);
+          } else {
+            await pb.collection('merchant_activity').create(body: data);
+          }
+        }
+      } catch (e) {
+        debugPrint('PocketBase location sync warning: $e');
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

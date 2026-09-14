@@ -78,8 +78,27 @@ class _AddProductScreenState extends State<AddProductScreen> {
       _brandController.text = master.brand ?? '';
       _imageUrl = master.primaryImageUrl;
       _barcodeController.text = master.barcode ?? '';
-      _selectedSecondary = master.secondaryCategory;
-      _selectedPrimary = master.secondaryCategory?.primaryCategory;
+      
+      // Match the primary category from the loaded list to ensure dropdown works
+      if (master.secondaryCategory?.primaryCategoryId != null) {
+        try {
+          _selectedPrimary = _primaryCategories.firstWhere(
+            (c) => c.id == master.secondaryCategory!.primaryCategoryId
+          );
+          
+          // Match the secondary category from the primary's list
+          if (master.secondaryCategoryId != null) {
+            _selectedSecondary = _selectedPrimary!.secondaryCategories?.firstWhere(
+              (c) => c.id == master.secondaryCategoryId
+            );
+          }
+        } catch (_) {
+          // If not found in current list, fallback to the one from master
+          _selectedSecondary = master.secondaryCategory;
+          _selectedPrimary = master.secondaryCategory?.primaryCategory;
+        }
+      }
+      
       _categorySlug = master.categorySlug;
     });
   }
@@ -280,7 +299,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Column(
       children: [
         DropdownButtonFormField<PrimaryCategory>(
-          value: _selectedPrimary,
+          value: _primaryCategories.contains(_selectedPrimary) ? _selectedPrimary : null,
           decoration: const InputDecoration(labelText: 'Main Category', prefixIcon: Icon(Icons.category_outlined)),
           items: _primaryCategories.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
           onChanged: (v) => setState(() { 
@@ -291,7 +310,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<SecondaryCategory>(
-          value: _selectedSecondary,
+          value: (_selectedPrimary?.secondaryCategories?.contains(_selectedSecondary) ?? false) ? _selectedSecondary : null,
           decoration: const InputDecoration(labelText: 'Sub Category', prefixIcon: Icon(Icons.subdirectory_arrow_right_rounded)),
           items: (_selectedPrimary?.secondaryCategories ?? []).map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
           onChanged: (v) => setState(() { 
