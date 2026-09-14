@@ -38,16 +38,11 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
             'image_url': data['image_url'],
           });
         }
-      } else {
-        if (mounted) {
-           _showNotFoundDialog(barcode);
-        }
       }
     } catch (e) {
+      // Gracefully handle "Not Found" or any error as a prompt for manual addition
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-        _controller.start();
-        setState(() => _isProcessing = false);
+        _showNotFoundDialog(barcode);
       }
     }
   }

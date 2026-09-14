@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Image.asset(
-                  'assets/images/patapoa new logo.png',
+                  'assets/images/patapoa logo.jpg',
                   height: 100,
                   fit: BoxFit.contain,
                 ),

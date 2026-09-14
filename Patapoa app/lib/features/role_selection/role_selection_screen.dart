@@ -27,7 +27,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   children: [
                     const SizedBox(height: 40),
                     Image.asset(
-                      'assets/images/patapoa new logo.png',
+                      'assets/images/patapoa logo.jpg',
                       height: 120,
                       fit: BoxFit.contain,
                     ),
@@ -73,11 +73,11 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
 
     return ListTile(
       onTap: () => setState(() => _selectedRole = id),
-      leading: Icon(icon, color: isSelected ? colorScheme.primary : null, size: 24),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 10)),
+      leading: Icon(icon, color: isSelected ? colorScheme.primary : null, size: 22),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+      subtitle: Text(subtitle, style: const TextStyle(fontSize: 9)),
       trailing: Transform.scale(
-        scale: 0.7,
+        scale: 0.6,
         child: Radio<String>(
           value: id,
           groupValue: _selectedRole,
@@ -85,9 +85,10 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         ),
       ),
       dense: true,
+      visualDensity: VisualDensity.compact,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: isSelected ? colorScheme.primary : Colors.black12, width: isSelected ? 1.5 : 1),
+        side: BorderSide(color: isSelected ? colorScheme.primary : Colors.black12, width: 1.5),
       ),
     );
   }

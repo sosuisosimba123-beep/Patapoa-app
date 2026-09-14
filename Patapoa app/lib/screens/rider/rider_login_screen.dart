@@ -85,7 +85,7 @@ class _RiderLoginScreenState extends State<RiderLoginScreen> {
             children: [
               const SizedBox(height: 40),
               Image.asset(
-                'assets/images/patapoa new logo.png',
+                'assets/images/patapoa logo.jpg',
                 height: 100,
                 fit: BoxFit.contain,
               ),

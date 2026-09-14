@@ -157,7 +157,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
           height: 100,
           child: SafeArea(child: Row(children: [
             Image.asset(
-              'assets/images/patapoa new logo.png',
+              'assets/images/patapoa logo.jpg',
               height: 32,
               fit: BoxFit.contain,
             ),

@@ -98,18 +98,39 @@ class AuthProvider with ChangeNotifier {
         final authData = await pb.collection('users').authWithPassword(email, password);
         debugPrint('PocketBase Login success: ${authData.record?.id}');
         
-        // 2. NEW: MySQL (Laravel) Login/Sync
+        // 2. NEW: Aggressive MySQL Sync/Login
         try {
           final res = await _apiService.post('/auth/login', {
             'login': email,
             'password': password,
             'user_type': userType,
           });
+          
           if (res.statusCode == 200) {
             final data = jsonDecode(res.body);
             final token = data['token'] ?? data['access_token'];
             if (token != null) await _apiService.setAuthToken(token);
             debugPrint('MySQL Login/Token Sync success');
+          } else if (res.statusCode == 404 || res.statusCode == 401) {
+            // User might exist in PB but not Laravel yet (Sync Gap)
+            debugPrint('User missing in MySQL. Attempting auto-sync registration...');
+            final pbModel = authData.record!;
+            await _apiService.post('/auth/register', {
+              'name': pbModel.data['name'] ?? 'User',
+              'phone': pbModel.data['phone'] ?? pbModel.username,
+              'email': email,
+              'password': password,
+              'user_type': userType ?? pbModel.data['user_type'] ?? 'customer',
+            });
+            // Try login again after auto-sync
+            final retryRes = await _apiService.post('/auth/login', {
+              'login': email, 'password': password, 'user_type': userType,
+            });
+            if (retryRes.statusCode == 200) {
+              final data = jsonDecode(retryRes.body);
+              final token = data['token'] ?? data['access_token'];
+              if (token != null) await _apiService.setAuthToken(token);
+            }
           }
         } catch (e) {
           debugPrint('Warning: MySQL Sync failed during login: $e');
@@ -243,11 +264,10 @@ class AuthProvider with ChangeNotifier {
       final authData = await pb.collection('users').authWithOAuth2(
         'google',
         (url) async {
-          final result = await FlutterWebAuth2.authenticate(
+          await FlutterWebAuth2.authenticate(
             url: url.toString(),
             callbackUrlScheme: 'com.nacci.patapoa.app',
           );
-          return result;
         }
       );
 
@@ -288,7 +308,7 @@ class AuthProvider with ChangeNotifier {
     try {
       await _apiService.post('/auth/social-sync', {
         'pb_id': pbUser.id,
-        'email': pbUser.email,
+        'email': pbUser.data['email'] ?? '',
         'name': pbUser.data['name'],
         'user_type': userType,
       });

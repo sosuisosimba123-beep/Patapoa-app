@@ -129,7 +129,7 @@ class PatapoaProductImage extends StatelessWidget {
         errorBuilder: (context, error, stackTrace) {
           // Final fallback to a local asset if even the network category image fails
           return Image.asset(
-            'assets/images/patapoa new logo.png', // Or some other generic fallback asset you have
+            'assets/images/patapoa logo.jpg', // Or some other generic fallback asset you have
             width: width,
             height: height,
             fit: BoxFit.contain,
