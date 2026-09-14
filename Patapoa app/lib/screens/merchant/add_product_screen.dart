@@ -24,7 +24,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
   late final TextEditingController _brandController;
   final _priceController = TextEditingController();
   final _descController = TextEditingController();
-  final _stockController = TextEditingController();
   late final TextEditingController _barcodeController;
   late final TextEditingController _unitController;
   
@@ -43,8 +42,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   void initState() {
     super.initState();
-    
-    // Initialize controllers with initial data if provided
     final data = widget.initialData;
     _nameController = TextEditingController(text: data?['name'] ?? '');
     _brandController = TextEditingController(text: data?['brand'] ?? '');
@@ -52,7 +49,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _unitController = TextEditingController(text: data?['unit'] ?? '');
     _imageUrl = data?['image_url'];
     _masterProductId = data?['master_product_id'];
-
     _loadCategories();
   }
 
@@ -70,7 +66,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _brandController.dispose();
     _priceController.dispose();
     _descController.dispose();
-    _stockController.dispose();
     _barcodeController.dispose();
     _unitController.dispose();
     super.dispose();
@@ -99,11 +94,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     if (selected != null) {
       setState(() {
-        _imageUrl = selected.src; // Use the Pexels URL directly
+        _imageUrl = selected.src;
       });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pexels image URL linked to product!')));
-      }
     }
   }
 
@@ -115,10 +107,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
     }
 
     final price = double.tryParse(_priceController.text.replaceAll(RegExp(r'[^0-9.]'), ''));
-    final stock = int.tryParse(_stockController.text.replaceAll(RegExp(r'[^0-9]'), ''));
-
-    if (price == null || stock == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid price or stock values')));
+    if (price == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid price value')));
       return;
     }
 
@@ -131,7 +121,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         'unit': _unitController.text,
         'price': price,
         'description': _descController.text,
-        'stock_count': stock,
+        'stock_count': 999, // Stock count removed from UI, defaulted to high value for MVP
         'barcode': _barcodeController.text,
         'secondary_category_id': _selectedSecondary!.id,
         'image_url': _imageUrl,
@@ -160,7 +150,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Product'),
+        title: _buildImageSearchBar(),
         leading: IconButton(onPressed: () => context.pop(), icon: const Icon(Icons.arrow_back)),
         actions: [
           IconButton(
@@ -178,50 +168,76 @@ class _AddProductScreenState extends State<AddProductScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSearchAndFilter(colorScheme, textTheme),
-                  const SizedBox(height: 24),
                   Center(
-                    child: Column(
-                      children: [
-                        PatapoaProductImage(
-                          imageUrl: _imageUrl,
-                          categorySlug: _categorySlug,
-                          width: 120, height: 120,
-                        ),
-                        TextButton.icon(
-                          onPressed: _showPexelsPicker,
-                          icon: const Icon(Icons.image_search),
-                          label: const Text('Search High-Quality Image'),
-                        ),
-                      ],
+                    child: GestureDetector(
+                      onTap: _showPexelsPicker,
+                      child: Column(
+                        children: [
+                          if (_imageUrl == null)
+                            Container(
+                              width: 160, height: 160,
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: colorScheme.primary.withOpacity(0.2), width: 2, style: BorderStyle.solid),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add_rounded, size: 48, color: colorScheme.primary),
+                                  const SizedBox(height: 8),
+                                  Text('ADD PRODUCT IMAGE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: colorScheme.primary, letterSpacing: 1)),
+                                ],
+                              ),
+                            )
+                          else
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(24),
+                              child: PatapoaProductImage(
+                                imageUrl: _imageUrl,
+                                categorySlug: _categorySlug,
+                                width: 160, height: 160,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          const SizedBox(height: 12),
+                          Text('Linked to Patapoa Library', style: textTheme.labelSmall?.copyWith(color: Colors.grey)),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-
+                  const SizedBox(height: 32),
+                  _buildSectionLabel('BASIC INFORMATION'),
                   _buildTextField(_nameController, 'Product Name', Icons.shopping_bag_outlined),
                   _buildCustomizableField(controller: _brandController, label: 'Brand', icon: Icons.branding_watermark_outlined, suggestions: _commonBrands),
                   _buildCustomizableField(controller: _unitController, label: 'Unit / Size', icon: Icons.straighten_outlined, suggestions: _commonUnits),
 
-                  _buildTextField(_priceController, 'Price (TZS)', Icons.money, isNumber: true),
-                  _buildTextField(_descController, 'Notes (Optional)', Icons.description_outlined),
-                  _buildTextField(_stockController, 'Stock Count', Icons.inventory_2_outlined, isNumber: true),
+                  const SizedBox(height: 16),
+                  _buildSectionLabel('PRICING & DETAILS'),
+                  _buildTextField(_priceController, 'Price (TZS)', Icons.payments_outlined, isNumber: true),
+                  _buildTextField(_descController, 'Notes (Optional)', Icons.notes_rounded),
                   
+                  const SizedBox(height: 16),
+                  _buildSectionLabel('CATEGORY'),
                   _buildCategorySelection(),
                   
-                  _buildTextField(_barcodeController, 'Barcode (Optional)', Icons.qr_code, 
+                  const SizedBox(height: 16),
+                  _buildSectionLabel('INVENTORY SYNC'),
+                  _buildTextField(_barcodeController, 'Barcode (Optional)', Icons.qr_code_2_rounded, 
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.camera_alt_outlined),
                       onPressed: () => context.push('/merchant/barcode-scan'),
                     )
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
-                    height: 56,
+                    height: 60,
                     child: FilledButton(
                       onPressed: _saveToInventory,
-                      child: const Text('Save to Inventory', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: FilledButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                      child: const Text('SAVE TO INVENTORY', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -232,12 +248,40 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
+  Widget _buildSectionLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 12),
+      child: Text(label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 10, color: Colors.grey, letterSpacing: 1.5)),
+    );
+  }
+
+  Widget _buildImageSearchBar() {
+    return Container(
+      height: 40,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: TextField(
+        readOnly: true,
+        onTap: _showPexelsPicker,
+        decoration: const InputDecoration(
+          hintText: 'Search Patapoa Library...',
+          hintStyle: TextStyle(fontSize: 13),
+          prefixIcon: Icon(Icons.search, size: 20),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(vertical: 10),
+        ),
+      ),
+    );
+  }
+
   Widget _buildCategorySelection() {
     return Column(
       children: [
         DropdownButtonFormField<PrimaryCategory>(
           value: _selectedPrimary,
-          decoration: const InputDecoration(labelText: 'Main Category', prefixIcon: Icon(Icons.category), border: OutlineInputBorder()),
+          decoration: const InputDecoration(labelText: 'Main Category', prefixIcon: Icon(Icons.category_outlined)),
           items: _primaryCategories.map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
           onChanged: (v) => setState(() { 
             _selectedPrimary = v; 
@@ -248,14 +292,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
         const SizedBox(height: 16),
         DropdownButtonFormField<SecondaryCategory>(
           value: _selectedSecondary,
-          decoration: const InputDecoration(labelText: 'Sub Category', prefixIcon: Icon(Icons.subdirectory_arrow_right), border: OutlineInputBorder()),
+          decoration: const InputDecoration(labelText: 'Sub Category', prefixIcon: Icon(Icons.subdirectory_arrow_right_rounded)),
           items: (_selectedPrimary?.secondaryCategories ?? []).map((c) => DropdownMenuItem(value: c, child: Text(c.name))).toList(),
           onChanged: (v) => setState(() { 
             _selectedSecondary = v; 
             _categorySlug = v?.slug ?? 'other';
           }),
         ),
-        const SizedBox(height: 16),
       ],
     );
   }
@@ -268,7 +311,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon),
-          border: const OutlineInputBorder(),
           suffixIcon: PopupMenuButton<String>(
             icon: const Icon(Icons.arrow_drop_down),
             onSelected: (String v) => controller.text = v,
@@ -285,43 +327,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
-        decoration: InputDecoration(labelText: label, prefixIcon: Icon(icon), suffixIcon: suffixIcon, border: const OutlineInputBorder()),
+        decoration: InputDecoration(labelText: label, prefixIcon: Icon(icon), suffixIcon: suffixIcon),
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,
         validator: (v) {
-          if (!label.contains('Optional') && (v == null || v.trim().isEmpty)) {
-            return 'Required';
-          }
-          if (v != null && RegExp(r'[<>{}\[\]\\]').hasMatch(v)) {
-            return 'Invalid characters detected';
-          }
+          if (!label.contains('Optional') && (v == null || v.trim().isEmpty)) return 'Required';
           return null;
         },
       ),
-    );
-  }
-
-  Widget _buildSearchAndFilter(ColorScheme colorScheme, TextTheme textTheme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Autocomplete<MasterProduct>(
-          displayStringForOption: (option) => option.name,
-          optionsBuilder: (textEditingValue) async {
-            if (textEditingValue.text.isEmpty) return const Iterable<MasterProduct>.empty();
-            return await _productService.getMasterProducts(search: textEditingValue.text);
-          },
-          onSelected: _onMasterProductSelected,
-          fieldViewBuilder: (ctx, ctrl, node, onSubmit) => TextField(
-            controller: ctrl, focusNode: node,
-            decoration: InputDecoration(
-              hintText: 'Search catalog templates...',
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: IconButton(icon: const Icon(Icons.qr_code_scanner, color: Colors.blue), onPressed: () => context.push('/merchant/barcode-scan')),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

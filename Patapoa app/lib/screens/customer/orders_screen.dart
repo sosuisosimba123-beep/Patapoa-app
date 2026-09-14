@@ -75,9 +75,10 @@ class _CustomerOrdersScreenState extends State<CustomerOrdersScreen> {
       itemCount: filters.length,
       separatorBuilder: (context, index) => const SizedBox(width: 8),
       itemBuilder: (context, i) => FilterChip(
-        label: Text(filters[i]),
+        label: Text(filters[i], style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
         selected: _selectedFilter == filters[i],
         onSelected: (s) => setState(() => _selectedFilter = filters[i]),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
       ),
     ));
   }

@@ -83,67 +83,124 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Product Details'), centerTitle: true),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: const Text('Product Details'), 
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _buildImage(product, colorScheme),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           _buildInfoRow(product, textTheme, colorScheme),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           _buildQuantitySelector(textTheme, colorScheme),
-          const SizedBox(height: 24),
-          if (product.displayName != product.name) ...[
-             Text('Category', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-             Text(product.name ?? 'Unspecified', style: TextStyle(color: colorScheme.onSurfaceVariant)),
-             const SizedBox(height: 16),
-          ],
+          const SizedBox(height: 28),
           _buildDescription(product, textTheme, colorScheme),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           _buildMerchantCard(product, colorScheme),
+          const SizedBox(height: 100),
         ]),
       ),
-      bottomNavigationBar: _buildBottomBar(product, colorScheme),
+      bottomSheet: _buildBottomBar(product, colorScheme, textTheme),
     );
   }
 
   Widget _buildImage(Product product, ColorScheme colorScheme) {
-    return PatapoaProductImage(
-      imageUrl: product.displayImage,
-      categorySlug: product.categorySlug,
-      borderRadius: BorderRadius.circular(20),
-      height: 350,
-      width: double.infinity,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 40,
+            offset: const Offset(0, 20),
+          )
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: PatapoaProductImage(
+          imageUrl: product.displayImage,
+          categorySlug: product.categorySlug,
+          borderRadius: BorderRadius.circular(32),
+          height: 380,
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 
   Widget _buildInfoRow(Product product, TextTheme textTheme, ColorScheme colorScheme) {
-    return LiquidGlassContainer(
-      padding: const EdgeInsets.all(20),
-      borderRadius: 24,
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(product.fullDisplayName, style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text(product.isAvailable ? 'In Stock' : 'Out of Stock', style: TextStyle(color: product.isAvailable ? colorScheme.primary : colorScheme.error)),
-        ])),
-        Text('TZS ${product.price.toStringAsFixed(0)}', style: textTheme.titleLarge?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold)),
-      ]),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                product.fullDisplayName, 
+                style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1)
+              ),
+            ),
+            const SizedBox(width: 16),
+            Text(
+              'TZS ${product.price.toStringAsFixed(0)}', 
+              style: textTheme.headlineSmall?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.w900)
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: product.isAvailable ? colorScheme.primary.withValues(alpha: 0.1) : colorScheme.error.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: product.isAvailable ? colorScheme.primary.withValues(alpha: 0.2) : colorScheme.error.withValues(alpha: 0.2)),
+          ),
+          child: Text(
+            product.isAvailable ? 'AVAILABLE IN STOCK' : 'OUT OF STOCK',
+            style: TextStyle(
+              color: product.isAvailable ? colorScheme.primary : colorScheme.error,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1,
+            )
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildQuantitySelector(TextTheme textTheme, ColorScheme colorScheme) {
-    return LiquidGlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      borderRadius: 16,
-      opacity: 0.05,
-      blur: 5,
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3)),
+      ),
       child: Row(children: [
-        const Text('Quantity', style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(width: 12),
+        const Text('Quantity', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white70)),
         const Spacer(),
-        IconButton(onPressed: _quantity > 1 ? () => setState(() => _quantity--) : null, icon: const Icon(Icons.remove)),
-        Text('$_quantity', style: textTheme.titleMedium),
-        IconButton(onPressed: () => setState(() => _quantity++), icon: const Icon(Icons.add)),
+        IconButton.filledTonal(
+          onPressed: _quantity > 1 ? () => setState(() => _quantity--) : null,
+          icon: const Icon(Icons.remove),
+          style: IconButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+        ),
+        const SizedBox(width: 16),
+        Text('$_quantity', style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900, color: Colors.white)),
+        const SizedBox(width: 16),
+        IconButton.filledTonal(
+          onPressed: () => setState(() => _quantity++),
+          icon: const Icon(Icons.add),
+          style: IconButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+        ),
       ]),
     );
   }
@@ -151,9 +208,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget _buildDescription(Product product, TextTheme textTheme, ColorScheme colorScheme) {
     final desc = product.description ?? product.masterProduct?.description ?? 'Locally sourced quality product.';
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('Description', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-      const SizedBox(height: 8),
-      Text(desc, style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+      const Text('ABOUT PRODUCT', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 11, color: Colors.white54, letterSpacing: 1.5)),
+      const SizedBox(height: 12),
+      Text(desc, style: textTheme.bodyLarge?.copyWith(color: Colors.white.withValues(alpha: 0.8), height: 1.6)),
     ]);
   }
 
@@ -162,27 +219,44 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (merchant == null) return const SizedBox();
 
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: colorScheme.primaryContainer.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(16)),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3)),
+      ),
       child: Row(children: [
-        const Icon(Icons.storefront, size: 32),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: colorScheme.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
+          child: Icon(Icons.storefront, color: colorScheme.primary, size: 24),
+        ),
         const SizedBox(width: 16),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(merchant['store_name'] ?? 'Store', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(merchant['city'] ?? 'Dar es Salaam', style: const TextStyle(fontSize: 12)),
+          Text(merchant['store_name'] ?? 'Store', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Colors.white)),
+          Text(merchant['city'] ?? 'Dar es Salaam', style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.5))),
         ])),
+        const Icon(Icons.chevron_right, color: Colors.white24),
       ]),
     );
   }
 
-  Widget _buildBottomBar(Product product, ColorScheme colorScheme) {
-    return SafeArea(child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: FilledButton(
-        onPressed: product.isAvailable ? _addToCart : null,
-        style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(56)),
-        child: Text(product.isAvailable ? 'Add to Cart' : 'Out of Stock'),
+  Widget _buildBottomBar(Product product, ColorScheme colorScheme, TextTheme textTheme) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+      decoration: BoxDecoration(
+        color: colorScheme.surface.withValues(alpha: 0.95),
+        border: Border(top: BorderSide(color: colorScheme.outline.withValues(alpha: 0.3))),
       ),
-    ));
+      child: SafeArea(
+        child: ElevatedButton(
+          onPressed: product.isAvailable ? _addToCart : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: product.isAvailable ? colorScheme.primary : colorScheme.error.withValues(alpha: 0.3),
+          ),
+          child: Text(product.isAvailable ? 'ADD TO BASKET' : 'OUT OF STOCK'),
+        ),
+      ),
+    );
   }
 }

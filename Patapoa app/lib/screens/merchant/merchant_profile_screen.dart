@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../services/merchant_service.dart';
 import '../../services/auth_service.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/api_service.dart';
 
 class MerchantProfileScreen extends StatefulWidget {
   const MerchantProfileScreen({super.key});
@@ -15,6 +16,7 @@ class MerchantProfileScreen extends StatefulWidget {
 class _MerchantProfileScreenState extends State<MerchantProfileScreen> {
   final MerchantService _merchantService = MerchantService();
   final AuthService _authService = AuthService();
+  final ApiService _apiService = ApiService();
   bool _isEditing = false;
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
@@ -68,9 +70,9 @@ class _MerchantProfileScreenState extends State<MerchantProfileScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
-      // Update core profile
-      await _authService.updateProfile({
-        'name': _storeNameController.text,
+      // Update core profile in Laravel
+      await _apiService.put('/merchant/profile', {
+        'store_name': _storeNameController.text,
         'email': _emailController.text,
         'phone': _phoneController.text,
       });
@@ -161,6 +163,7 @@ class _MerchantProfileScreenState extends State<MerchantProfileScreen> {
               DropdownMenuItem(value: 'mpesa', child: Text('M-Pesa')),
               DropdownMenuItem(value: 'tigo_pesa', child: Text('Tigo Pesa')),
               DropdownMenuItem(value: 'airtel_money', child: Text('Airtel Money')),
+              DropdownMenuItem(value: 'halopesa', child: Text('HaloPesa')),
               DropdownMenuItem(value: 'bank', child: Text('Bank Account')),
             ],
             onChanged: _isEditing ? (v) => setState(() => _selectedPayoutMethod = v!) : null,

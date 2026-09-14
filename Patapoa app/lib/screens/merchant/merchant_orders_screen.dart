@@ -133,7 +133,7 @@ class _MerchantOrdersScreenState extends State<MerchantOrdersScreen> {
                   backgroundColor: selected ? colorScheme.primaryContainer : colorScheme.surfaceContainerHighest,
                   foregroundColor: selected ? colorScheme.onPrimaryContainer : colorScheme.onSurface,
                 ),
-                child: Text(labels[i]),
+                child: Text(labels[i], style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
               ),
             ),
           );

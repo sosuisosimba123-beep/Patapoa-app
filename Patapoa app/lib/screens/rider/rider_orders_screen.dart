@@ -123,9 +123,11 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
 
   Widget _buildEmptyState(ColorScheme colorScheme, TextTheme textTheme) {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Icon(Icons.inbox_outlined, size: 64, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+      Icon(Icons.assignment_turned_in_outlined, size: 64, color: colorScheme.primary.withOpacity(0.3)),
       const SizedBox(height: 16),
-      Text('No orders found', style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+      Text('No delivery tasks yet', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+      const SizedBox(height: 8),
+      Text('Your completed and active trips will appear here', style: textTheme.bodySmall, textAlign: TextAlign.center),
     ]));
   }
 

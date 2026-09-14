@@ -55,6 +55,21 @@ class _RiderLoginScreenState extends State<RiderLoginScreen> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    final authProvider = provider.Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.signInWithGoogle('rider');
+
+    if (mounted) {
+      if (success) {
+        context.go('/delivery-partner/home');
+      } else if (authProvider.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(authProvider.errorMessage!)),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -106,6 +121,34 @@ class _RiderLoginScreenState extends State<RiderLoginScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
+                      OutlinedButton.icon(
+                        onPressed: isLoading ? null : _handleGoogleSignIn,
+                        icon: Image.network(
+                          'https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png',
+                          height: 18,
+                          width: 18,
+                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.login, size: 18),
+                        ),
+                        label: const Text('Continue with Google'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          side: const BorderSide(color: Colors.black12),
+                          minimumSize: const Size.fromHeight(48),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Row(
+                        children: [
+                          Expanded(child: Divider()),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Text('OR', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 10)),
+                          ),
+                          Expanded(child: Divider()),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

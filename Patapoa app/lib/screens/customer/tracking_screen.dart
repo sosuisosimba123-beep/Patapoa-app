@@ -5,9 +5,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:latlong2/latlong.dart' hide Path;
 import 'package:provider/provider.dart' as provider;
+import 'package:pocketbase/pocketbase.dart';
 import '../../models/order.dart';
 import '../../services/order_service.dart';
-import '../../services/websocket_service.dart';
+import '../../services/pocketbase_services.dart';
 import '../../providers/location_provider.dart';
 import '../../services/osm_service.dart';
 import '../../services/map_marker_service.dart';
@@ -25,11 +26,9 @@ class TrackingScreen extends StatefulWidget {
 class _TrackingScreenState extends State<TrackingScreen> with SingleTickerProviderStateMixin {
   final OrderService _orderService = OrderService();
   final OsmService _osmService = OsmService();
-  final WebSocketService _wsService = WebSocketService();
   late final AnimationController _animController;
   LatLng? _riderLocation;
   List<LatLng> _routePoints = [];
-  StreamSubscription? _wsSubscription;
   int _eta = 15;
   Timer? _timer;
   String _currentStatus = 'placed';
@@ -42,7 +41,7 @@ class _TrackingScreenState extends State<TrackingScreen> with SingleTickerProvid
     _currentStatusNote = _getStatusNote(_currentStatus);
     _animController = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
     _fetchLiveLocation();
-    _initWebSocket();
+    _initPocketBaseSubscription();
     _timer = Timer.periodic(const Duration(seconds: 30), (_) => _fetchLiveLocation()); // Fallback polling
     
     // Initialize custom markers
@@ -51,17 +50,28 @@ class _TrackingScreenState extends State<TrackingScreen> with SingleTickerProvid
     });
   }
 
-  void _initWebSocket() {
-    if (widget.order.rider?['id'] != null) {
-      final partnerId = (widget.order.rider!['id'] as num).toInt();
-      _wsSubscription = _wsService.listenToPartnerLocation(partnerId).listen((data) {
+  void _initPocketBaseSubscription() {
+    // Subscribe to live_orders where order_id matches
+    pb.collection('live_orders').subscribe('*', (e) {
+      if (e.record != null && e.record!.data['order_id'] == widget.order.id.toString()) {
+        final data = e.record!.data;
         if (mounted) {
-           final lat = (data['latitude'] as num).toDouble();
-           final lng = (data['longitude'] as num).toDouble();
-           _updateMap(LatLng(lat, lng));
+           final lat = (data['rider_lat'] as num?)?.toDouble();
+           final lng = (data['rider_lng'] as num?)?.toDouble();
+           final status = data['status'] as String?;
+
+           if (lat != null && lng != null) {
+              _updateMap(LatLng(lat, lng));
+           }
+           if (status != null) {
+              setState(() {
+                _currentStatus = status;
+                _currentStatusNote = _getStatusNote(status);
+              });
+           }
         }
-      });
-    }
+      }
+    });
   }
 
   void _updateMap(LatLng newPos) async {
@@ -114,7 +124,7 @@ class _TrackingScreenState extends State<TrackingScreen> with SingleTickerProvid
   @override
   void dispose() {
     _timer?.cancel();
-    _wsSubscription?.cancel();
+    pb.collection('live_orders').unsubscribe('*');
     _animController.dispose();
     super.dispose();
   }

@@ -56,4 +56,12 @@ return [
         'credentials' => env('FIREBASE_CREDENTIALS'),
     ],
 
+    'sms' => [
+        'enabled' => env('ENABLE_SMS_DISPATCH', false),
+        'url' => env('SMS_GATEWAY_URL', 'https://api.sms-gate.app'),
+        'user' => env('SMS_GATEWAY_USER'),
+        'pass' => env('SMS_GATEWAY_PASS'),
+        'device_id' => env('SMS_GATEWAY_DEVICE_ID'),
+    ],
+
 ];

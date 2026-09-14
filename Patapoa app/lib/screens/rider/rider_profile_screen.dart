@@ -34,14 +34,14 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
       if (mounted) {
         setState(() {
           _profile = profile;
-          _nameController.text = profile['name'] ?? '';
-          _phoneController.text = profile['phone'] ?? '';
-          _emailController.text = profile['email'] ?? '';
+          _nameController.text = profile['name'] ?? profile['user']?['name'] ?? '';
+          _phoneController.text = profile['phone'] ?? profile['user']?['phone'] ?? '';
+          _emailController.text = profile['email'] ?? profile['user']?['email'] ?? '';
           _vehicleController.text = profile['vehicle_type'] ?? '';
         });
       }
     } catch (e) {
-      // Handle error
+      debugPrint('Error loading rider profile: $e');
     }
   }
 

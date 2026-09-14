@@ -153,30 +153,31 @@ class LiquidPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint1 = Paint()..color = const Color(0xFF673AB7).withValues(alpha: 0.2)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 80);
-    final paint2 = Paint()..color = const Color(0xFF00BCD4).withValues(alpha: 0.2)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 80);
-    final paint3 = Paint()..color = const Color(0xFFE91E63).withValues(alpha: 0.15)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 80);
+    // Emerald & Teal Tones for the Stunning Original Aesthetic
+    final paint1 = Paint()..color = const Color(0xFF10B981).withValues(alpha: 0.15)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 100);
+    final paint2 = Paint()..color = const Color(0xFF0D9488).withValues(alpha: 0.15)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 100);
+    final paint3 = Paint()..color = const Color(0xFF14B8A6).withValues(alpha: 0.12)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 100);
 
-    // Blob 1
+    // Blob 1: Top Left
     final center1 = Offset(
-      size.width * 0.2 + (size.width * 0.1 * progress), 
-      size.height * 0.3 + (size.height * 0.05 * progress)
+      size.width * 0.1 + (size.width * 0.15 * progress), 
+      size.height * 0.2 + (size.height * 0.1 * progress)
     );
-    canvas.drawCircle(center1, 150, paint1);
+    canvas.drawCircle(center1, 200, paint1);
 
-    // Blob 2
+    // Blob 2: Bottom Right
     final center2 = Offset(
-      size.width * 0.8 - (size.width * 0.1 * progress), 
-      size.height * 0.7 - (size.height * 0.1 * progress)
+      size.width * 0.9 - (size.width * 0.2 * progress), 
+      size.height * 0.8 - (size.height * 0.15 * progress)
     );
-    canvas.drawCircle(center2, 200, paint2);
+    canvas.drawCircle(center2, 250, paint2);
 
-    // Blob 3
+    // Blob 3: Center Pulsing
     final center3 = Offset(
       size.width * 0.5, 
-      size.height * 0.5 + (size.height * 0.2 * (progress - 0.5).abs())
+      size.height * 0.5 + (size.height * 0.25 * (progress - 0.5).abs())
     );
-    canvas.drawCircle(center3, 180, paint3);
+    canvas.drawCircle(center3, 220, paint3);
   }
 
   @override

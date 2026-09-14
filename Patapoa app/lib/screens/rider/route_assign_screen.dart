@@ -148,20 +148,32 @@ class _RouteAssignScreenState extends State<RouteAssignScreen> {
       child: SafeArea(child: Padding(
         padding: EdgeInsets.fromLTRB(16, topInset, 16, 12),
         child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: colorScheme.surface.withValues(alpha: 0.9), borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: colorScheme.surface.withValues(alpha: 0.95), 
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3)),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 30, offset: const Offset(0, 10))
+            ],
+          ),
           child: Row(children: [
-            Icon(Icons.storefront, color: colorScheme.primary),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(color: colorScheme.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
+              child: Icon(Icons.storefront, color: colorScheme.primary),
+            ),
             const SizedBox(width: 16),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('PICKUP FROM', style: textTheme.labelSmall),
-              Text(order.pickupLocation, style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-              Text('${order.pickupDistance.toStringAsFixed(1)} km away', style: textTheme.bodySmall),
+              const Text('PICKUP FROM', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.white54, letterSpacing: 1.2)),
+              const SizedBox(height: 4),
+              Text(order.pickupLocation, style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900, color: Colors.white)),
+              Text('${order.pickupDistance.toStringAsFixed(1)} km away', style: TextStyle(fontSize: 11, color: colorScheme.primary, fontWeight: FontWeight.bold)),
             ])),
-            FilledButton.icon(
+            IconButton.filled(
               onPressed: _launchNavigation,
-              icon: const Icon(Icons.directions, size: 18),
-              label: const Text('Go')
+              icon: const Icon(Icons.directions_rounded),
+              style: IconButton.styleFrom(backgroundColor: colorScheme.primary, foregroundColor: Colors.white),
             ),
           ]),
         ),
@@ -184,31 +196,61 @@ class _RouteAssignScreenState extends State<RouteAssignScreen> {
     return Positioned(
       bottom: 0, left: 0, right: 0,
       child: Container(
-        decoration: BoxDecoration(color: colorScheme.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
-        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: colorScheme.surface, 
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+          border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3)),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 50, offset: const Offset(0, -10))
+          ],
+        ),
+        padding: const EdgeInsets.fromLTRB(28, 40, 28, 40),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Row(children: [
-            const CircleAvatar(radius: 30, child: Icon(Icons.person)),
-            const SizedBox(width: 16),
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: colorScheme.primary, width: 2),
+              ),
+              child: const CircleAvatar(radius: 32, child: Icon(Icons.person, size: 32)),
+            ),
+            const SizedBox(width: 20),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(order.customerName, style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
-              Text('${order.customerRating}★ Top Tier', style: textTheme.bodyMedium),
+              Text(order.customerName, style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -0.5)),
+              Row(
+                children: [
+                  const Icon(Icons.star_rounded, color: Colors.amber, size: 16),
+                  const SizedBox(width: 4),
+                  Text('${order.customerRating} • Top Tier Mteja', style: TextStyle(fontSize: 13, color: colorScheme.secondary, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ])),
-            IconButton(
+            IconButton.filledTonal(
               onPressed: () => _launchCaller(order.customerPhone), 
-              icon: const Icon(Icons.call), 
-              style: IconButton.styleFrom(backgroundColor: colorScheme.primaryContainer)
+              icon: const Icon(Icons.call_rounded), 
+              style: IconButton.styleFrom(
+                backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
+                foregroundColor: colorScheme.primary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              )
             ),
           ]),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           SizedBox(
             width: double.infinity, 
-            height: 60, 
-            child: FilledButton(
+            height: 64, 
+            child: ElevatedButton(
               onPressed: _isUpdating ? null : () => _updateStatus(int.parse(order.id), nextStatus), 
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                elevation: 10,
+                shadowColor: colorScheme.primary.withValues(alpha: 0.4),
+              ),
               child: _isUpdating 
-                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                : Text(buttonText)
+                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+                : Text(buttonText.toUpperCase(), style: const TextStyle(letterSpacing: 1, fontWeight: FontWeight.w900))
             )
           ),
         ]),

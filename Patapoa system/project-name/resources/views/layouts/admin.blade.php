@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <title>{{ config('app.name', 'Patapoa') }} Admin - @yield('title')</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
@@ -78,6 +79,10 @@
                 <span class="material-symbols-outlined">receipt_long</span>
                 <span class="text-sm">Transactions</span>
             </a>
+            <a href="{{ route('admin.security') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('admin.security') ? 'active-nav' : 'text-on-surface-variant font-medium hover:bg-surface-container-highest' }}">
+                <span class="material-symbols-outlined">security</span>
+                <span class="text-sm">Security Hub</span>
+            </a>
             <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {{ request()->routeIs('admin.settings') ? 'active-nav' : 'text-on-surface-variant font-medium hover:bg-surface-container-highest' }}">
                 <span class="material-symbols-outlined">settings</span>
                 <span class="text-sm">Settings</span>
@@ -88,7 +93,7 @@
                 <span class="material-symbols-outlined">contact_support</span>
                 <span class="text-sm">Support</span>
             </a>
-            <form action="{{ route('auth.logout') }}" method="POST">
+            <form action="{{ route('admin.logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-on-surface-variant font-medium hover:bg-surface-container-highest">
                     <span class="material-symbols-outlined">logout</span>
@@ -120,6 +125,27 @@
 
         <!-- Page Content -->
         <div class="p-6 space-y-6">
+            @if(session('error'))
+                <div class="bg-red-500/10 border border-red-500/50 text-red-500 px-6 py-4 rounded-2xl flex items-center gap-3">
+                    <span class="material-symbols-outlined">error</span>
+                    <span class="text-sm font-bold">{{ session('error') }}</span>
+                </div>
+            @endif
+
+            @if(session('success'))
+                <div class="bg-emerald-500/10 border border-emerald-500/50 text-emerald-500 px-6 py-4 rounded-2xl flex items-center gap-3">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <span class="text-sm font-bold">{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if(session('warning'))
+                <div class="bg-amber-500/10 border border-amber-500/50 text-amber-500 px-6 py-4 rounded-2xl flex items-center gap-3">
+                    <span class="material-symbols-outlined">warning</span>
+                    <span class="text-sm font-bold">{{ session('warning') }}</span>
+                </div>
+            @endif
+
             @yield('content')
         </div>
     </main>

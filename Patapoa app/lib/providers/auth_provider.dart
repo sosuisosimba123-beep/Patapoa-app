@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
+import '../services/api_service.dart';
 import '../services/pocketbase_services.dart';
 import '../models/user.dart';
 import '../services/notification_service.dart';
@@ -11,6 +13,7 @@ import '../utils/location_helper.dart';
 
 class AuthProvider with ChangeNotifier {
   final NotificationService _notificationService = NotificationService();
+  final ApiService _apiService = ApiService();
   late final GoogleSignIn _googleSignIn;
   bool _isGoogleInitialized = false;
 
@@ -51,6 +54,7 @@ class AuthProvider with ChangeNotifier {
         _user = User.fromJson({
           'id': model.id,
           ...model.data,
+          'user_type': model.data['user_type'] ?? model.data['userType'] ?? model.data['role'],
           'created': model.created,
           'updated': model.updated,
         });
@@ -87,15 +91,33 @@ class AuthProvider with ChangeNotifier {
     try {
       debugPrint('Attempting login for: $email');
       
+      // 1. PocketBase Login
       if (userType == 'admin') {
         await pb.admins.authWithPassword(email, password);
       } else {
         final authData = await pb.collection('users').authWithPassword(email, password);
-        debugPrint('Login success: ${authData.record?.id}');
+        debugPrint('PocketBase Login success: ${authData.record?.id}');
         
+        // 2. NEW: MySQL (Laravel) Login/Sync
+        try {
+          final res = await _apiService.post('/auth/login', {
+            'login': email,
+            'password': password,
+            'user_type': userType,
+          });
+          if (res.statusCode == 200) {
+            final data = jsonDecode(res.body);
+            final token = data['token'] ?? data['access_token'];
+            if (token != null) await _apiService.setAuthToken(token);
+            debugPrint('MySQL Login/Token Sync success');
+          }
+        } catch (e) {
+          debugPrint('Warning: MySQL Sync failed during login: $e');
+        }
+
         // If userType is provided, verify it matches
         if (userType != null && authData.record != null) {
-          final actualRole = authData.record!.data['userType'];
+          final actualRole = authData.record!.data['user_type'] ?? authData.record!.data['userType'];
           debugPrint('Checking role: expected $userType, got $actualRole');
           if (actualRole != userType) {
             pb.authStore.clear();
@@ -134,6 +156,7 @@ class AuthProvider with ChangeNotifier {
     required String password,
     required String userType,
     String? passwordConfirmation,
+    Map<String, dynamic>? additionalData,
   }) async {
     _isLoading = true;
     _errorMessage = null;
@@ -143,22 +166,41 @@ class AuthProvider with ChangeNotifier {
       debugPrint('Attempting registration for: $email');
       // 1. Create the user record
       final body = {
-        'username': phone.replaceAll('+', ''), // Phone as username (removing + for compatibility)
+        'username': phone.replaceAll('+', ''), // Phone as username
         'email': email,
         'password': password,
         'passwordConfirm': passwordConfirmation ?? password,
         'name': name,
         'phone': phone,
-        'userType': userType,
+        'user_type': userType, // Primary field
+        'userType': userType,  // Compat field 1
+        'role': userType,      // Compat field 2
+        ...?additionalData,
       };
       debugPrint('Registration body: $body');
       
       await pb.collection('users').create(body: body);
-      debugPrint('User created successfully');
+      debugPrint('User created successfully in PocketBase');
 
-      // 2. Login immediately to get the token
+      // 2. NEW: Sync with MySQL (Laravel)
+      try {
+        await _apiService.post('/auth/register', {
+          'name': name,
+          'phone': phone,
+          'email': email,
+          'password': password,
+          'user_type': userType,
+        });
+        debugPrint('User synced with MySQL successfully');
+      } catch (e) {
+        debugPrint('Warning: MySQL Sync failed: $e');
+        // We don't fail the whole registration if MySQL fails, 
+        // but it might limit functionality until synced.
+      }
+
+      // 3. Login immediately to get the token
       await pb.collection('users').authWithPassword(email, password);
-      debugPrint('Login after registration success');
+      debugPrint('Login success. Role in store: ${pb.authStore.model?.data['user_type']}');
 
       // 3. Request verification email
       try {
@@ -194,37 +236,64 @@ class AuthProvider with ChangeNotifier {
   Future<bool> signInWithGoogle(String userType) async {
     _isLoading = true;
     _errorMessage = null;
-    _partialSocialData = null;
     notifyListeners();
 
     try {
+      debugPrint('Starting Google Fast-Track for $userType...');
       final authData = await pb.collection('users').authWithOAuth2(
         'google',
         (url) async {
-          await FlutterWebAuth2.authenticate(
+          final result = await FlutterWebAuth2.authenticate(
             url: url.toString(),
             callbackUrlScheme: 'com.nacci.patapoa.app',
           );
+          return result;
         }
       );
 
-      if (authData.record != null) {
-        // If it's a new user, we might need to set the userType
-        if (authData.record!.data['userType'] == null) {
-           await pb.collection('users').update(authData.record!.id, body: {
+      if (pb.authStore.isValid && pb.authStore.model != null) {
+        final model = pb.authStore.model as RecordModel;
+        final currentRole = model.data['user_type'] ?? model.data['userType'] ?? model.data['role'];
+        
+        // Auto-assign role if missing or if user explicitly chose to upgrade
+        if (currentRole == null || (currentRole == 'customer' && userType != 'customer')) {
+           await pb.collection('users').update(model.id, body: {
+             'user_type': userType,
              'userType': userType,
+             'role': userType,
            });
+           await pb.collection('users').authRefresh();
         }
+
+        // Fast-track: Sync with MySQL in background
+        _syncWithLaravel(model, userType);
+        
         await _syncFcmToken();
+        debugPrint('Google Auth Successful. Redirecting...');
         return true;
       }
       return false;
     } catch (e) {
-      _errorMessage = 'Google Sign-In failed: $e';
+      debugPrint('Google Auth Error: $e');
+      _errorMessage = 'Login failed. Please try again.';
       return false;
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  /// Internal helper to ensure MySQL is always in sync with Google Auth
+  Future<void> _syncWithLaravel(RecordModel pbUser, String userType) async {
+    try {
+      await _apiService.post('/auth/social-sync', {
+        'pb_id': pbUser.id,
+        'email': pbUser.email,
+        'name': pbUser.data['name'],
+        'user_type': userType,
+      });
+    } catch (e) {
+      debugPrint('Laravel Social Sync ignored: $e');
     }
   }
 

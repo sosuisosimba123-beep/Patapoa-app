@@ -51,7 +51,7 @@ class User {
       name: json['name'] ?? json['username'] ?? 'User',
       email: json['email'] as String?,
       phone: json['phone'] as String?,
-      userType: json['userType'] ?? json['user_type'] ?? 'customer',
+      userType: json['user_type'] ?? json['userType'] ?? json['role'] ?? 'customer',
       isActive: json['isActive'] ?? json['is_active'] ?? true,
       isVerified: json['verified'] ?? json['is_verified'] ?? false,
       profileImage: json['profileImage'] ?? json['profile_image'] as String?,

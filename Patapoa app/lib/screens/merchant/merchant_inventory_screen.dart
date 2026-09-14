@@ -100,6 +100,12 @@ class _MerchantInventoryScreenState extends State<MerchantInventoryScreen> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.go('/merchant/add-product'),
+        backgroundColor: colorScheme.primary,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
@@ -110,7 +116,7 @@ class _MerchantInventoryScreenState extends State<MerchantInventoryScreen> {
         children: [
           Text('Inventory', style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900)),
           const Spacer(),
-          FilledButton.icon(onPressed: () => context.go('/merchant/add-product'), icon: const Icon(Icons.add, size: 18), label: const Text('Add')),
+          // Replaced header button with FAB for better UX
         ],
       ),
     );
@@ -191,7 +197,7 @@ class _ProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: IconButton(
-                        onPressed: onDelete, 
+                        onPressed: onDelete,
                         icon: Icon(Icons.delete_outline, color: colorScheme.error, size: 20),
                         padding: const EdgeInsets.all(8),
                         constraints: const BoxConstraints(),

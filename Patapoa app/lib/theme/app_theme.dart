@@ -23,19 +23,26 @@ ThemeData buildPatapoaTheme() {
     scaffoldBackgroundColor: scheme.surface,
     useMaterial3: true,
     appBarTheme: AppBarTheme(
-      backgroundColor: scheme.surface.withValues(alpha: 0.92),
+      backgroundColor: scheme.surface,
       surfaceTintColor: Colors.transparent,
       foregroundColor: scheme.onSurface,
       elevation: 0,
+      centerTitle: true,
+      titleTextStyle: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+    ),
+    cardTheme: CardThemeData(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Colors.black12),
+      ),
     ),
     chipTheme: ChipThemeData(
-      side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+      side: const BorderSide(color: Colors.black12),
       backgroundColor: scheme.surface,
-      selectedColor: primaryContainer.withValues(alpha: 0.2),
+      selectedColor: primaryContainer.withOpacity(0.2),
       labelStyle: textTheme.labelMedium?.copyWith(color: scheme.onSurface),
-      secondaryLabelStyle: textTheme.labelMedium?.copyWith(
-        color: scheme.onPrimary,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: scheme.surface,
@@ -45,28 +52,36 @@ ThemeData buildPatapoaTheme() {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: scheme.surfaceContainerLow,
-      hintStyle: textTheme.bodyMedium?.copyWith(
-        color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
-      ),
+      fillColor: Colors.white,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(999),
-        borderSide: BorderSide(color: scheme.outlineVariant),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black12),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(999),
-        borderSide: BorderSide(
-          color: scheme.outlineVariant.withValues(alpha: 0.4),
-        ),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black12),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(999),
-        borderSide: BorderSide(color: scheme.primary, width: 1.4),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: scheme.primary, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      shape: CircleBorder(),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: scheme.primary,
+        foregroundColor: Colors.white,
+        minimumSize: const Size.fromHeight(52),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        minimumSize: const Size.fromHeight(52),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+      ),
     ),
   );
 }

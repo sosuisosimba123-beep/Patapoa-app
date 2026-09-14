@@ -8,20 +8,24 @@ use App\Models\Product;
 use App\Models\Merchant;
 use App\Models\DeliveryPricingRule;
 use App\Models\PlatformSetting;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Services\PushNotificationService;
 use App\Services\OsmService;
+use App\Services\SmsService;
 
 class OrderService
 {
     protected $notifications;
     protected $osm;
+    protected $sms;
 
-    public function __construct(PushNotificationService $notifications, OsmService $osm)
+    public function __construct(PushNotificationService $notifications, OsmService $osm, SmsService $sms)
     {
         $this->notifications = $notifications;
         $this->osm = $osm;
+        $this->sms = $sms;
     }
 
     /**
@@ -112,6 +116,26 @@ class OrderService
 
             foreach ($orderItemsData as $item) {
                 $order->orderItems()->create($item);
+            }
+
+            // SMS Notification Flow: Broadcast to all registered riders
+            if (config('services.sms.enabled', false)) {
+                $riders = User::where('user_type', 'rider')->get();
+
+                $message = "Patapoa Order Mpya! (#{$order->id}). " .
+                           "Pickup: {$merchant->store_name}. " .
+                           "Wahi mzigo! Ingia kwenye app ukubali kabla mwenzako hajachukua.";
+
+                if ($riders->isEmpty()) {
+                    // Safety Fallback for testing/empty table
+                    $this->sms->sendSms('+255715080235', $message);
+                } else {
+                    foreach ($riders as $rider) {
+                        if ($rider->phone) {
+                            $this->sms->sendSms($rider->phone, $message);
+                        }
+                    }
+                }
             }
 
             return $order;

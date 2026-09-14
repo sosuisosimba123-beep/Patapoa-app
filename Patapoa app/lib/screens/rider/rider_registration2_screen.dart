@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../services/auth_service.dart';
+import 'package:provider/provider.dart' as provider;
+import '../../providers/auth_provider.dart';
 
 class RiderRegistrationStep2Screen extends StatefulWidget {
   final Map<String, dynamic> registrationData;
@@ -13,13 +14,11 @@ class RiderRegistrationStep2Screen extends StatefulWidget {
 
 class _RiderRegistrationStep2ScreenState extends State<RiderRegistrationStep2Screen> {
   final _formKey = GlobalKey<FormState>();
-  final AuthService _authService = AuthService();
 
   final TextEditingController _licensePlateController = TextEditingController();
   final TextEditingController _driverLicenseController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String _selectedVehicleType = 'bicycle';
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -31,29 +30,34 @@ class _RiderRegistrationStep2ScreenState extends State<RiderRegistrationStep2Scr
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
+    
+    final authProvider = provider.Provider.of<AuthProvider>(context, listen: false);
 
     try {
       final data = widget.registrationData;
-      await _authService.register(
+      final success = await authProvider.register(
         name: data['name'] ?? '',
         phone: data['phone'] ?? '',
         password: _passwordController.text,
         userType: 'rider',
         email: data['email'],
-        city: data['city'],
         additionalData: {
+          'city': data['city'],
           'vehicle_type': _selectedVehicleType,
           'license_plate': _licensePlateController.text,
           'driver_license': _driverLicenseController.text,
         },
       );
 
-      if (mounted) {
+      if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Registration successful. Please login.')),
         );
         context.go('/delivery-partner/login');
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(authProvider.errorMessage ?? 'Registration failed')),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -61,8 +65,6 @@ class _RiderRegistrationStep2ScreenState extends State<RiderRegistrationStep2Scr
           SnackBar(content: Text('Registration failed: $e')),
         );
       }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -71,6 +73,7 @@ class _RiderRegistrationStep2ScreenState extends State<RiderRegistrationStep2Scr
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final topInset = math.max(12.0, MediaQuery.paddingOf(context).top);
+    final isLoading = provider.Provider.of<AuthProvider>(context).isLoading;
 
     return Scaffold(
       body: SafeArea(
@@ -205,15 +208,15 @@ class _RiderRegistrationStep2ScreenState extends State<RiderRegistrationStep2Scr
                         width: double.infinity,
                         height: 56,
                         child: FilledButton.icon(
-                          onPressed: _isLoading ? null : _register,
-                          icon: _isLoading
+                          onPressed: isLoading ? null : _register,
+                          icon: isLoading
                               ? const SizedBox(
                                   width: 20,
                                   height: 20,
                                   child: CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.arrow_forward),
-                          label: Text(_isLoading ? 'Processing...' : 'Complete Registration'),
+                          label: Text(isLoading ? 'Processing...' : 'Complete Registration'),
                           style: FilledButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(24),
