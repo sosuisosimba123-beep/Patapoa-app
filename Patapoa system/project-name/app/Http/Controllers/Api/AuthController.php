@@ -157,8 +157,25 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Ensure sub-profile exists (Self-healing sync)
+        if ($user->user_type === 'merchant' && !$user->merchant) {
+            $user->merchant()->create([
+                'store_name' => $user->name . "'s Store",
+                'address' => 'Not set',
+                'city' => 'Dar es Salaam',
+                'is_verified' => false,
+            ]);
+        } elseif ($user->user_type === 'rider' && !$user->deliveryPartner) {
+            $user->deliveryPartner()->create([
+                'vehicle_type' => 'motorcycle',
+                'city' => 'Dar es Salaam',
+                'is_online' => false,
+                'is_verified' => true,
+            ]);
+        }
+
         return $this->successResponse([
-            'user' => $user,
+            'user' => $user->load(['merchant', 'deliveryPartner', 'wallet']),
             'token' => $token,
         ], 'Login successful');
     }

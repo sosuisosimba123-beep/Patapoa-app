@@ -75,7 +75,7 @@ class MerchantController extends Controller
         if (!$merchant) return $this->errorResponse('Merchant profile not found', 404);
 
         $validator = Validator::make($request->all(), [
-            'payout_method' => 'required|in:mpesa,tigo_pesa,airtel_money,bank',
+            'payout_method' => 'required|in:mpesa,tigo_pesa,airtel_money,halopesa,bank',
             'payout_account' => 'required|string|max:255',
         ]);
 

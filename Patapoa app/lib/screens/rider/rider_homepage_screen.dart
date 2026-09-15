@@ -36,11 +36,38 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
     super.initState();
     _loadProfile();
     _loadOrders();
+    _broadcastStatus();
 
     // Initialize custom markers
     WidgetsBinding.instance.addPostFrameCallback((_) {
       MapMarkerService().initialize(context);
     });
+  }
+
+  Future<void> _broadcastStatus() async {
+    try {
+      final userId = pb.authStore.model?.id;
+      if (userId == null) return;
+
+      final records = await pb.collection('rider_status').getList(
+        filter: 'user = "$userId"',
+        page: 1, perPage: 1
+      );
+
+      final data = {
+        'user': userId,
+        'is_online': _isOnline,
+        'last_active': DateTime.now().toIso8601String(),
+      };
+
+      if (records.items.isNotEmpty) {
+        await pb.collection('rider_status').update(records.items.first.id, body: data);
+      } else {
+        await pb.collection('rider_status').create(body: data);
+      }
+    } catch (e) {
+      debugPrint('Rider status broadcast error: $e');
+    }
   }
 
   Future<void> _loadProfile() async {

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:pocketbase/pocketbase.dart';
 import '../config/api_config.dart';
 import 'api_service.dart';
@@ -124,10 +124,6 @@ class DeliveryPartnerService {
         } else {
           await pb.collection('rider_status').create(body: statusData);
         }
-
-        // Also update any active live_orders for this rider
-        // For simplicity, we find the most recent 'in_progress' or 'out_for_delivery' order for this rider in PB
-        // In a full implementation, we'd know the active orderId from the local state.
       }
     } catch (e) {
       debugPrint('PocketBase location broadcast error: $e');

@@ -58,4 +58,106 @@ class DeliveryPartnerController extends Controller
             'pending_balance' => $wallet ? $wallet->pending_balance : 0,
         ], 'Earnings retrieved');
     }
+
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+        $partner = $user->deliveryPartner;
+
+        if (!$partner) return $this->errorResponse('Delivery Partner profile not found', 404);
+
+        return $this->successResponse([
+            'id' => $partner->id,
+            'name' => $user->name,
+            'phone' => $user->phone,
+            'email' => $user->email,
+            'vehicle_type' => $partner->vehicle_type,
+            'city' => $partner->city,
+            'rating' => $partner->rating,
+            'total_deliveries' => $partner->total_deliveries,
+            'is_online' => $partner->is_online,
+        ], 'Profile retrieved');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+        $partner = $user->deliveryPartner;
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+            'vehicle_type' => 'sometimes|string|in:bicycle,motorcycle,car',
+        ]);
+
+        if ($validator->fails()) return $this->errorResponse('Validation failed', 422, $validator->errors()->toArray());
+
+        $user->update($request->only(['name', 'email']));
+        if ($partner) $partner->update($request->only(['vehicle_type']));
+
+        return $this->successResponse($this->profile($request)->original['data'], 'Profile updated');
+    }
+
+    public function goOnline(Request $request)
+    {
+        $partner = $request->user()->deliveryPartner;
+        if (!$partner) return $this->errorResponse('Profile not found', 404);
+
+        $partner->update(['is_online' => true]);
+        return $this->successResponse(['is_online' => true], 'Partner is now online');
+    }
+
+    public function goOffline(Request $request)
+    {
+        $partner = $request->user()->deliveryPartner;
+        if (!$partner) return $this->errorResponse('Profile not found', 404);
+
+        $partner->update(['is_online' => false]);
+        return $this->successResponse(['is_online' => false], 'Partner is now offline');
+    }
+
+    public function updateLocation(Request $request)
+    {
+        $partner = $request->user()->deliveryPartner;
+        if (!$partner) return $this->errorResponse('Profile not found', 404);
+
+        $validator = Validator::make($request->all(), [
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) return $this->errorResponse('Invalid coordinates', 422);
+
+        $partner->update([
+            'current_latitude' => $request->latitude,
+            'current_longitude' => $request->longitude,
+            'last_located_at' => now(),
+        ]);
+
+        return $this->successResponse(null, 'Location updated');
+    }
+
+    public function availableOrders(Request $request)
+    {
+        $partner = $request->user()->deliveryPartner;
+        if (!$partner->is_online) return $this->successResponse([], 'Go online to see orders');
+
+        $orders = Order::where('status', 'ready_for_pickup')
+            ->whereNull('delivery_partner_id')
+            ->with(['orderItems.product', 'customer', 'address'])
+            ->get();
+
+        return $this->successResponse($orders, 'Available orders retrieved');
+    }
+
+    public function partnerOrders(Request $request)
+    {
+        $partner = $request->user()->deliveryPartner;
+        $orders = Order::where('delivery_partner_id', $partner->id)
+            ->with(['customer', 'address'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return $this->successResponse($orders, 'Trip history retrieved');
+    }
 }

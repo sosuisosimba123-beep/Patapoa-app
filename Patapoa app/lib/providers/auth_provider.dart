@@ -117,7 +117,7 @@ class AuthProvider with ChangeNotifier {
             final pbModel = authData.record!;
             await _apiService.post('/auth/register', {
               'name': pbModel.data['name'] ?? 'User',
-              'phone': pbModel.data['phone'] ?? pbModel.username,
+              'phone': pbModel.data['phone'] ?? pbModel.data['username'] ?? '',
               'email': email,
               'password': password,
               'user_type': userType ?? pbModel.data['user_type'] ?? 'customer',
@@ -153,8 +153,7 @@ class AuthProvider with ChangeNotifier {
     } on ClientException catch (e) {
       debugPrint('PocketBase Login Error: ${e.response}');
       final msg = e.response['message'] ?? 'Login failed.';
-      final errors = e.response['data'] as Map<String, dynamic>?;
-      if (errors != null && errors.isNotEmpty) {
+      final errors = e.response['data'] as Map<String, dynamic>?;      if (errors != null && errors.isNotEmpty) {
         _errorMessage = errors.entries.map((e) => '${e.key}: ${e.value['message']}').join('\n');
       } else {
         _errorMessage = msg;
@@ -264,11 +263,10 @@ class AuthProvider with ChangeNotifier {
       final authData = await pb.collection('users').authWithOAuth2(
         'google',
         (url) async {
-          final result = await FlutterWebAuth2.authenticate(
+          await FlutterWebAuth2.authenticate(
             url: url.toString(),
             callbackUrlScheme: 'com.nacci.patapoa.app',
           );
-          return result;
         }
       );
 
