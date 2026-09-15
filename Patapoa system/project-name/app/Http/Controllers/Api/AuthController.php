@@ -181,6 +181,57 @@ class AuthController extends Controller
     }
 
     /**
+     * PocketBase Mirror Sync
+     * Ensures MySQL user exists and has the correct role based on PocketBase
+     */
+    public function pbSync(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'name' => 'required|string',
+            'user_type' => 'required|in:customer,merchant,rider',
+        ]);
+
+        if ($validator->fails()) return $this->errorResponse('Sync validation failed', 422);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // Create the missing mirror user
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => '0000000000', // Placeholder until profile update
+                'password' => Hash::make(Str::random(16)),
+                'user_type' => $request->user_type,
+                'is_active' => true,
+                'is_verified' => true,
+            ]);
+
+            $user->wallet()->create(['wallet_type' => $request->user_type, 'balance' => 0, 'currency' => 'TZS']);
+        }
+
+        // Force role sync if there's a mismatch
+        if ($user->user_type !== $request->user_type) {
+            $user->update(['user_type' => $request->user_type]);
+        }
+
+        // Ensure sub-profile exists (The Healer)
+        if ($user->user_type === 'merchant' && !$user->merchant) {
+            $user->merchant()->create(['store_name' => $user->name . "'s Store", 'city' => 'Dar es Salaam', 'is_verified' => false]);
+        } elseif ($user->user_type === 'rider' && !$user->deliveryPartner) {
+            $user->deliveryPartner()->create(['vehicle_type' => 'motorcycle', 'city' => 'Dar es Salaam', 'is_verified' => true]);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return $this->successResponse([
+            'user' => $user->load(['merchant', 'deliveryPartner', 'wallet']),
+            'token' => $token,
+        ], 'Mirror sync successful');
+    }
+
+    /**
      * Social Login (Google)
      * This is a simplified endpoint for handling Google ID tokens sent from the app.
      */

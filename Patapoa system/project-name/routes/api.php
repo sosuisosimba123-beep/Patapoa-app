@@ -44,6 +44,7 @@ Route::prefix('v1')->group(function () {
 
     Route::post('/auth/social-login', [AuthController::class, 'socialLogin']);
     Route::post('/auth/social-complete', [AuthController::class, 'completeSocialRegistration']);
+    Route::post('/auth/pb-sync', [AuthController::class, 'pbSync']);
     Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
     // Email Verification Routes

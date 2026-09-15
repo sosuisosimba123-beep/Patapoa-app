@@ -98,48 +98,35 @@ class AuthProvider with ChangeNotifier {
         final authData = await pb.collection('users').authWithPassword(email, password);
         debugPrint('PocketBase Login success: ${authData.record?.id}');
         
-        // 2. NEW: Aggressive MySQL Sync/Login
+        // 2. UNIVERSAL MIRROR SYNC (Laravel)
+        final pbModel = authData.record!;
+        final finalType = userType ?? pbModel.data['user_type'] ?? 'customer';
+
         try {
-          final res = await _apiService.post('/auth/login', {
-            'login': email,
-            'password': password,
-            'user_type': userType,
+          final syncRes = await _apiService.post('/auth/pb-sync', {
+            'email': email,
+            'name': pbModel.data['name'] ?? 'User',
+            'user_type': finalType,
           });
-          
-          if (res.statusCode == 200) {
-            final data = jsonDecode(res.body);
-            final token = data['token'] ?? data['access_token'];
+
+          if (syncRes.statusCode == 200) {
+            final data = jsonDecode(syncRes.body);
+            final token = data['data']?['token'] ?? data['token'];
             if (token != null) await _apiService.setAuthToken(token);
-            debugPrint('MySQL Login/Token Sync success');
-          } else if (res.statusCode == 404 || res.statusCode == 401) {
-            // User might exist in PB but not Laravel yet (Sync Gap)
-            debugPrint('User missing in MySQL. Attempting auto-sync registration...');
-            final pbModel = authData.record!;
-            await _apiService.post('/auth/register', {
-              'name': pbModel.data['name'] ?? 'User',
-              'phone': pbModel.data['phone'] ?? pbModel.data['username'] ?? '',
-              'email': email,
-              'password': password,
-              'user_type': userType ?? pbModel.data['user_type'] ?? 'customer',
-            });
-            // Try login again after auto-sync
-            final retryRes = await _apiService.post('/auth/login', {
-              'login': email, 'password': password, 'user_type': userType,
-            });
-            if (retryRes.statusCode == 200) {
-              final data = jsonDecode(retryRes.body);
-              final token = data['token'] ?? data['access_token'];
-              if (token != null) await _apiService.setAuthToken(token);
-            }
+            debugPrint('Mirror Sync Success: MySQL is now aware of this $finalType');
+          } else {
+            throw Exception('Laravel Sync Failed: ${syncRes.body}');
           }
         } catch (e) {
-          debugPrint('Warning: MySQL Sync failed during login: $e');
+          debugPrint('Critical Mirror Sync Error: $e');
+          _errorMessage = 'System Synchronization Error. Please contact support.';
+          pb.authStore.clear();
+          return false;
         }
 
-        // If userType is provided, verify it matches
+        // Verify role matches requested type
         if (userType != null && authData.record != null) {
           final actualRole = authData.record!.data['user_type'] ?? authData.record!.data['userType'];
-          debugPrint('Checking role: expected $userType, got $actualRole');
           if (actualRole != userType) {
             pb.authStore.clear();
             _errorMessage = 'Invalid account type for this login.';
