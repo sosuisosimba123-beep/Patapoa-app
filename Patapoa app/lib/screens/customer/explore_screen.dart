@@ -577,37 +577,53 @@ class _SearchBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
           ),
         ],
-        border: Border.all(color: Colors.black12, width: 0.5),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
       child: TextField(
         controller: controller,
         onSubmitted: onSubmitted,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         decoration: InputDecoration(
-          hintText: 'Search for groceries, snacks...',
-          hintStyle: TextStyle(color: Colors.grey.withOpacity(0.6), fontWeight: FontWeight.normal),
-          prefixIcon: Icon(Icons.search, color: colorScheme.primary),
+          hintText: 'Search groceries, snacks...',
+          hintStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontWeight: FontWeight.normal),
+          prefixIcon: Icon(Icons.search_rounded, color: colorScheme.primary, size: 22),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-          suffixIcon: controller.text.isNotEmpty 
-            ? IconButton(
-                icon: const Icon(Icons.close, size: 20),
-                onPressed: () {
-                  controller.clear();
-                  onSubmitted('');
-                }
-              )
-            : const Icon(Icons.tune_outlined, color: Colors.grey, size: 20),
+          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (controller.text.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.close_rounded, size: 20),
+                  onPressed: () {
+                    controller.clear();
+                    onSubmitted('');
+                  },
+                ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Container(
+                  height: 32,
+                  width: 1,
+                  color: Colors.black12,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Icon(Icons.tune_rounded, color: colorScheme.primary, size: 20),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -35,7 +35,13 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
       final orders = await _riderService.getOrders(page: 1, limit: 20);
       if (mounted) setState(() { _orders = orders; _isLoading = false; _hasMore = orders.length >= 20; });
     } catch (e) {
-      if (mounted) setState(() { _errorMessage = e.toString(); _isLoading = false; });
+      debugPrint('Rider Orders Fetch Error: $e');
+      if (mounted) setState(() { 
+        _errorMessage = e.toString().contains('404') 
+          ? 'Error 404: The server could not find your trip history. Please make sure your VPS is updated.'
+          : 'Failed to load deliveries: $e'; 
+        _isLoading = false; 
+      });
     }
   }
 

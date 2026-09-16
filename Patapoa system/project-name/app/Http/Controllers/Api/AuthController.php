@@ -201,7 +201,7 @@ class AuthController extends Controller
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'phone' => '0000000000', // Placeholder until profile update
+                'phone' => $request->phone ?? '0000000000',
                 'password' => Hash::make(Str::random(16)),
                 'user_type' => $request->user_type,
                 'is_active' => true,
@@ -211,16 +211,16 @@ class AuthController extends Controller
             $user->wallet()->create(['wallet_type' => $request->user_type, 'balance' => 0, 'currency' => 'TZS']);
         }
 
-        // Force role sync if there's a mismatch
+        // AUTO-PROMOTION & ROLE FIX (Mirroring)
         if ($user->user_type !== $request->user_type) {
             $user->update(['user_type' => $request->user_type]);
         }
 
         // Ensure sub-profile exists (The Healer)
         if ($user->user_type === 'merchant' && !$user->merchant) {
-            $user->merchant()->create(['store_name' => $user->name . "'s Store", 'city' => 'Dar es Salaam', 'is_verified' => false]);
+            $user->merchant()->create(['store_name' => $user->name . "'s Store", 'city' => 'Dar es Salaam', 'is_verified' => false, 'is_online' => true]);
         } elseif ($user->user_type === 'rider' && !$user->deliveryPartner) {
-            $user->deliveryPartner()->create(['vehicle_type' => 'motorcycle', 'city' => 'Dar es Salaam', 'is_verified' => true]);
+            $user->deliveryPartner()->create(['vehicle_type' => 'motorcycle', 'city' => 'Dar es Salaam', 'is_verified' => true, 'is_online' => false]);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;

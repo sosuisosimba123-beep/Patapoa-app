@@ -72,9 +72,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/master-products/barcode/{barcode}', [MasterProductController::class, 'showByBarcode']);
 
     // Protected routes
-    Route::middleware(['auth:sanctum', 'verified', 'idempotency'])->group(function () {
+    Route::middleware(['auth:sanctum', 'idempotency'])->group(function () {
         // Auth
-        Route::post('/auth/logout', [AuthController::class, 'logout'])->withoutMiddleware('verified');
+        Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::get('/auth/me', [AuthController::class, 'me'])->withoutMiddleware('verified');
         Route::put('/auth/me', [AuthController::class, 'updateProfile']);
 

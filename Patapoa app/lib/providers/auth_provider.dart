@@ -250,31 +250,60 @@ class AuthProvider with ChangeNotifier {
       final authData = await pb.collection('users').authWithOAuth2(
         'google',
         (url) async {
-          await FlutterWebAuth2.authenticate(
+          final result = await FlutterWebAuth2.authenticate(
             url: url.toString(),
             callbackUrlScheme: 'com.nacci.patapoa.app',
           );
-        }
+          return result;
+        },
       );
 
       if (pb.authStore.isValid && pb.authStore.model != null) {
         final model = pb.authStore.model as RecordModel;
-        final currentRole = model.data['user_type'] ?? model.data['userType'] ?? model.data['role'];
         
-        // Auto-assign role if missing or if user explicitly chose to upgrade
-        if (currentRole == null || (currentRole == 'customer' && userType != 'customer')) {
-           final targetRole = (currentRole == 'customer' && userType != 'customer') ? userType : (currentRole ?? userType);
+        // Ensure name and user_type are NEVER empty in PocketBase
+        final existingName = model.data['name'] ?? '';
+        final existingRole = model.data['user_type'] ?? model.data['userType'] ?? model.data['role'];
+        
+        // If it's a new user or fields are missing, perform a "Full Identity Sync"
+        if (existingName.isEmpty || existingRole == null || (existingRole == 'customer' && userType != 'customer')) {
+           final targetRole = (existingRole == 'customer' && userType != 'customer') ? userType : (existingRole ?? userType);
+           
+           // Extract name from OAuth2 data if missing in profile
+           String? nameToSet = existingName.isNotEmpty ? existingName : authData.meta?.name;
+           if (nameToSet == null || nameToSet.isEmpty) nameToSet = 'Patapoa User';
+
            await pb.collection('users').update(model.id, body: {
+             'name': nameToSet,
              'user_type': targetRole,
-             'userType': targetRole,
-             'role': targetRole,
+             'userType': targetRole, // Backwards compatibility
+             'role': targetRole,     // Backwards compatibility
            });
-           // Force refresh to update local authStore model immediately
+           
+           debugPrint('PocketBase Identity Sync: Set name="$nameToSet", role="$targetRole"');
            await pb.collection('users').authRefresh();
         }
 
-        // Parallel background sync with Laravel/MySQL
-        _syncWithLaravel(model, userType);
+        // UNIVERSAL MIRROR SYNC (Laravel - Keeping for now until full migration)
+        final pbModel = authData.record!;
+        final finalType = userType ?? pbModel.data['user_type'] ?? 'customer';
+
+        try {
+          final syncRes = await _apiService.post('/auth/pb-sync', {
+            'email': pbModel.data['email'] ?? '',
+            'name': pbModel.data['name'] ?? 'User',
+            'user_type': finalType,
+          });
+
+          if (syncRes.statusCode == 200) {
+            final data = jsonDecode(syncRes.body);
+            final token = data['data']?['token'] ?? data['token'];
+            if (token != null) await _apiService.setAuthToken(token);
+            debugPrint('Mirror Sync Success: MySQL is now aware of this $finalType');
+          }
+        } catch (e) {
+          debugPrint('Google Laravel Sync Warning: $e');
+        }
         
         await _syncFcmToken();
         debugPrint('Authentication successful. Directing to app...');
@@ -293,16 +322,7 @@ class AuthProvider with ChangeNotifier {
 
   /// Internal helper to ensure MySQL is always in sync with Google Auth
   Future<void> _syncWithLaravel(RecordModel pbUser, String userType) async {
-    try {
-      await _apiService.post('/auth/social-sync', {
-        'pb_id': pbUser.id,
-        'email': pbUser.data['email'] ?? '',
-        'name': pbUser.data['name'],
-        'user_type': userType,
-      });
-    } catch (e) {
-      debugPrint('Laravel Social Sync ignored: $e');
-    }
+     // Deprecated: Using universal pb-sync endpoint inside signInWithGoogle
   }
 
   Future<bool> sendOtp(String phone) async {

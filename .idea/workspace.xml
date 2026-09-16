@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="1b5ff4e8-0c52-4597-9bed-e7541e5f7030" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_homepage_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_homepage_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/providers/auth_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/providers/auth_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/explore_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/explore_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_orders_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_orders_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

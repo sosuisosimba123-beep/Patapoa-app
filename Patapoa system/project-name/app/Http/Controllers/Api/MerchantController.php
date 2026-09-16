@@ -21,9 +21,35 @@ class MerchantController extends Controller
         $this->merchantService = $merchantService;
     }
 
+    /**
+     * Helper to get merchant or create if missing
+     */
+    private function getMerchantOrHeal(Request $request)
+    {
+        $user = $request->user();
+        $merchant = $user->merchant;
+
+        if (!$merchant && $user->user_type === 'merchant') {
+            $merchant = $user->merchant()->create([
+                'store_name' => $user->name . "'s Store",
+                'address' => 'Not set',
+                'city' => 'Dar es Salaam',
+                'is_verified' => false,
+                'is_online' => true,
+            ]);
+            $user->load('merchant');
+            $merchant = $user->merchant;
+        }
+
+        return $merchant;
+    }
+
     public function dashboard(Request $request)
     {
-        $stats = $this->merchantService->getDashboardStats($request->user()->merchant);
+        $merchant = $this->getMerchantOrHeal($request);
+        if (!$merchant) return $this->errorResponse('Merchant profile not found', 404);
+
+        $stats = $this->merchantService->getDashboardStats($merchant);
         return $this->successResponse($stats, 'Dashboard data retrieved successfully');
     }
 
@@ -139,7 +165,7 @@ class MerchantController extends Controller
 
     public function updateLocation(Request $request)
     {
-        $merchant = $request->user()->merchant;
+        $merchant = $this->getMerchantOrHeal($request);
         if (!$merchant) return $this->errorResponse('Merchant profile not found', 404);
 
         $validator = Validator::make($request->all(), [
