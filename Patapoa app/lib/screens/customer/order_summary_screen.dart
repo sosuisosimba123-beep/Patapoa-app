@@ -8,7 +8,7 @@ import '../../utils/analytics_service.dart';
 
 class OrderSummaryScreen extends StatefulWidget {
   const OrderSummaryScreen({super.key, required this.addressId});
-  final int addressId;
+  final String addressId;
 
   @override
   State<OrderSummaryScreen> createState() => _OrderSummaryScreenState();

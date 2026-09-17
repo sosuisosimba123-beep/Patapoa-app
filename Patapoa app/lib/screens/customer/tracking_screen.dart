@@ -133,18 +133,16 @@ class _TrackingScreenState extends State<TrackingScreen> with SingleTickerProvid
     try {
       final data = await _orderService.getOrderTracking(widget.order.id);
       if (mounted) {
-        final riderLat = (data['rider']?['current_latitude'] as num?)?.toDouble();
-        final riderLng = (data['rider']?['current_longitude'] as num?)?.toDouble();
+        final riderLat = (data['rider_lat'] as num?)?.toDouble();
+        final riderLng = (data['rider_lng'] as num?)?.toDouble();
         
-        final dropoffLat = (data['dropoff_location']?['latitude'] as num?)?.toDouble();
-        final dropoffLng = (data['dropoff_location']?['longitude'] as num?)?.toDouble();
+        // Use address from order model since TrackingScreen receives the Order object
+        final dropoffLat = widget.order.address?['latitude'] != null ? (widget.order.address!['latitude'] as num).toDouble() : null;
+        final dropoffLng = widget.order.address?['longitude'] != null ? (widget.order.address!['longitude'] as num).toDouble() : null;
 
         setState(() {
           _currentStatus = data['status'] ?? _currentStatus;
           _currentStatusNote = _getStatusNote(_currentStatus);
-          if (data['estimated_duration'] != null) {
-            _eta = (data['estimated_duration'] as num).toInt();
-          }
         });
 
         if (riderLat != null && riderLng != null && dropoffLat != null && dropoffLng != null) {
@@ -166,11 +164,6 @@ class _TrackingScreenState extends State<TrackingScreen> with SingleTickerProvid
           setState(() {
             _riderLocation = newRiderLocation;
           });
-          
-          // Auto-fit bounds on the first fetch
-          if (_routePoints.isNotEmpty && widget.order.status == 'out_for_delivery') {
-             // _mapController.fitCamera(...) would be ideal here if using a controller
-          }
         }
       }
     } catch (e) {

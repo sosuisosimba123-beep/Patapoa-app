@@ -47,7 +47,7 @@ class _ExploreScreenState extends State<ExploreScreen> with SingleTickerProvider
   List<Product> _searchResults = [];
   MasterProduct? _searchHeroProduct;
 
-  int? _selectedPrimaryCategoryId;
+  String? _selectedPrimaryCategoryId;
 
   @override
   void initState() {

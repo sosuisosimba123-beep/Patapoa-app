@@ -250,11 +250,10 @@ class AuthProvider with ChangeNotifier {
       final authData = await pb.collection('users').authWithOAuth2(
         'google',
         (url) async {
-          final result = await FlutterWebAuth2.authenticate(
+          await FlutterWebAuth2.authenticate(
             url: url.toString(),
             callbackUrlScheme: 'com.nacci.patapoa.app',
           );
-          return result;
         },
       );
 
@@ -270,7 +269,7 @@ class AuthProvider with ChangeNotifier {
            final targetRole = (existingRole == 'customer' && userType != 'customer') ? userType : (existingRole ?? userType);
            
            // Extract name from OAuth2 data if missing in profile
-           String? nameToSet = existingName.isNotEmpty ? existingName : authData.meta?.name;
+           String? nameToSet = existingName.isNotEmpty ? existingName : authData.meta?['name'];
            if (nameToSet == null || nameToSet.isEmpty) nameToSet = 'Patapoa User';
 
            await pb.collection('users').update(model.id, body: {
@@ -318,21 +317,6 @@ class AuthProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-  }
-
-  /// Internal helper to ensure MySQL is always in sync with Google Auth
-  Future<void> _syncWithLaravel(RecordModel pbUser, String userType) async {
-     // Deprecated: Using universal pb-sync endpoint inside signInWithGoogle
-  }
-
-  Future<bool> sendOtp(String phone) async {
-    // Placeholder for PocketBase phone auth if implemented
-    return true; 
-  }
-
-  Future<bool> verifyOtp(String phone, String otp) async {
-    // Placeholder for PocketBase phone auth if implemented
-    return true;
   }
 
   Future<void> logout() async {

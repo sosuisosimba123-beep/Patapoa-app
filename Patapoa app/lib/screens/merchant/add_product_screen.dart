@@ -29,7 +29,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   
   String? _imageUrl;
   String _categorySlug = 'other';
-  int? _masterProductId;
+  String? _masterProductId;
   bool _isLoading = false;
 
   List<PrimaryCategory> _primaryCategories = [];

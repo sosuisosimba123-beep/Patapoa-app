@@ -6,7 +6,7 @@ class PaymentService {
   final ApiService _apiService = ApiService();
 
   Future<Map<String, dynamic>> initiatePayment({
-    required int orderId,
+    required String orderId,
     required String paymentMethod,
   }) async {
     try {
@@ -26,9 +26,9 @@ class PaymentService {
     }
   }
 
-  Future<Map<String, dynamic>> checkPaymentStatus(int orderId) async {
+  Future<Map<String, dynamic>> checkPaymentStatus(String orderId) async {
     try {
-      final response = await _apiService.get(ApiConfig.paymentsStatus(orderId));
+      final response = await _apiService.get('/payments/$orderId/status');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

@@ -240,7 +240,7 @@ class _RouteAssignScreenState extends State<RouteAssignScreen> {
             width: double.infinity, 
             height: 64, 
             child: ElevatedButton(
-              onPressed: _isUpdating ? null : () => _updateStatus(int.parse(order.id), nextStatus), 
+              onPressed: _isUpdating ? null : () => _updateStatus(order.id, nextStatus), 
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
                 foregroundColor: Colors.white,
@@ -265,7 +265,7 @@ class _RouteAssignScreenState extends State<RouteAssignScreen> {
     }
   }
 
-  Future<void> _updateStatus(int orderId, String status) async {
+  Future<void> _updateStatus(String orderId, String status) async {
     setState(() => _isUpdating = true);
     try {
       await _riderService.updateOrderStatus(orderId, status).timeout(

@@ -89,13 +89,15 @@ class _OrderCard extends StatelessWidget {
   const _OrderCard({required this.order});
   @override
   Widget build(BuildContext context) {
-    return LiquidGlassContainer(
-      padding: EdgeInsets.zero,
-      borderRadius: 16,
-      opacity: 0.1,
-      blur: 5,
+    final colorScheme = Theme.of(context).colorScheme;
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Colors.black12),
+      ),
       child: ListTile(
-        title: Text('Order ${order.displayId}', style: const TextStyle(fontWeight: FontWeight.w900)),
+        title: Text('Order ${order.displayId}', style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text('Status: ${order.status.toUpperCase()}', style: const TextStyle(fontSize: 10, letterSpacing: 1.1, fontWeight: FontWeight.bold)),
         trailing: Text('TZS ${order.total.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold)),
       ),

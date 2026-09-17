@@ -38,7 +38,7 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
       debugPrint('Rider Orders Fetch Error: $e');
       if (mounted) setState(() { 
         _errorMessage = e.toString().contains('404') 
-          ? 'Error 404: The server could not find your trip history. Please make sure your VPS is updated.'
+          ? 'No history found. Once you complete your first delivery, it will appear here!'
           : 'Failed to load deliveries: $e'; 
         _isLoading = false; 
       });

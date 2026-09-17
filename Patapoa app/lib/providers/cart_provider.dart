@@ -100,13 +100,13 @@ class CartProvider with ChangeNotifier {
     return null;
   }
 
-  void removeItem(int productId) {
+  void removeItem(String productId) {
     _items.removeWhere((item) => item.product.id == productId);
     _saveCart();
     notifyListeners();
   }
 
-  void updateQuantity(int productId, int quantity) {
+  void updateQuantity(String productId, int quantity) {
     if (quantity <= 0) {
       removeItem(productId);
       return;

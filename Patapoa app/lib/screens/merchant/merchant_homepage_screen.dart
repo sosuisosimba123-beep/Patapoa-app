@@ -224,7 +224,7 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
   }
 
   Widget _buildOrderCard(Map<String, dynamic> map, TextTheme textTheme, ColorScheme colorScheme) {
-    final id = (map['id'] as num).toInt();
+    final String id = map['id'].toString();
     final displayId = map['display_id'] as String? ?? '#$id';
     final customerName = map['customer']?['name'] as String? ?? 'Customer';
     final items = (map['items_list'] as List? ?? []);
@@ -262,7 +262,7 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
     );
   }
 
-  Future<void> _handleOrder(int id, String status) async {
+  Future<void> _handleOrder(String id, String status) async {
     try {
       await _merchantService.updateOrderStatus(id, status);
       _loadStats();

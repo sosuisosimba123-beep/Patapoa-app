@@ -183,7 +183,7 @@ class PatapoaApp extends StatelessWidget {
           path: '/customer/order-summary',
           builder: (context, state) {
             final extra = state.extra as Map<String, dynamic>?;
-            return OrderSummaryScreen(addressId: extra?['address_id'] as int? ?? 0);
+            return OrderSummaryScreen(addressId: extra?['address_id']?.toString() ?? '');
           }
         ),
         GoRoute(path: '/customer/tracking', builder: (context, state) => TrackingScreen(order: state.extra as Order)),
@@ -233,8 +233,8 @@ class PatapoaApp extends StatelessWidget {
           builder: (context, state) {
             final extra = state.extra as Map<String, dynamic>;
             return RiderCashReceivedScreen(
-              orderId: extra['orderId'] as int,
-              amount: extra['amount'] as double,
+              orderId: extra['orderId'].toString(),
+              amount: (extra['amount'] as num).toDouble(),
             );
           },
         ),

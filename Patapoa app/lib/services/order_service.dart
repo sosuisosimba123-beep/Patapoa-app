@@ -1,88 +1,79 @@
-import 'dart:convert';
-import '../config/api_config.dart';
+import 'package:flutter/foundation.dart';
+import 'package:pocketbase/pocketbase.dart';
 import '../models/order.dart';
-import 'api_service.dart';
-import '../utils/api_error_handler.dart';
+import 'pocketbase_services.dart';
 
 class OrderService {
-  final ApiService _apiService = ApiService();
-
   Future<List<Order>> getCustomerOrders({
     int page = 1,
     int limit = 20,
-    List<String>? fields,
-    List<String>? include,
   }) async {
-    return ApiErrorHandler.withRetry(() async {
-      String url = ApiConfig.customerOrders;
-      final params = <String>[];
-      params.add('page=$page');
-      params.add('limit=$limit');
+    final userId = pb.authStore.model?.id;
+    if (userId == null) return [];
 
-      final queryString = params.isNotEmpty ? '?${params.join('&')}' : '';
-      final response = await _apiService.get(url + queryString, fields: fields, include: include);
-      
-      final dynamic decoded = jsonDecode(response.body);
-      final List<dynamic> ordersData = decoded is List ? decoded : (decoded['data'] ?? []);
-      return ordersData.map((json) => Order.fromJson(json)).toList();
-    });
-  }
+    try {
+      final result = await pb.collection('Orders').getList(
+        page: page,
+        perPage: limit,
+        filter: 'customer = "$userId"',
+        expand: 'order_items_via_order,merchant,rider',
+        sort: '-created',
+      );
 
-  Future<Order> getOrder(int id, {List<String>? fields, List<String>? include}) async {
-    final response = await _apiService.get(ApiConfig.customerOrder(id), fields: fields, include: include);
-    final data = jsonDecode(response.body);
-    return Order.fromJson(data['data'] ?? data);
-  }
-
-  Future<Order> createOrder(Map<String, dynamic> request) async {
-    final response = await _apiService.post(ApiConfig.customerOrders, request);
-    final data = jsonDecode(response.body);
-
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return Order.fromJson(data['data'] ?? data);
-    } else {
-      throw Exception(data['message'] ?? 'Failed to create order');
+      return result.items.map((record) => Order.fromJson({
+        'id': record.id,
+        ...record.data,
+        'expand': record.expand,
+      })).toList();
+    } catch (e) {
+      debugPrint('PocketBase GetOrders Error: $e');
+      return [];
     }
   }
 
-  Future<Map<String, dynamic>> getOrderTracking(int id) async {
-    final response = await _apiService.get(ApiConfig.orderTracking(id));
-    final data = jsonDecode(response.body);
-    return data['data'] ?? data;
-  }
+  Future<Order> createOrder(Map<String, dynamic> request) async {
+    final userId = pb.authStore.model?.id;
+    if (userId == null) throw Exception('Auth required');
 
-  Future<bool> cancelOrder(int id) async {
-    await _apiService.put(ApiConfig.orderCancel(id), {});
-    return true;
-  }
-
-  Future<List<Order>> getMerchantOrders({
-    int page = 1,
-    int limit = 20,
-    List<String>? fields,
-    List<String>? include,
-  }) async {
-    return ApiErrorHandler.withRetry(() async {
-      String url = ApiConfig.merchantOrders;
-      final params = <String>[];
-      params.add('page=$page');
-      params.add('limit=$limit');
-
-      final queryString = params.isNotEmpty ? '?${params.join('&')}' : '';
-      final response = await _apiService.get(url + queryString, fields: fields, include: include);
-      
-      final dynamic decoded = jsonDecode(response.body);
-      final List<dynamic> ordersData = decoded is List ? decoded : (decoded['data'] ?? []);
-      return ordersData.map((json) => Order.fromJson(json)).toList();
+    // 1. Create the Main Order record
+    final orderRecord = await pb.collection('Orders').create(body: {
+      'order_number': 'PAT-${DateTime.now().millisecondsSinceEpoch}',
+      'customer': userId,
+      'merchant': request['merchant_id'],
+      'status': 'placed',
+      'total_amount': request['total_amount'],
+      'delivery_fee': request['delivery_fee'] ?? 0.0,
+      'Address': request['delivery_address'],
     });
+
+    // 2. Create Order Items linked to this order
+    final List<dynamic> items = request['items'];
+    for (var item in items) {
+      await pb.collection('order_items').create(body: {
+        'Orders': orderRecord.id,
+        'Products': item['product_id'],
+        'quantity': item['quantity'],
+        'price_at_purchase': item['price'],
+      });
+    }
+
+    return Order.fromJson({'id': orderRecord.id, ...orderRecord.data});
   }
 
-  Future<Order> updateMerchantOrderStatus(int id, String status) async {
-    final response = await _apiService.put(
-      ApiConfig.merchantUpdateOrderStatus(id),
-      {'status': status},
-    );
-    final data = jsonDecode(response.body);
-    return Order.fromJson(data['data'] ?? data);
+  Future<void> updateOrderStatus(String orderId, String status) async {
+    await pb.collection('Orders').update(orderId, body: {'status': status});
+  }
+
+  Future<Map<String, dynamic>> getOrderTracking(String id) async {
+    try {
+      final record = await pb.collection('live_orders').getFirstListItem('order_id = "$id"', expand: 'rider');
+      return {
+        ...record.data,
+        'rider': record.expand['rider']?.first.data,
+      };
+    } catch (e) {
+      debugPrint('PocketBase GetOrderTracking Error: $e');
+      return {'status': 'placed'};
+    }
   }
 }

@@ -106,7 +106,7 @@ class _CartScreenState extends State<CartScreen> {
           const Row(children: [Icon(Icons.location_on_outlined, size: 16), SizedBox(width: 8), Text('Delivery Address', style: TextStyle(fontWeight: FontWeight.bold))]),
           const SizedBox(height: 8),
           DropdownButtonFormField<Map<String, dynamic>>(
-            initialValue: _selectedAddress,
+            value: _selectedAddress,
             items: _addresses.map((a) => DropdownMenuItem(value: a, child: Text(a['address_line_1'], overflow: TextOverflow.ellipsis))).toList(),
             onChanged: (v) => setState(() => _selectedAddress = v),
             decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 12)),

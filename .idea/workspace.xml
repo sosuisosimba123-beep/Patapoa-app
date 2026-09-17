@@ -6,9 +6,34 @@
   <component name="ChangeListManager">
     <list default="true" id="1b5ff4e8-0c52-4597-9bed-e7541e5f7030" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/config/api_config.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/config/api_config.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/features/cart/presentation/cart_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/features/cart/presentation/cart_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/order.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/order.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/order.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/order.g.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/product.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/product.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/models/product.g.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/models/product.g.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Patapoa app/lib/providers/auth_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/providers/auth_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/providers/cart_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/providers/cart_provider.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/explore_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/explore_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/order_summary_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/order_summary_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/orders_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/orders_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/payment_gateway_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/payment_gateway_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/tracking_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/customer/tracking_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/add_product_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/add_product_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_homepage_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_homepage_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_inventory_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_inventory_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_orders_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/merchant/merchant_orders_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_cash_received_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_cash_received_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_orders_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/rider_orders_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/route_assign_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/screens/rider/route_assign_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/address_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/address_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/delivery_partner_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/delivery_partner_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/merchant_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/merchant_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/order_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/order_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/payment_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/payment_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/product_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/product_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Patapoa app/lib/services/transaction_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Patapoa app/lib/services/transaction_service.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

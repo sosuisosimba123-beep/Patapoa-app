@@ -53,7 +53,7 @@ class _MerchantOrdersScreenState extends State<MerchantOrdersScreen> {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) _loadMoreOrders();
   }
 
-  Future<void> _updateStatus(int orderId, String status) async {
+  Future<void> _updateStatus(String orderId, String status) async {
     try {
       await _merchantService.updateOrderStatus(orderId, status);
       _loadOrders();

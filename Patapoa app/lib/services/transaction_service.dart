@@ -1,46 +1,45 @@
-import 'dart:convert';
-import '../config/api_config.dart';
-import 'api_service.dart';
+import 'package:flutter/foundation.dart';
+import 'pocketbase_services.dart';
 
 class TransactionService {
-  final ApiService _apiService = ApiService();
-
   Future<List<Map<String, dynamic>>> getTransactions({int page = 1, int limit = 20}) async {
+    final userId = pb.authStore.model?.id;
+    if (userId == null) return [];
+
     try {
-      String url = ApiConfig.transactions;
-      final params = <String>[];
-      params.add('page=$page');
-      params.add('limit=$limit');
-      
-      if (params.isNotEmpty) {
-        url += '?${params.join('&')}';
-      }
-      
-      final response = await _apiService.get(url);
-      
-      if (response.statusCode == 200) {
-        final dynamic decoded = jsonDecode(response.body);
-        final List<dynamic> transactionsData = decoded is List ? decoded : (decoded['data'] ?? []);
-        return transactionsData.map((item) => item as Map<String, dynamic>).toList();
-      } else {
-        throw Exception('Failed to load transactions');
-      }
+      final result = await pb.collection('transactions').getList(
+        page: page,
+        perPage: limit,
+        filter: 'user = "$userId"',
+        sort: '-created',
+      );
+
+      return result.items.map((record) => {
+        'id': record.id,
+        ...record.data,
+        'created_at': record.created,
+      }).toList();
     } catch (e) {
-      throw Exception('Error fetching transactions: $e');
+      debugPrint('PocketBase GetTransactions Error: $e');
+      return [];
     }
   }
 
-  Future<Map<String, dynamic>> requestPayout(Map<String, dynamic> data) async {
+  Future<void> requestPayout(Map<String, dynamic> data) async {
+    final userId = pb.authStore.model?.id;
+    if (userId == null) throw Exception('Auth required');
+
     try {
-      final response = await _apiService.post(ApiConfig.riderPayoutRequest, data);
-      
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to request payout');
-      }
+      // Create a pending debit transaction
+      await pb.collection('transactions').create(body: {
+        'user': userId,
+        'amount': -(data['amount'] as num).abs(),
+        'type': 'debit',
+        'description': 'Withdrawal request to ${data['phone']} (${data['provider']})',
+        'status': 'pending',
+      });
     } catch (e) {
-      throw Exception('Error requesting payout: $e');
+      throw Exception('Failed to submit payout request: $e');
     }
   }
 }

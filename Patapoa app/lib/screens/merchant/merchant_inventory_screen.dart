@@ -56,7 +56,7 @@ class _MerchantInventoryScreenState extends State<MerchantInventoryScreen> {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) _loadMoreProducts();
   }
 
-  Future<void> _deleteProduct(int id) async {
+  Future<void> _deleteProduct(String id) async {
     try {
       await _merchantService.deleteProduct(id);
       setState(() => _products.removeWhere((p) => p.id == id));

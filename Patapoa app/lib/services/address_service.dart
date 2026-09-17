@@ -1,83 +1,62 @@
-import 'dart:convert';
-import '../config/api_config.dart';
-import 'api_service.dart';
+import 'package:flutter/foundation.dart';
+import 'pocketbase_services.dart';
 
 class AddressService {
-  final ApiService _apiService = ApiService();
-
   Future<List<Map<String, dynamic>>> getAddresses() async {
+    final userId = pb.authStore.model?.id;
+    if (userId == null) return [];
+
     try {
-      final response = await _apiService.get(ApiConfig.addresses);
-      if (response.statusCode == 200) {
-        final dynamic decoded = jsonDecode(response.body);
-        final List<dynamic> data = decoded is List ? decoded : (decoded['data'] ?? []);
-        return data.map((item) => item as Map<String, dynamic>).toList();
-      } else {
-        throw Exception('Failed to load addresses');
-      }
+      final result = await pb.collection('addresses').getList(
+        filter: 'user = "$userId"',
+        sort: '-is_default,created',
+      );
+      return result.items.map((r) => {'id': r.id, ...r.data}).toList();
     } catch (e) {
-      throw Exception('Error fetching addresses: $e');
+      debugPrint('PocketBase GetAddresses Error: $e');
+      return [];
     }
   }
 
-  Future<Map<String, dynamic>> createAddress({
+  Future<void> createAddress({
     required String label,
     required String recipientName,
     required String phone,
     required String addressLine1,
-    String? addressLine2,
     required String city,
-    required String region,
     double? latitude,
     double? longitude,
   }) async {
-    try {
-      final body = <String, dynamic>{
-        'label': label,
-        'recipient_name': recipientName,
-        'phone': phone,
-        'address_line_1': addressLine1,
-        'city': city,
-        'region': region,
-      };
-      if (addressLine2 != null) body['address_line_2'] = addressLine2;
-      if (latitude != null) body['latitude'] = latitude;
-      if (longitude != null) body['longitude'] = longitude;
+    final userId = pb.authStore.model?.id;
+    if (userId == null) return;
 
-      final response = await _apiService.post(ApiConfig.addresses, body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        return data['data'] ?? data;
-      } else {
-        throw Exception('Failed to create address');
-      }
-    } catch (e) {
-      throw Exception('Error creating address: $e');
-    }
+    await pb.collection('addresses').create(body: {
+      'user': userId,
+      'label': label,
+      'recipient_name': recipientName,
+      'phone': phone,
+      'address_line_1': addressLine1,
+      'city': city,
+      'latitude': latitude,
+      'longitude': longitude,
+    });
   }
 
-  Future<Map<String, dynamic>> setDefaultAddress(int id) async {
-    try {
-      final response = await _apiService.put(ApiConfig.addressSetDefault(id), {});
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['data'] ?? data;
-      } else {
-        throw Exception('Failed to set default address');
-      }
-    } catch (e) {
-      throw Exception('Error setting default address: $e');
+  Future<void> setDefaultAddress(String id) async {
+    final userId = pb.authStore.model?.id;
+    if (userId == null) return;
+
+    // Reset others
+    final current = await pb.collection('addresses').getList(filter: 'user = "$userId" && is_default = true');
+    for (var item in current.items) {
+      await pb.collection('addresses').update(item.id, body: {'is_default': false});
     }
+
+    // Set new default
+    await pb.collection('addresses').update(id, body: {'is_default': true});
   }
 
-  Future<void> deleteAddress(int id) async {
-    try {
-      final response = await _apiService.delete(ApiConfig.address(id));
-      if (response.statusCode != 200 && response.statusCode != 204) {
-        throw Exception('Failed to delete address');
-      }
-    } catch (e) {
-      throw Exception('Error deleting address: $e');
-    }
+  Future<void> deleteAddress(String id) async {
+    await pb.collection('addresses').delete(id);
   }
 }

@@ -4,7 +4,7 @@ import '../../services/delivery_partner_service.dart';
 
 class RiderCashReceivedScreen extends StatefulWidget {
   const RiderCashReceivedScreen({super.key, required this.orderId, required this.amount});
-  final int orderId;
+  final String orderId;
   final double amount;
 
   @override

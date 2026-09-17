@@ -45,7 +45,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
     super.dispose();
   }
 
-  void _startStatusPolling(int orderId) {
+  void _startStatusPolling(String orderId) {
     _statusTimer?.cancel();
     _pollCount = 0;
     setState(() => _isPolling = true);

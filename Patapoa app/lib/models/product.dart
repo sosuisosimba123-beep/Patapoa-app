@@ -1,11 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:flutter/foundation.dart';
 import '../utils/number_utils.dart';
 
-part 'product.g.dart';
-
-@JsonSerializable(fieldRename: FieldRename.snake, createFactory: false)
 class PrimaryCategory {
-  final int id;
+  final String id;
   final String name;
   final String slug;
   final String? imageUrl;
@@ -29,23 +26,29 @@ class PrimaryCategory {
 
   factory PrimaryCategory.fromJson(Map<String, dynamic> json) {
     return PrimaryCategory(
-      id: NumberUtils.paramInt(json['id']),
+      id: json['id'].toString(),
       name: json['name'] as String,
       slug: json['slug'] as String,
-      imageUrl: json['image_url'] as String?,
+      imageUrl: json['image_url'] as String? ?? json['icon_url'] as String?,
       secondaryCategories: json['secondary_categories'] != null 
           ? (json['secondary_categories'] as List).map((i) => SecondaryCategory.fromJson(i as Map<String, dynamic>)).toList()
           : null,
     );
   }
 
-  Map<String, dynamic> toJson() => _$PrimaryCategoryToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'slug': slug,
+      'image_url': imageUrl,
+    };
+  }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake, createFactory: false)
 class SecondaryCategory {
-  final int id;
-  final int primaryCategoryId;
+  final String id;
+  final String primaryCategoryId;
   final String name;
   final String slug;
   final String? imageUrl;
@@ -70,30 +73,37 @@ class SecondaryCategory {
 
   factory SecondaryCategory.fromJson(Map<String, dynamic> json) {
     return SecondaryCategory(
-      id: NumberUtils.paramInt(json['id']),
-      primaryCategoryId: NumberUtils.paramInt(json['primary_category_id']),
+      id: json['id'].toString(),
+      primaryCategoryId: (json['primary_category_id'] ?? json['primary_category']).toString(),
       name: json['name'] as String,
       slug: json['slug'] as String,
-      imageUrl: json['image_url'] as String?,
-      primaryCategory: json['primary_category'] != null 
+      imageUrl: json['image_url'] as String? ?? json['icon_url'] as String?,
+      primaryCategory: json['primary_category'] != null && json['primary_category'] is Map
           ? PrimaryCategory.fromJson(json['primary_category'] as Map<String, dynamic>)
           : null,
     );
   }
 
-  Map<String, dynamic> toJson() => _$SecondaryCategoryToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'primary_category': primaryCategoryId,
+      'name': name,
+      'slug': slug,
+      'image_url': imageUrl,
+    };
+  }
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake, createFactory: false)
 class MasterProduct {
-  final int id;
+  final String id;
   final String name;
   final String? brand;
   final String? description;
   final String? primaryImageUrl;
   final String? backupImageUrl;
   final String? barcode;
-  final int? secondaryCategoryId;
+  final String? secondaryCategoryId;
   final SecondaryCategory? secondaryCategory;
 
   MasterProduct({
@@ -110,28 +120,36 @@ class MasterProduct {
 
   factory MasterProduct.fromJson(Map<String, dynamic> json) {
     return MasterProduct(
-      id: NumberUtils.paramInt(json['id']),
+      id: json['id'].toString(),
       name: json['name'] as String,
       brand: json['brand'] as String?,
       description: json['description'] as String?,
       primaryImageUrl: json['primary_image_url'] as String?,
       backupImageUrl: json['backup_image_url'] as String?,
       barcode: json['barcode'] as String?,
-      secondaryCategoryId: NumberUtils.paramInt(json['secondary_category_id']),
-      secondaryCategory: json['secondary_category'] != null 
+      secondaryCategoryId: (json['secondary_category_id'] ?? json['category']).toString(),
+      secondaryCategory: json['secondary_category'] != null && json['secondary_category'] is Map
           ? SecondaryCategory.fromJson(json['secondary_category'] as Map<String, dynamic>) 
           : null,
     );
   }
   
-  Map<String, dynamic> toJson() => _$MasterProductToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'brand': brand,
+      'description': description,
+      'barcode': barcode,
+      'category': secondaryCategoryId,
+    };
+  }
 
   String get categorySlug => secondaryCategory?.slug ?? 'other';
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake, createFactory: false)
 class Product {
-  final int id;
+  final String id;
   final String? name;
   final String? brand;
   final String? unit;
@@ -139,10 +157,10 @@ class Product {
   final double price;
   final String? image;
   final int? stockQuantity;
-  final int? merchantId;
-  final int? secondaryCategoryId;
+  final String? merchantId;
+  final String? secondaryCategoryId;
   final SecondaryCategory? secondaryCategory;
-  final int? masterProductId;
+  final String? masterProductId;
   final MasterProduct? masterProduct;
   final bool isAvailable;
   final double distance;
@@ -175,29 +193,29 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: NumberUtils.paramInt(json['id']),
+      id: json['id'].toString(),
       name: json['name'] as String?,
       brand: json['brand'] as String?,
       unit: json['unit'] as String?,
-      description: json['description'] as String?,
-      price: NumberUtils.toDouble(json['price']),
-      image: json['image'] as String?,
+      description: json['description'] ?? json['Description'] as String?,
+      price: NumberUtils.toDouble(json['price'] ?? json['Price']),
+      image: json['image'] ?? json['Image_url'] as String?,
       stockQuantity: NumberUtils.paramInt(json['stock_quantity'] ?? json['stock_count']),
-      merchantId: NumberUtils.paramInt(json['merchant_id']),
-      secondaryCategoryId: NumberUtils.paramInt(json['secondary_category_id']),
-      secondaryCategory: json['secondary_category'] != null 
+      merchantId: (json['merchant_id'] ?? json['merchant']).toString(),
+      secondaryCategoryId: (json['secondary_category_id'] ?? json['category']).toString(),
+      secondaryCategory: json['secondary_category'] != null && json['secondary_category'] is Map
           ? SecondaryCategory.fromJson(json['secondary_category'] as Map<String, dynamic>) 
           : null,
-      masterProductId: NumberUtils.paramInt(json['master_product_id']),
-      masterProduct: json['master_product'] != null 
+      masterProductId: json['master_product_id']?.toString(),
+      masterProduct: json['master_product'] != null && json['master_product'] is Map
           ? MasterProduct.fromJson(json['master_product'] as Map<String, dynamic>) 
           : null,
       isAvailable: json['is_available'] as bool? ?? true,
       distance: NumberUtils.toDouble(json['distance']),
-      merchant: json['merchant'] as Map<String, dynamic>?,
+      merchant: json['merchant'] is Map ? json['merchant'] as Map<String, dynamic> : null,
       isCustom: json['is_custom'] as bool? ?? false,
-      createdAt: json['created_at'] == null ? null : DateTime.parse(json['created_at'] as String),
-      updatedAt: json['updated_at'] == null ? null : DateTime.parse(json['updated_at'] as String),
+      createdAt: json['created'] == null ? null : DateTime.parse(json['created'] as String),
+      updatedAt: json['updated'] == null ? null : DateTime.parse(json['updated'] as String),
     );
   }
 
@@ -222,12 +240,24 @@ class Product {
 
   String get categorySlug => secondaryCategory?.slug ?? masterProduct?.categorySlug ?? 'other';
 
-  Map<String, dynamic> toJson() => _$ProductToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'brand': brand,
+      'unit': unit,
+      'Price': price,
+      'Description': description,
+      'category': secondaryCategoryId,
+      'merchant': merchantId,
+      'is_available': isAvailable,
+    };
+  }
 }
 
 class ProductCreateRequest {
-  final int? masterProductId;
-  final int? secondaryCategoryId;
+  final String? masterProductId;
+  final String? secondaryCategoryId;
   final double price;
   final int stockCount;
   final bool isAvailable;
@@ -242,8 +272,8 @@ class ProductCreateRequest {
   
   Map<String, dynamic> toJson() => {
     if (masterProductId != null) 'master_product_id': masterProductId,
-    if (secondaryCategoryId != null) 'secondary_category_id': secondaryCategoryId,
-    'price': price,
+    if (secondaryCategoryId != null) 'category': secondaryCategoryId,
+    'Price': price,
     'stock_count': stockCount,
     'is_available': isAvailable,
   };
@@ -253,7 +283,7 @@ class ProductUpdateRequest {
   final double? price;
   final int? stockCount;
   final bool? isAvailable;
-  final int? secondaryCategoryId;
+  final String? secondaryCategoryId;
   
   ProductUpdateRequest({
     this.price,
@@ -263,10 +293,10 @@ class ProductUpdateRequest {
   });
   
   Map<String, dynamic> toJson() => {
-    if (price != null) 'price': price,
+    if (price != null) 'Price': price,
     if (stockCount != null) 'stock_count': stockCount,
     if (isAvailable != null) 'is_available': isAvailable,
-    if (secondaryCategoryId != null) 'secondary_category_id': secondaryCategoryId,
+    if (secondaryCategoryId != null) 'category': secondaryCategoryId,
   };
 }
 
