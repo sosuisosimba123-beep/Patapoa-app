@@ -29,6 +29,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
   final _scrollController = ScrollController();
 
   bool _isOnline = false;
+  bool _isLoading = false;
   List<Map<String, dynamic>> _orders = [];
   Timer? _locationTimer;
   Map<String, dynamic>? _profile;
@@ -75,7 +76,24 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
   Future<void> _loadProfile() async {
     try {
       final profile = await _riderService.getProfile();
+      
+      // Also fetch online status from rider_status collection
+      final userId = pb.authStore.model?.id;
+      if (userId != null) {
+        try {
+          final statusRecord = await pb.collection('rider_status').getFirstListItem('users = "$userId"');
+          if (mounted) {
+            setState(() {
+              _isOnline = statusRecord.data['is_online'] ?? false;
+            });
+          }
+        } catch (_) {
+          // Status record might not exist yet, that's fine
+        }
+      }
+
       if (mounted) setState(() { _profile = profile; });
+      if (_isOnline) _startLocationUpdates();
     } catch (e) {
       debugPrint('Error loading profile: $e');
     }
@@ -104,6 +122,8 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
       if (!hasLocation) return;
     }
 
+    setState(() => _isLoading = true); // Assuming you add an _isLoading bool for the button
+
     try {
       if (!_isOnline) {
         await _riderService.goOnline();
@@ -118,10 +138,14 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
           _orders.clear();
         });
       }
+      // Broadcast to real-time status collection
+      await _broadcastStatus();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

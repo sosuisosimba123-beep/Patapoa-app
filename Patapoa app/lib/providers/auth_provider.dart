@@ -246,31 +246,44 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      debugPrint('Initiating Google Fast-Track Sign-In...');
+      debugPrint('Initiating Google Fast-Track Sign-In (Manual Flow)...');
+      
+      // 1. Get the Google Auth Provider info
+      final authMethods = await pb.collection('users').listAuthMethods();
+      final provider = authMethods.oauth2.firstWhere((p) => p.name == 'google');
+      
+      // 2. Open browser and get the redirect URL
+      final redirectContext = await FlutterWebAuth2.authenticate(
+        url: provider.authUrl + '&redirect_uri=https://pocketbase.patapoa.online/api/oauth2-redirect',
+        callbackUrlScheme: 'com.nacci.patapoa.app',
+      );
+
+      // 3. Extract the code from the redirect URL
+      final code = Uri.parse(redirectContext).queryParameters['code'];
+      if (code == null) throw Exception('No authorization code received');
+
+      // 4. Finalize authentication with PocketBase
       final authData = await pb.collection('users').authWithOAuth2(
         'google',
-        (url) async {
-          await FlutterWebAuth2.authenticate(
-            url: url.toString(),
-            callbackUrlScheme: 'com.nacci.patapoa.app',
-          );
-        },
+        code,
+        provider.codeVerifier,
+        'https://pocketbase.patapoa.online/api/oauth2-redirect',
       );
 
       if (pb.authStore.isValid && pb.authStore.model != null) {
         final model = pb.authStore.model as RecordModel;
         
         // Ensure name and user_type are NEVER empty in PocketBase
-        final existingName = model.data['name'] ?? '';
-        final existingRole = model.data['user_type'] ?? model.data['userType'] ?? model.data['role'];
+        final String existingName = (model.data['name'] ?? '').toString();
+        final String? existingRole = model.data['user_type'] ?? model.data['userType'] ?? model.data['role'];
         
         // If it's a new user or fields are missing, perform a "Full Identity Sync"
-        if (existingName.isEmpty || existingRole == null || (existingRole == 'customer' && userType != 'customer')) {
+        if (existingName.isEmpty || existingRole == null || existingRole.isEmpty || (existingRole == 'customer' && userType != 'customer')) {
            final targetRole = (existingRole == 'customer' && userType != 'customer') ? userType : (existingRole ?? userType);
            
            // Extract name from OAuth2 data if missing in profile
            String? nameToSet = existingName.isNotEmpty ? existingName : authData.meta?['name'];
-           if (nameToSet == null || nameToSet.isEmpty) nameToSet = 'Patapoa User';
+           if (nameToSet == null || nameToSet.toString().isEmpty) nameToSet = 'Patapoa User';
 
            await pb.collection('users').update(model.id, body: {
              'name': nameToSet,

@@ -40,7 +40,7 @@ class OrderService {
       'order_number': 'PAT-${DateTime.now().millisecondsSinceEpoch}',
       'customer': userId,
       'merchant': request['merchant_id'],
-      'status': 'placed',
+      'select': 'placed ', // Schema has a space after placed
       'total_amount': request['total_amount'],
       'delivery_fee': request['delivery_fee'] ?? 0.0,
       'Address': request['delivery_address'],
@@ -61,7 +61,7 @@ class OrderService {
   }
 
   Future<void> updateOrderStatus(String orderId, String status) async {
-    await pb.collection('Orders').update(orderId, body: {'status': status});
+    await pb.collection('Orders').update(orderId, body: {'select': status});
   }
 
   Future<Map<String, dynamic>> getOrderTracking(String id) async {

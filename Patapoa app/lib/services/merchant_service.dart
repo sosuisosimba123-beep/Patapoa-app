@@ -22,7 +22,7 @@ class MerchantService {
       final products = await pb.collection('Products').getList(filter: 'merchant = "$userId"', perPage: 1);
       
       // Fetch wallet balance
-      final wallet = await pb.collection('Wallets').getFirstListItem('User = "$userId"');
+      final wallet = await pb.collection('Wallets').getFirstListItem('user = "$userId"');
 
       return {
         ...profile.data,

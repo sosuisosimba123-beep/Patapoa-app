@@ -70,12 +70,12 @@ class DeliveryPartnerService {
 
     try {
       final records = await pb.collection('rider_status').getList(
-        filter: 'users = "$userId"',
+        filter: 'user = "$userId"',
         page: 1, perPage: 1
       );
 
       final data = {
-        'users': userId,
+        'user': userId,
         'current_lat': latitude,
         'current_lng': longitude,
         'is_online': true,
@@ -96,14 +96,14 @@ class DeliveryPartnerService {
     if (userId == null) return;
 
     final records = await pb.collection('rider_status').getList(
-      filter: 'users = "$userId"',
+      filter: 'user = "$userId"',
       page: 1, perPage: 1
     );
 
     if (records.items.isNotEmpty) {
       await pb.collection('rider_status').update(records.items.first.id, body: {'is_online': true});
     } else {
-      await pb.collection('rider_status').create(body: {'users': userId, 'is_online': true});
+      await pb.collection('rider_status').create(body: {'user': userId, 'is_online': true});
     }
   }
 
@@ -112,7 +112,7 @@ class DeliveryPartnerService {
     if (userId == null) return;
 
     final records = await pb.collection('rider_status').getList(
-      filter: 'users = "$userId"',
+      filter: 'user = "$userId"',
       page: 1, perPage: 1
     );
     if (records.items.isNotEmpty) {
