@@ -15,20 +15,38 @@ class MerchantService {
     if (userId == null) return {};
 
     try {
-      // Fetch merchant profile
-      final profile = await pb.collection('merchant_profiles').getFirstListItem('user = "$userId"');
+      // 1. Fetch merchant profile with healing
+      RecordModel? profile;
+      try {
+        profile = await pb.collection('merchant_profiles').getFirstListItem('user = "$userId"');
+      } catch (e) {
+        profile = await pb.collection('merchant_profiles').create(body: {
+          'user': userId,
+          'store_name': 'My New Store',
+          'is_verified': false,
+        });
+      }
       
-      // Fetch product count
+      // 2. Fetch product count
       final products = await pb.collection('Products').getList(filter: 'merchant = "$userId"', perPage: 1);
       
-      // Fetch wallet balance
-      final wallet = await pb.collection('Wallets').getFirstListItem('user = "$userId"');
+      // 3. Fetch wallet with healing
+      RecordModel? wallet;
+      try {
+        wallet = await pb.collection('Wallets').getFirstListItem('user = "$userId"');
+      } catch (e) {
+        wallet = await pb.collection('Wallets').create(body: {
+          'user': userId,
+          'balance': 0.0,
+          'pending_balance': 0.0,
+        });
+      }
 
       return {
         ...profile.data,
         'products_count': products.totalItems,
-        'available_balance': wallet.data['balance'],
-        'pending_balance': wallet.data['pending_balance'],
+        'available_balance': wallet.data['balance'] ?? 0.0,
+        'pending_balance': wallet.data['pending_balance'] ?? 0.0,
       };
     } catch (e) {
       debugPrint('PocketBase GetStats Error: $e');

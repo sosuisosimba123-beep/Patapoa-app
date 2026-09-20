@@ -233,8 +233,8 @@ class PatapoaApp extends StatelessWidget {
           builder: (context, state) {
             final extra = state.extra as Map<String, dynamic>;
             return RiderCashReceivedScreen(
-              orderId: extra['orderId'].toString(),
-              amount: (extra['amount'] as num).toDouble(),
+              orderId: (extra['orderId'] ?? '').toString(),
+              amount: ((extra['amount'] ?? 0.0) as num).toDouble(),
             );
           },
         ),

@@ -29,12 +29,12 @@ class _MerchantHomeScreenState extends State<MerchantHomeScreen> {
       if (userId == null) return;
 
       final records = await pb.collection('merchant_activity').getList(
-        filter: 'user = "$userId"',
+        filter: 'users = "$userId"', // Standardized to match your schema
         page: 1, perPage: 1
       );
 
       final data = {
-        'user': userId,
+        'users': userId, // Standardized
         'is_accepting_orders': true,
         'last_seen': DateTime.now().toIso8601String(),
       };

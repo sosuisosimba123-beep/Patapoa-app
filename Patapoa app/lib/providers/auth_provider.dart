@@ -246,85 +246,63 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      debugPrint('Initiating Google Fast-Track Sign-In (Manual Flow)...');
+      debugPrint('Initiating Google Sign-In (Hardened Flow)...');
       
-      // 1. Get the Google Auth Provider info
-      final authMethods = await pb.collection('users').listAuthMethods();
-      final provider = authMethods.oauth2.firstWhere((p) => p.name == 'google');
-      
-      // 2. Open browser and get the redirect URL
-      final redirectContext = await FlutterWebAuth2.authenticate(
-        url: provider.authUrl + '&redirect_uri=https://pocketbase.patapoa.online/api/oauth2-redirect',
-        callbackUrlScheme: 'com.nacci.patapoa.app',
-      );
-
-      // 3. Extract the code from the redirect URL
-      final code = Uri.parse(redirectContext).queryParameters['code'];
-      if (code == null) throw Exception('No authorization code received');
-
-      // 4. Finalize authentication with PocketBase
+      // Using standard PocketBase SDK 0.25.x callback flow
       final authData = await pb.collection('users').authWithOAuth2(
         'google',
-        code,
-        provider.codeVerifier,
-        'https://pocketbase.patapoa.online/api/oauth2-redirect',
+        (url) async {
+          // Open external browser and wait for redirect
+          final result = await FlutterWebAuth2.authenticate(
+            url: url.toString(),
+            callbackUrlScheme: 'com.nacci.patapoa.app',
+          );
+          return result;
+        } as dynamic,
       );
 
       if (pb.authStore.isValid && pb.authStore.model != null) {
         final model = pb.authStore.model as RecordModel;
         
-        // Ensure name and user_type are NEVER empty in PocketBase
-        final String existingName = (model.data['name'] ?? '').toString();
-        final String? existingRole = model.data['user_type'] ?? model.data['userType'] ?? model.data['role'];
+        // Identity Recovery: Ensure no N/A fields
+        String nameToSet = (model.data['name'] ?? '').toString();
+        if (nameToSet.isEmpty || nameToSet == 'null') {
+          nameToSet = authData.meta?['name'] ?? 'Patapoa User';
+        }
         
-        // If it's a new user or fields are missing, perform a "Full Identity Sync"
-        if (existingName.isEmpty || existingRole == null || existingRole.isEmpty || (existingRole == 'customer' && userType != 'customer')) {
-           final targetRole = (existingRole == 'customer' && userType != 'customer') ? userType : (existingRole ?? userType);
-           
-           // Extract name from OAuth2 data if missing in profile
-           String? nameToSet = existingName.isNotEmpty ? existingName : authData.meta?['name'];
-           if (nameToSet == null || nameToSet.toString().isEmpty) nameToSet = 'Patapoa User';
-
-           await pb.collection('users').update(model.id, body: {
-             'name': nameToSet,
-             'user_type': targetRole,
-             'userType': targetRole, // Backwards compatibility
-             'role': targetRole,     // Backwards compatibility
-           });
-           
-           debugPrint('PocketBase Identity Sync: Set name="$nameToSet", role="$targetRole"');
-           await pb.collection('users').authRefresh();
+        String roleToSet = (model.data['user_type'] ?? model.data['role'] ?? '').toString();
+        if (roleToSet.isEmpty || roleToSet == 'null' || (roleToSet == 'customer' && userType != 'customer')) {
+          roleToSet = userType;
         }
 
-        // UNIVERSAL MIRROR SYNC (Laravel - Keeping for now until full migration)
-        final pbModel = authData.record!;
-        final finalType = userType ?? pbModel.data['user_type'] ?? 'customer';
+        // Apply fix to PocketBase
+        await pb.collection('users').update(model.id, body: {
+          'name': nameToSet,
+          'user_type': roleToSet,
+          'userType': roleToSet,
+          'role': roleToSet,
+        });
 
+        await pb.collection('users').authRefresh();
+
+        // Laravel Mirror Sync
         try {
-          final syncRes = await _apiService.post('/auth/pb-sync', {
-            'email': pbModel.data['email'] ?? '',
-            'name': pbModel.data['name'] ?? 'User',
-            'user_type': finalType,
+          await _apiService.post('/auth/pb-sync', {
+            'email': model.data['email'] ?? '',
+            'name': nameToSet,
+            'user_type': roleToSet,
           });
-
-          if (syncRes.statusCode == 200) {
-            final data = jsonDecode(syncRes.body);
-            final token = data['data']?['token'] ?? data['token'];
-            if (token != null) await _apiService.setAuthToken(token);
-            debugPrint('Mirror Sync Success: MySQL is now aware of this $finalType');
-          }
         } catch (e) {
-          debugPrint('Google Laravel Sync Warning: $e');
+          debugPrint('Laravel Mirror Warning: $e');
         }
         
         await _syncFcmToken();
-        debugPrint('Authentication successful. Directing to app...');
         return true;
       }
       return false;
     } catch (e) {
-      debugPrint('Google Auth Error: $e');
-      _errorMessage = 'Google Sign-In was cancelled or failed. Please try again.';
+      debugPrint('Google Login Error: $e');
+      _errorMessage = 'Login Failed. Please try again.';
       return false;
     } finally {
       _isLoading = false;
