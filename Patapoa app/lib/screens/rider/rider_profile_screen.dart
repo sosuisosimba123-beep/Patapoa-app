@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../services/delivery_partner_service.dart';
+import '../../providers/auth_provider.dart';
 import '../../utils/number_utils.dart';
 
 class RiderProfileScreen extends StatefulWidget {
@@ -147,8 +149,26 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
   }
 
   Widget _buildLogoutButton(ColorScheme colorScheme) {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
     return FilledButton.icon(
-      onPressed: () {},
+      onPressed: () async {
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Log Out'),
+            content: const Text('Are you sure you want to sign out?'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('CANCEL')),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('LOG OUT', style: TextStyle(color: Colors.red))),
+            ],
+          ),
+        );
+
+        if (confirmed == true) {
+          await auth.logout();
+          if (mounted) context.go('/role');
+        }
+      },
       style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52), backgroundColor: colorScheme.errorContainer, foregroundColor: colorScheme.onErrorContainer),
       icon: const Icon(Icons.logout), label: const Text('Log Out'),
     );

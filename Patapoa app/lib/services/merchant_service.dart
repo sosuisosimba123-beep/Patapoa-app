@@ -152,6 +152,53 @@ class MerchantService {
     _cache.remove('merchant_stats');
   }
 
+  Future<void> updateStoreLocation(Map<String, dynamic> data) async {
+    final userId = pb.authStore.model?.id;
+    if (userId == null) return;
+
+    try {
+      final record = await pb.collection('merchant_profiles').getFirstListItem('user = "$userId"');
+      await pb.collection('merchant_profiles').update(record.id, body: {
+        'latitude': data['latitude'],
+        'longitude': data['longitude'],
+        'address': data['address'],
+        'city': data['city'],
+        if (data.containsKey('store_name')) 'store_name': data['store_name'],
+      });
+    } catch (e) {
+       // Create if doesn't exist
+       await pb.collection('merchant_profiles').create(body: {
+         'user': userId,
+         'latitude': data['latitude'],
+         'longitude': data['longitude'],
+         'address': data['address'],
+         'city': data['city'],
+         'store_name': data['store_name'] ?? 'My New Store',
+       });
+    }
+  }
+
+  Future<void> updateMerchantProfile(Map<String, dynamic> data) async {
+    final userId = pb.authStore.model?.id;
+    if (userId == null) return;
+
+    try {
+      final record = await pb.collection('merchant_profiles').getFirstListItem('user = "$userId"');
+      await pb.collection('merchant_profiles').update(record.id, body: {
+        'store_name': data['store_name'],
+        'email': data['email'],
+        'phone': data['phone'],
+      });
+    } catch (e) {
+       await pb.collection('merchant_profiles').create(body: {
+         'user': userId,
+         'store_name': data['store_name'],
+         'email': data['email'],
+         'phone': data['phone'],
+       });
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getNearbyMerchants({double? latitude, double? longitude, double radius = 15.0}) async {
     // For now, we return verified merchants from the profiles collection
     final result = await pb.collection('merchant_profiles').getList(

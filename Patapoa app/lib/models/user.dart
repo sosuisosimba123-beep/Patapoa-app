@@ -65,7 +65,20 @@ class User {
     );
   }
 
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'user_type': userType,
+      'is_active': isActive,
+      'verified': isVerified,
+      'fcm_token': fcmToken,
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+  }
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)

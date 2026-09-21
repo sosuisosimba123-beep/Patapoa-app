@@ -125,7 +125,19 @@ class DeliveryPartnerService {
     if (userId == null) return {};
 
     try {
-      final record = await pb.collection('rider_profiles').getFirstListItem('user = "$userId"');
+      RecordModel? record;
+      try {
+        record = await pb.collection('rider_profiles').getFirstListItem('user = "$userId"');
+      } catch (e) {
+        // Heal: Create missing profile
+        record = await pb.collection('rider_profiles').create(body: {
+          'user': userId,
+          'vehicle_type': 'motorcycle',
+          'rating': 5.0,
+          'total_deliveries': 0,
+          'is_verified': false,
+        });
+      }
       return {'id': record.id, ...record.data};
     } catch (e) {
       debugPrint('PocketBase GetRiderProfile Error: $e');

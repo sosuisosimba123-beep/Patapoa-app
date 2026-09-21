@@ -4,7 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
-import '../../services/api_service.dart';
+import '../../services/merchant_service.dart';
 import '../../services/map_marker_service.dart';
 import '../../providers/location_provider.dart';
 import '../../config/map_config.dart';
@@ -18,7 +18,6 @@ class MerchantOnboardingScreen extends StatefulWidget {
 
 class _MerchantOnboardingScreenState extends State<MerchantOnboardingScreen> {
   final MapController _mapController = MapController();
-  final ApiService _apiService = ApiService();
   final _formKey = GlobalKey<FormState>();
 
   final _shopNameController = TextEditingController();
@@ -115,22 +114,15 @@ class _MerchantOnboardingScreenState extends State<MerchantOnboardingScreen> {
     
     setState(() => _isLoading = true);
     try {
-      final payload = {
+      final merchantService = MerchantService();
+      await merchantService.updateStoreLocation({
         'store_name': _shopNameController.text,
         'latitude': _selectedLocation.latitude,
         'longitude': _selectedLocation.longitude,
-      };
-      
-      debugPrint('Saving Onboarding Data: $payload');
-      
-      final response = await _apiService.post('/merchant/location', payload);
-      
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        if (mounted) {
-          context.go('/merchant/home');
-        }
-      } else {
-        throw 'Server returned status ${response.statusCode}: ${response.body}';
+      });
+
+      if (mounted) {
+        context.go('/merchant/home');
       }
     } catch (e) {
       if (mounted) {

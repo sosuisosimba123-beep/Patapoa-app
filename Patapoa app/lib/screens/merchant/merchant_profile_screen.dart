@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/merchant_service.dart';
-import '../../services/auth_service.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/api_service.dart';
 
 class MerchantProfileScreen extends StatefulWidget {
   const MerchantProfileScreen({super.key});
@@ -15,8 +13,6 @@ class MerchantProfileScreen extends StatefulWidget {
 
 class _MerchantProfileScreenState extends State<MerchantProfileScreen> {
   final MerchantService _merchantService = MerchantService();
-  final AuthService _authService = AuthService();
-  final ApiService _apiService = ApiService();
   bool _isEditing = false;
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
@@ -70,14 +66,14 @@ class _MerchantProfileScreenState extends State<MerchantProfileScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
-      // Update core profile in Laravel
-      await _apiService.put('/merchant/profile', {
+      // 1. Update Profile in PocketBase
+      await _merchantService.updateMerchantProfile({
         'store_name': _storeNameController.text,
         'email': _emailController.text,
         'phone': _phoneController.text,
       });
 
-      // Update payout details
+      // 2. Update payout details
       await _merchantService.updatePayoutDetails({
         'payout_method': _selectedPayoutMethod,
         'payout_account': _payoutAccountController.text,
@@ -85,13 +81,13 @@ class _MerchantProfileScreenState extends State<MerchantProfileScreen> {
 
       if (mounted) {
         setState(() { _isLoading = false; _isEditing = false; });
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile & Payout updated')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated successfully')));
         _loadProfile();
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Update failed: $e')));
       }
     }
   }

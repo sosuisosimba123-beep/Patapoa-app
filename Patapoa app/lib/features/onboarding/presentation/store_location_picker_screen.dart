@@ -136,31 +136,28 @@ class _StoreLocationPickerScreenState extends State<StoreLocationPickerScreen> {
       ),
     );
 
-    if (confirmed != true) return;
-
     setState(() => _isLoading = true);
     try {
-      // 1. Save to MySQL (Laravel)
-      await _apiService.post('/merchant/location', {
+      // 1. Save to PocketBase (merchant_profiles)
+      final merchantService = MerchantService();
+      await merchantService.updateStoreLocation({
         'latitude': _selectedLocation.latitude,
         'longitude': _selectedLocation.longitude,
-        'landmark': _landmarkController.text,
-        'district': _districtController.text,
         'city': _cityController.text,
         'address': _detectedAddress,
       });
 
-      // 2. Save to PocketBase (merchant_activity)
+      // 2. Update status in merchant_activity
       try {
         final userId = pb.authStore.model?.id;
         if (userId != null) {
           final records = await pb.collection('merchant_activity').getList(
-            filter: 'user = "$userId"',
+            filter: 'users = "$userId"',
             page: 1, perPage: 1
           );
 
           final data = {
-            'user': userId,
+            'users': userId,
             'is_accepting_orders': true,
             'last_seen': DateTime.now().toIso8601String(),
           };
@@ -172,7 +169,7 @@ class _StoreLocationPickerScreenState extends State<StoreLocationPickerScreen> {
           }
         }
       } catch (e) {
-        debugPrint('PocketBase location sync warning: $e');
+        debugPrint('PocketBase location activity sync warning: $e');
       }
 
       if (mounted) {

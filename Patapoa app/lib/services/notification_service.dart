@@ -2,7 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io' show Platform;
-import 'api_service.dart';
+import 'pocketbase_services.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -11,7 +11,6 @@ class NotificationService {
 
   FirebaseMessaging get _fcm => FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
-  final ApiService _apiService = ApiService();
 
   bool get _isSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
@@ -69,10 +68,10 @@ class NotificationService {
 
   Future<void> syncTokenWithBackend(String token) async {
     try {
-      final isAuthenticated = await _apiService.isAuthenticated();
-      if (isAuthenticated) {
-        await _apiService.post('/update-fcm-token', {'fcm_token': token});
-        debugPrint('FCM Token synced with backend');
+      final userId = pb.authStore.model?.id;
+      if (userId != null) {
+        await pb.collection('users').update(userId, body: {'fcm_token': token});
+        debugPrint('FCM Token synced with PocketBase');
       }
     } catch (e) {
       debugPrint('Error syncing FCM token: $e');

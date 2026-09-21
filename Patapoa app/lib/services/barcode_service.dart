@@ -1,31 +1,26 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'api_service.dart';
+import 'pocketbase_services.dart';
 
 class BarcodeService {
-  final ApiService _apiService = ApiService();
-
-  /// Unified lookup: Checks backend scan endpoint (Cache ➔ Gemini ➔ Fallback).
+  /// Unified lookup: Checks PocketBase master_products library.
   Future<Map<String, dynamic>?> lookupBarcode(String barcode) async {
     try {
-      final response = await _apiService.post('/products/scan', {'barcode': barcode});
+      final result = await pb.collection('master_products').getFirstListItem(
+        'barcode = "$barcode"',
+        expand: 'secondary_category',
+      );
       
-      if (response.statusCode == 200) {
-        final decoded = jsonDecode(response.body);
-        final data = decoded['data'] ?? decoded;
-        
-        return {
-          'source': data['is_cached'] == true ? 'cache' : 'ai',
-          'name': data['name'],
-          'brand': data['brand'],
-          'image_url': data['image_url'],
-          'secondary_category_id': data['secondary_category_id'],
-          'secondary_category_name': data['secondary_category_name'],
-          'master_product_id': data['master_product_id'],
-        };
-      }
+      return {
+        'source': 'library',
+        'name': result.data['name'],
+        'brand': result.data['brand'],
+        'image_url': result.data['primary_image_url'],
+        'secondary_category_id': result.data['secondary_category'],
+        'secondary_category_name': result.expand['secondary_category']?.first.data['name'],
+        'master_product_id': result.id,
+      };
     } catch (e) {
-      debugPrint('Barcode lookup failed: $e');
+      debugPrint('Barcode library lookup failed: $e');
     }
 
     return null;
